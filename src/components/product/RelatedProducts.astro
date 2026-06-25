@@ -1,0 +1,19 @@
+---
+import type { PublicProduct } from '@/lib/products/getters';
+import ProductGrid from './ProductGrid.astro';
+
+interface Props {
+  products: PublicProduct[];
+}
+
+const { products } = Astro.props;
+---
+
+{
+  products.length > 0 && (
+    <section class="grid gap-6">
+      <h2 class="text-2xl font-semibold text-ink">Productos relacionados</h2>
+      <ProductGrid products={products} />
+    </section>
+  )
+}

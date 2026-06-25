@@ -1,0 +1,32 @@
+---
+import type { PublicProduct } from '@/lib/products/getters';
+import { ROUTES } from '@/lib/routes';
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+
+interface Props {
+  product: PublicProduct;
+}
+
+const { product } = Astro.props;
+---
+
+<article class="grid gap-4 rounded-sm border border-border bg-surface p-4">
+  <div class="aspect-[4/3] rounded-sm bg-bg" aria-hidden="true"></div>
+  <div>
+    <Badge label={product.category} />
+    <h3 class="mt-3 text-xl font-semibold leading-tight text-ink">
+      {product.name}
+    </h3>
+    <p class="mt-2 text-sm leading-6 text-muted">{product.shortDescription}</p>
+  </div>
+  <p class="text-sm font-semibold text-leather-dark">
+    Precio disponible para clientes mayoristas registrados.
+  </p>
+  <Button
+    href={`${ROUTES.CATALOG}/${product.categorySlug}#${product.slug}`}
+    variant="secondary"
+  >
+    Ver producto
+  </Button>
+</article>

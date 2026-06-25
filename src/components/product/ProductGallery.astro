@@ -1,0 +1,27 @@
+---
+import type { PublicProduct } from '@/lib/products/getters';
+
+interface Props {
+  product: PublicProduct;
+}
+
+const { product } = Astro.props;
+const primaryImage = product.images[0];
+---
+
+<div class="grid gap-3">
+  {
+    primaryImage ? (
+      <img
+        src={primaryImage}
+        alt={`${product.name} Emilio Faraoni`}
+        class="aspect-[4/3] w-full rounded-sm border border-border object-cover"
+      />
+    ) : (
+      <div
+        class="aspect-[4/3] rounded-sm border border-border bg-bg"
+        aria-label={product.name}
+      />
+    )
+  }
+</div>

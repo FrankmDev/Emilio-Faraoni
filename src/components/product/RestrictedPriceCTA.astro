@@ -1,0 +1,34 @@
+---
+import { ROUTES } from '@/lib/routes';
+import Button from '@/components/ui/Button.astro';
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<div
+  class:list={[
+    'rounded-sm border border-border bg-surface p-4',
+    !compact && 'p-5',
+  ]}
+>
+  <p class="text-sm font-semibold text-ink">
+    Precio disponible para clientes mayoristas registrados.
+  </p>
+  {
+    !compact && (
+      <p class="mt-2 text-sm text-muted">
+        Solicite acceso profesional para consultar tarifas y condiciones.
+      </p>
+    )
+  }
+  <div class="mt-4 flex flex-wrap gap-3">
+    <Button href={ROUTES.WHOLESALE_ACCESS}>Solicitar acceso mayorista</Button>
+    <Button href={ROUTES.CONTACT} variant="secondary"
+      >Contactar con ventas</Button
+    >
+  </div>
+</div>

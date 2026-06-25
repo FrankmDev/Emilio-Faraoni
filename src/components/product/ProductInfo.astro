@@ -1,0 +1,53 @@
+---
+import type { PublicProduct } from '@/lib/products/getters';
+import RestrictedPriceCTA from './RestrictedPriceCTA.astro';
+
+interface Props {
+  product: PublicProduct;
+}
+
+const { product } = Astro.props;
+---
+
+<section class="grid gap-6">
+  <div>
+    {
+      product.reference && (
+        <p class="text-sm font-semibold text-muted">Ref. {product.reference}</p>
+      )
+    }
+    <h1 class="mt-2 text-4xl font-semibold leading-tight text-ink">
+      {product.name}
+    </h1>
+    <p class="mt-4 text-lg leading-8 text-muted">{product.description}</p>
+  </div>
+
+  <dl class="grid gap-3 text-sm">
+    <div>
+      <dt class="font-semibold text-ink">Colores</dt>
+      <dd class="text-muted">{product.colors.join(', ')}</dd>
+    </div>
+    <div>
+      <dt class="font-semibold text-ink">Tallas</dt>
+      <dd class="text-muted">{product.sizes.join(', ')}</dd>
+    </div>
+    {
+      product.measurements && (
+        <div>
+          <dt class="font-semibold text-ink">Medidas</dt>
+          <dd class="text-muted">{product.measurements}</dd>
+        </div>
+      )
+    }
+    {
+      product.materials && (
+        <div>
+          <dt class="font-semibold text-ink">Materiales</dt>
+          <dd class="text-muted">{product.materials}</dd>
+        </div>
+      )
+    }
+  </dl>
+
+  <RestrictedPriceCTA />
+</section>

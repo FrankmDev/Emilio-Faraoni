@@ -1,0 +1,45 @@
+---
+import { company } from '@/data/company';
+import { mainNavigation } from '@/data/navigation';
+import Container from '@/components/ui/Container.astro';
+
+const copyright = `© ${new Date().getFullYear()} ${company.name}. Datos editables en src/data/company.ts.`;
+---
+
+<footer class="border-t border-border bg-leather-dark text-white">
+  <Container class="grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div>
+      <strong class="text-lg font-semibold">{company.name}</strong>
+      <p class="mt-3 max-w-md text-sm leading-6 text-white/75">
+        {company.description}
+      </p>
+    </div>
+
+    <nav class="grid gap-2 text-sm" aria-label="Navegación secundaria">
+      <span class="text-xs font-semibold uppercase tracking-wide text-white/55"
+        >Web</span
+      >
+      {
+        mainNavigation.map((item) => (
+          <a href={item.href} class="text-white/78 hover:text-white">
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="grid gap-2 text-sm text-white/78">
+      <span class="text-xs font-semibold uppercase tracking-wide text-white/55"
+        >Contacto</span
+      >
+      <span>{company.location}</span>
+      <a href={`mailto:${company.contactEmail}`}>{company.contactEmail}</a>
+      <a href={`tel:${company.contactPhone}`}>{company.contactPhone}</a>
+    </div>
+  </Container>
+  <div class="border-t border-white/12 py-5">
+    <Container class="text-xs text-white/55">
+      {copyright}
+    </Container>
+  </div>
+</footer>

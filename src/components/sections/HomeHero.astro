@@ -1,0 +1,30 @@
+---
+import { ROUTES } from '@/lib/routes';
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+---
+
+<section class="py-16 md:py-24">
+  <Container class="grid gap-8">
+    <p class="text-xs font-semibold uppercase tracking-wide text-leather">
+      Catálogo mayorista
+    </p>
+    <div class="max-w-4xl">
+      <h1
+        class="text-4xl font-semibold leading-tight tracking-normal text-ink md:text-6xl"
+      >
+        Base técnica para Emilio Faraoni B2B
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-8 text-muted">
+        Proyecto Astro preparado para crecer hacia catálogo profesional, acceso
+        mayorista y precios privados.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <Button href={ROUTES.CATALOG}>Ver estructura de catálogo</Button>
+      <Button href={ROUTES.WHOLESALE_ACCESS} variant="secondary"
+        >Acceso mayorista</Button
+      >
+    </div>
+  </Container>
+</section>

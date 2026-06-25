@@ -1,0 +1,15 @@
+---
+import { company } from '@/data/company';
+import Container from '@/components/ui/Container.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
+---
+
+<section class="py-14">
+  <Container>
+    <SectionHeader
+      eyebrow={`Desde ${company.foundedYear}`}
+      title="Fabricante mayorista en Elche"
+      description={company.description}
+    />
+  </Container>
+</section>

@@ -1,0 +1,53 @@
+---
+import { COMPANY_NAME } from '@/lib/constants';
+import { ROUTES } from '@/lib/routes';
+import { mainNavigation, wholesaleAccessCta } from '@/data/navigation';
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="border-b border-border bg-bg">
+  <Container class="flex min-h-20 items-center justify-between gap-6">
+    <a
+      href={ROUTES.HOME}
+      class="flex flex-col leading-tight"
+      aria-label={`${COMPANY_NAME} inicio`}
+    >
+      <strong class="text-lg font-semibold tracking-normal"
+        >{COMPANY_NAME}</strong
+      >
+      <span class="text-xs font-semibold uppercase tracking-wide text-muted"
+        >Catálogo B2B</span
+      >
+    </a>
+
+    <nav
+      class="hidden items-center gap-6 md:flex"
+      aria-label="Navegación principal"
+    >
+      {
+        mainNavigation.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm font-semibold text-muted transition-colors hover:text-ink',
+              currentPath === item.href && 'text-ink',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <Button
+      href={wholesaleAccessCta.href}
+      variant="secondary"
+      class="hidden sm:inline-flex"
+    >
+      {wholesaleAccessCta.label}
+    </Button>
+  </Container>
+</header>

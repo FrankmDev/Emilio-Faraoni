@@ -1,0 +1,15 @@
+---
+import RestrictedPriceCTA from '@/components/product/RestrictedPriceCTA.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
+---
+
+<section class="py-14">
+  <Container class="grid gap-8 md:grid-cols-[1fr_420px] md:items-start">
+    <SectionHeader
+      title="Precios privados para mayoristas aprobados"
+      description="La arquitectura separa datos y UI para que, en fases futuras, los precios salgan solo de consultas server-side protegidas."
+    />
+    <RestrictedPriceCTA />
+  </Container>
+</section>

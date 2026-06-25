@@ -1,0 +1,18 @@
+---
+import { getPublicFeaturedProducts } from '@/lib/products/getters';
+import Container from '@/components/ui/Container.astro';
+import ProductGrid from '@/components/product/ProductGrid.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
+
+const products = getPublicFeaturedProducts();
+---
+
+<section class="py-14">
+  <Container class="grid gap-8">
+    <SectionHeader
+      title="Productos mock mínimos"
+      description="Solo referencias de prueba. No se renderizan precios."
+    />
+    <ProductGrid products={products} />
+  </Container>
+</section>
