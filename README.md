@@ -1,43 +1,62 @@
-# Astro Starter Kit: Minimal
+# Emilio Faraoni B2B
+
+Base inicial para una futura web catálogo mayorista de Emilio Faraoni.
+
+## Fase Actual
+
+Esta rama prepara únicamente la arquitectura de Fase 1:
+
+- Astro
+- TypeScript
+- Tailwind CSS
+- datos locales mínimos
+- layout base
+- componentes UI simples
+- helpers de rutas, SEO y seguridad
+
+No incluye login, Supabase, base de datos, panel admin, emails, carrito ni catálogo completo.
+
+## Comandos
 
 ```sh
-bun create astro@latest -- --template minimal
+bun install
+bun run dev
+bun run build
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Estructura
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```txt
+src/
+  components/
+    layout/
+    product/
+    sections/
+    ui/
+  data/
+  layouts/
+  lib/
+    products/
+    security/
+  pages/
+  styles/
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Seguridad B2B
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+`wholesalePrice` puede existir en datos mock para validar el modelo, pero no debe renderizarse en UI pública ni exponerse desde endpoints públicos.
 
-Any static assets, like images, can be placed in the `public/` directory.
+Cuando se implemente Supabase/Auth, los precios deberán obtenerse solo desde queries server-side protegidas y con permisos de usuario mayorista aprobado.
 
-## 🧞 Commands
+## Carpetas Futuras
 
-All commands are run from the root of the project, from a terminal:
+No existen todavía. Se añadirán solo cuando toque implementar backend/auth:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```txt
+src/lib/supabase/
+src/lib/auth/
+src/lib/validation/
+src/server/actions/
+src/server/queries/
+```
+# Emilio-Faraoni
