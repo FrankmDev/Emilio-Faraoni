@@ -1,45 +1,55 @@
 ---
-import { company } from '@/data/company';
-import { mainNavigation } from '@/data/navigation';
 import Container from '@/components/ui/Container.astro';
-
-const copyright = `© ${new Date().getFullYear()} ${company.name}. Datos editables en src/data/company.ts.`;
 ---
 
-<footer class="border-t border-border bg-leather-dark text-white">
-  <Container class="grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
+<footer class="border-t border-border-soft bg-bg">
+  <Container class="grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr]">
     <div>
-      <strong class="text-lg font-semibold">{company.name}</strong>
-      <p class="mt-3 max-w-md text-sm leading-6 text-white/75">
-        {company.description}
+      <strong class="font-serif text-2xl font-light tracking-[-0.02em] text-ink">
+        Emilio Faraoni
+      </strong>
+      <p class="copy-small mt-4 max-w-md">
+        Fabricación y distribución mayorista de cinturones, bolsos y artículos
+        de marroquinería. Elche, Alicante.
       </p>
     </div>
 
-    <nav class="grid gap-2 text-sm" aria-label="Navegación secundaria">
-      <span class="text-xs font-semibold uppercase tracking-wide text-white/55"
-        >Web</span
-      >
-      {
-        mainNavigation.map((item) => (
-          <a href={item.href} class="text-white/78 hover:text-white">
-            {item.label}
-          </a>
-        ))
-      }
+    <nav class="grid gap-3 text-sm" aria-label="Navegación secundaria">
+      <span class="meta-label">Web</span>
+      <a href="/" class="text-muted transition-colors hover:text-ink">
+        Inicio
+      </a>
+      <a href="/catalogo" class="text-muted transition-colors hover:text-ink">
+        Catálogo
+      </a>
+      <a href="/empresa" class="text-muted transition-colors hover:text-ink">
+        Empresa
+      </a>
+      <a href="/contacto" class="text-muted transition-colors hover:text-ink">
+        Contacto
+      </a>
     </nav>
 
-    <div class="grid gap-2 text-sm text-white/78">
-      <span class="text-xs font-semibold uppercase tracking-wide text-white/55"
-        >Contacto</span
+    <div class="grid gap-3 text-sm text-muted">
+      <span class="meta-label">Contacto</span>
+      <span>Elche, Alicante</span>
+      <a
+        href="mailto:info@emiliofaraoni.com"
+        class="transition-colors hover:text-ink"
       >
-      <span>{company.location}</span>
-      <a href={`mailto:${company.contactEmail}`}>{company.contactEmail}</a>
-      <a href={`tel:${company.contactPhone}`}>{company.contactPhone}</a>
+        info@emiliofaraoni.com
+      </a>
+      <a
+        href="tel:+34965000000"
+        class="transition-colors hover:text-ink"
+      >
+        +34 965 000 000
+      </a>
     </div>
   </Container>
-  <div class="border-t border-white/12 py-5">
-    <Container class="text-xs text-white/55">
-      {copyright}
+  <div class="border-t border-border-soft py-6">
+    <Container class="text-[0.6875rem] uppercase tracking-[0.15em] text-muted">
+      © {new Date().getFullYear()} Emilio Faraoni. Todos los derechos reservados.
     </Container>
   </div>
 </footer>

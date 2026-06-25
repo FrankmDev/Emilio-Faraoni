@@ -1,22 +1,23 @@
 ---
-import { ROUTES } from '@/lib/routes';
-import Button from '@/components/ui/Button.astro';
 import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import { ROUTES } from '@/lib/routes';
 ---
 
-<section class="py-16">
-  <Container class="rounded-sm border border-border bg-surface p-8">
-    <h2 class="text-3xl font-semibold leading-tight text-ink">
+<section class="section-y">
+  <Container>
+    <p class="eyebrow">Siguiente paso</p>
+    <h2 class="heading-section mt-4 max-w-2xl text-ink">
       Base preparada para la siguiente tarea
     </h2>
-    <p class="mt-3 max-w-2xl text-muted">
-      El siguiente paso puede ser crear rutas de catálogo y fichas de producto
-      sobre esta estructura.
+    <p class="copy-lead mt-6 max-w-2xl">
+      El siguiente paso puede ser crear rutas de catálogo y fichas de
+      producto sobre esta estructura.
     </p>
-    <div class="mt-6">
-      <Button href={ROUTES.CONTACT} variant="secondary"
-        >Contacto comercial</Button
-      >
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href={ROUTES.CONTACT} variant="secondary">
+        Contacto comercial
+      </Button>
     </div>
   </Container>
 </section>

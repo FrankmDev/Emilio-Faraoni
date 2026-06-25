@@ -1,38 +1,868 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageShell from '@/components/layout/PageShell.astro';
-import Container from '@/components/ui/Container.astro';
-import SectionHeader from '@/components/ui/SectionHeader.astro';
-import Button from '@/components/ui/Button.astro';
-import { ROUTES } from '@/lib/routes';
+import '@/styles/global.css';
+
+const palette = [
+  { name: 'Background', token: 'bg', value: '#f4f2ee', var: '--color-bg', group: 'superficie' },
+  { name: 'Surface', token: 'surface', value: '#ffffff', var: '--color-surface', group: 'superficie' },
+  { name: 'Surface Muted', token: 'surface-muted', value: '#eeeeea', var: '--color-surface-muted', group: 'superficie' },
+  { name: 'Ink', token: 'ink', value: '#151515', var: '--color-ink', group: 'tinta' },
+  { name: 'Ink Soft', token: 'ink-soft', value: '#2a2724', var: '--color-ink-soft', group: 'tinta' },
+  { name: 'Muted', token: 'muted', value: '#6f6b64', var: '--color-muted', group: 'tinta' },
+  { name: 'Muted Light', token: 'muted-light', value: '#9a948a', var: '--color-muted-light', group: 'tinta' },
+  { name: 'Border', token: 'border', value: '#dedbd4', var: '--color-border', group: 'borde' },
+  { name: 'Border Soft', token: 'border-soft', value: '#ebe8e1', var: '--color-border-soft', group: 'borde' },
+  { name: 'Leather', token: 'leather', value: '#7a4f2c', var: '--color-leather', group: 'acento' },
+  { name: 'Leather Dark', token: 'leather-dark', value: '#3a2518', var: '--color-leather-dark', group: 'acento' },
+  { name: 'Gold Soft', token: 'gold-soft', value: '#a98b5f', var: '--color-gold-soft', group: 'acento' },
+];
+
+const typeScale = [
+  { class: 'heading-display', sample: 'Fabricación mayorista', spec: 'clamp 2.625–6rem · 500 · -0.04em · serif' },
+  { class: 'heading-section', sample: 'Cinturones de piel clásicos', spec: 'clamp 2.25–4.25rem · 500 · -0.035em · serif' },
+  { class: 'heading-card', sample: 'Cinturón de piel clásico', spec: 'clamp 1.35–1.65rem · 500 · -0.025em · serif' },
+  { class: 'eyebrow', sample: 'Catálogo profesional', spec: '0.69rem · 650 · 0.18em · uppercase · sans' },
+  { class: 'meta-label', sample: 'Material · Piel', spec: '0.7rem · 650 · 0.15em · uppercase · sans' },
+  { class: 'copy-lead', sample: 'Una cuidada selección de cinturones y artículos de marroquinería para compradores profesionales.', spec: 'clamp 1–1.125rem · 1.75 · sans' },
+  { class: 'copy-small', sample: 'Información técnica y disponibilidad', spec: '0.875rem · 1.7 · sans' },
+];
+
+const buttons = [
+  { label: 'Primario · Leather', class: 'btn-primary', text: 'Ver producto' },
+  { label: 'Primario · Ink', class: 'btn-dark', text: 'Solicitar acceso' },
+  { label: 'Secundario', class: 'btn-secondary', text: 'Contactar' },
+  { label: 'Ghost', class: 'btn-ghost', text: 'Ver más' },
+  { label: 'Gold · Premium', class: 'btn-gold', text: 'Destacado' },
+  { label: 'Disabled', class: 'btn-primary', text: 'No disponible', disabled: true },
+];
+
+const spacing = [
+  { token: '--section-y', label: 'Section padding', value: 'clamp(3.5rem, 7vw, 7.5rem)' },
+  { token: '--section-y-compact', label: 'Section compact', value: 'clamp(3rem, 5vw, 5.5rem)' },
+  { token: '--grid-gap', label: 'Grid gap', value: 'clamp(1.25rem, 2.2vw, 2rem)' },
+  { token: '--container-max', label: 'Container max', value: '77.5rem' },
+];
 ---
 
-<BaseLayout title="Arquitectura inicial">
-  <PageShell>
-    <section class="py-16 md:py-24">
-      <Container class="grid gap-8">
-        <SectionHeader
-          eyebrow="Fase 1"
-          title="Base Astro para catálogo B2B"
-          description="Arquitectura inicial, datos centralizados y componentes mínimos para preparar el futuro catálogo mayorista de Emilio Faraoni."
-        />
-
-        <div class="flex flex-wrap gap-3">
-          <Button href={ROUTES.CATALOG}>Ruta catálogo</Button>
-          <Button href={ROUTES.WHOLESALE_ACCESS} variant="secondary"
-            >Acceso mayorista</Button
-          >
-        </div>
-
-        <div class="rounded-sm border border-border bg-surface p-6">
-          <h2 class="text-xl font-semibold text-ink">Alcance actual</h2>
-          <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            Esta pantalla solo verifica layout, estilos, navegación y
-            componentes base. No hay login, Supabase, carrito, emails, panel
-            admin ni catálogo completo.
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <title>Style Museum · Emilio Faraoni</title>
+  </head>
+  <body>
+    <main class="museum">
+      <header class="hero">
+        <div class="container">
+          <div class="hero-meta">
+            <span class="eyebrow">Sistema de diseño · v1.0</span>
+            <span class="hero-divider" aria-hidden="true"></span>
+            <span class="meta-label">12 colores · 7 estilos · 3 superficies</span>
+          </div>
+          <h1 class="heading-display hero-title">Style<br />Museum</h1>
+          <p class="copy-lead hero-lead">
+            Una guía visual completa de los tokens, tipografías, superficies y componentes que articulan la identidad editorial de Emilio Faraoni.
           </p>
+          <nav class="hero-nav">
+            <a href="#colors" class="hero-link">01 · Paleta</a>
+            <a href="#typography" class="hero-link">02 · Tipografía</a>
+            <a href="#surfaces" class="hero-link">03 · Superficies</a>
+            <a href="#buttons" class="hero-link">04 · Botones</a>
+            <a href="#spacing" class="hero-link">05 · Espaciado</a>
+            <a href="#composition" class="hero-link">06 · Composición</a>
+          </nav>
         </div>
-      </Container>
-    </section>
-  </PageShell>
-</BaseLayout>
+      </header>
+
+      <section id="colors" class="section">
+        <div class="container">
+          <header class="section-head">
+            <span class="section-num">01</span>
+            <div class="section-intro">
+              <p class="eyebrow">Paleta cromática</p>
+              <h2 class="heading-section">Colores del sistema</h2>
+              <p class="copy-lead">
+                Tonos cálidos, sobrios y artesanales que reflejan la identidad de la marca. Doce tokens organizados en cuatro familias: superficies, tintas, bordes y acentos.
+              </p>
+            </div>
+          </header>
+          <div class="swatch-grid">
+            {palette.map((c) => (
+              <article class="swatch">
+                <div class="swatch-fill" style={`background-color: ${c.value}`}></div>
+                <div class="swatch-meta">
+                  <div class="swatch-top">
+                    <p class="meta-label">{c.group}</p>
+                    <p class="swatch-name">{c.name}</p>
+                  </div>
+                  <dl class="swatch-spec">
+                    <div>
+                      <dt>Token</dt>
+                      <dd class="mono">{c.token}</dd>
+                    </div>
+                    <div>
+                      <dt>HEX</dt>
+                      <dd class="mono">{c.value}</dd>
+                    </div>
+                    <div>
+                      <dt>CSS</dt>
+                      <dd class="mono small">{c.var}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="typography" class="section section-alt">
+        <div class="container">
+          <header class="section-head">
+            <span class="section-num">02</span>
+            <div class="section-intro">
+              <p class="eyebrow">Tipografía</p>
+              <h2 class="heading-section">Escala tipográfica</h2>
+              <p class="copy-lead">
+                Una jerarquía editorial construida sobre dos familias: Cormorant Garamond para titulares con carácter, Instrument Sans para cuerpo y metadatos.
+              </p>
+            </div>
+          </header>
+          <div class="type-frame">
+            {typeScale.map((t) => (
+              <article class="type-row">
+                <div class="type-label">
+                  <p class="meta-label">.{t.class}</p>
+                  <p class="copy-small mono">{t.spec}</p>
+                </div>
+                <div class="type-sample">
+                  <p class={t.class}>{t.sample}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="surfaces" class="section">
+        <div class="container">
+          <header class="section-head">
+            <span class="section-num">03</span>
+            <div class="section-intro">
+              <p class="eyebrow">Superficies</p>
+              <h2 class="heading-section">Capas y elevación</h2>
+              <p class="copy-lead">
+                Tres utilidades de superficie que articulan la profundidad del sistema, todas con radio de 5px y bordes sutiles.
+              </p>
+            </div>
+          </header>
+          <div class="surface-grid">
+            <article class="surface-card surface-demo">
+              <p class="meta-label">.surface-card</p>
+              <h3 class="heading-card">Tarjeta de contenido</h3>
+              <p class="copy-small">Superficie principal con borde sutil y fondo blanco. Uso general en tarjetas y módulos de contenido.</p>
+              <div class="surface-spec">
+                <span class="meta-label">border</span>
+                <span class="mono small">--color-border-soft</span>
+              </div>
+            </article>
+            <article class="surface-muted surface-demo">
+              <p class="meta-label">.surface-muted</p>
+              <h3 class="heading-card">Tarjeta silenciada</h3>
+              <p class="copy-small">Fondo gris cálido que aligera el ritmo visual. Uso en secciones alternas y tarjetas secundarias.</p>
+              <div class="surface-spec">
+                <span class="meta-label">background</span>
+                <span class="mono small">--color-surface-muted</span>
+              </div>
+            </article>
+            <article class="product-surface surface-demo">
+              <p class="meta-label">.product-surface</p>
+              <h3 class="heading-card">Superficie de producto</h3>
+              <p class="copy-small">Capa específica para fichas. Sin borde, fondo gris cálido. Uso exclusivo en cards de catálogo.</p>
+              <div class="surface-spec">
+                <span class="meta-label">uso</span>
+                <span class="mono small">product cards</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="buttons" class="section section-alt">
+        <div class="container">
+          <header class="section-head">
+            <span class="section-num">04</span>
+            <div class="section-intro">
+              <p class="eyebrow">Interacción</p>
+              <h2 class="heading-section">Botones</h2>
+              <p class="copy-lead">
+                Seis variantes que cubren los principales contextos de interacción, con radio de 5px y transiciones sobrias.
+              </p>
+            </div>
+          </header>
+          <div class="button-stage">
+            {buttons.map((b) => (
+              <div class="button-group">
+                <p class="meta-label">{b.label}</p>
+                <button type="button" class={`btn ${b.class}`} disabled={b.disabled}>
+                  {b.text}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="spacing" class="section">
+        <div class="container">
+          <header class="section-head">
+            <span class="section-num">05</span>
+            <div class="section-intro">
+              <p class="eyebrow">Ritmo</p>
+              <h2 class="heading-section">Espaciado y escala</h2>
+              <p class="copy-lead">
+                Un sistema de espaciado generoso basado en unidades fluidas que escalan con el viewport.
+              </p>
+            </div>
+          </header>
+          <div class="spacing-grid">
+            {spacing.map((s) => (
+              <article class="spacing-card">
+                <header class="spacing-head">
+                  <p class="meta-label">{s.label}</p>
+                  <p class="mono small strong">{s.token}</p>
+                </header>
+                {s.token === '--container-max' ? (
+                  <div class="container-vis">
+                    <span>max-width</span>
+                  </div>
+                ) : (
+                  <div class="spacing-bar" style={`--h: ${s.value}`}>
+                    <div class="spacing-fill" style={`height: ${s.value}`}></div>
+                  </div>
+                )}
+                <p class="copy-small mono">{s.value}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="composition" class="section section-alt">
+        <div class="container">
+          <header class="section-head">
+            <span class="section-num">06</span>
+            <div class="section-intro">
+              <p class="eyebrow">Composición</p>
+              <h2 class="heading-section">Ejemplos en contexto</h2>
+              <p class="copy-lead">
+                Componentes reales que combinan los tokens del sistema en productos finales.
+              </p>
+            </div>
+          </header>
+          <div class="composition-grid">
+            <article class="product-card">
+              <div class="product-image">
+                <div class="product-image-fill"></div>
+                <span class="product-tag">Novedad</span>
+              </div>
+              <div class="product-body">
+                <p class="meta-label">Cinturones</p>
+                <h3 class="heading-card">Cinturón de piel clásico</h3>
+                <p class="copy-small">Piel envejecida con hebilla metálica. Acabado sobrio para uso diario.</p>
+                <div class="product-footer">
+                  <span class="product-ref mono">EF-001</span>
+                  <a href="#" class="product-link">Ver ficha →</a>
+                </div>
+              </div>
+            </article>
+
+            <div class="feature-stack">
+              <article class="surface-card feature-card">
+                <span class="feature-num">01</span>
+                <h3 class="heading-card">Fabricación nacional</h3>
+                <p class="copy-small">Producción propia en Elche con control total sobre materiales y acabados.</p>
+              </article>
+              <article class="surface-card feature-card">
+                <span class="feature-num">02</span>
+                <h3 class="heading-card">Distribución mayorista</h3>
+                <p class="copy-small">Catálogo profesional para tiendas, distribuidores y compradores especializados.</p>
+              </article>
+              <article class="surface-card feature-card">
+                <span class="feature-num">03</span>
+                <h3 class="heading-card">Atención comercial</h3>
+                <p class="copy-small">Contacto directo con el equipo de ventas para consultas y solicitudes.</p>
+              </article>
+            </div>
+
+            <article class="surface-card header-example">
+              <p class="eyebrow">Sobre nosotros</p>
+              <h2 class="heading-section">Una trayectoria de oficio y consistencia</h2>
+              <p class="copy-lead">
+                Desde 1976, Emilio Faraoni trabaja en el desarrollo y distribución de artículos de marroquinería para clientes profesionales.
+              </p>
+              <a href="#" class="header-link">Conocer más →</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <footer class="museum-footer">
+        <div class="container">
+          <p class="copy-small">Style Museum · Emilio Faraoni · Sistema de diseño v1.0</p>
+        </div>
+      </footer>
+    </main>
+
+    <style>
+      .museum {
+        background: var(--color-bg);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+      }
+
+      .container {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: 0 clamp(1.25rem, 3vw, 2.5rem);
+      }
+
+      .mono {
+        font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+      }
+
+      .small {
+        font-size: 0.78rem;
+      }
+
+      .strong {
+        color: var(--color-ink-soft);
+        font-weight: 500;
+      }
+
+      .section {
+        padding-block: var(--section-y);
+        border-top: 1px solid var(--color-border-soft);
+      }
+
+      .section-alt {
+        background: var(--color-surface-muted);
+      }
+
+      .hero {
+        padding-block: clamp(5rem, 12vw, 10rem) var(--section-y);
+      }
+
+      .hero-meta {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+      }
+
+      .hero-divider {
+        width: 2.5rem;
+        height: 1px;
+        background: var(--color-border);
+      }
+
+      .hero-title {
+        margin-bottom: 2rem;
+        max-width: 14ch;
+      }
+
+      .hero-lead {
+        max-width: 56ch;
+        margin-bottom: 4rem;
+      }
+
+      .hero-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 2.5rem;
+        padding-top: 2.5rem;
+        border-top: 1px solid var(--color-border-soft);
+      }
+
+      .hero-link {
+        color: var(--color-muted);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        transition: color 220ms ease;
+      }
+
+      .hero-link:hover {
+        color: var(--color-leather);
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1.5rem 3rem;
+        align-items: start;
+        margin-bottom: clamp(3rem, 6vw, 5rem);
+        max-width: 80rem;
+      }
+
+      .section-num {
+        font-family: var(--font-serif);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--color-leather);
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--color-leather);
+        min-width: 2.5rem;
+        letter-spacing: 0.05em;
+      }
+
+      .section-intro {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .section-intro .copy-lead {
+        max-width: 60ch;
+        margin-top: 0.75rem;
+      }
+
+      .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+        gap: var(--grid-gap);
+      }
+
+      .swatch {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border-soft);
+        border-radius: var(--radius-card);
+        overflow: hidden;
+        transition: transform 320ms ease, box-shadow 320ms ease;
+      }
+
+      .swatch:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 42px -22px rgba(58, 37, 24, 0.22);
+      }
+
+      .swatch-fill {
+        aspect-ratio: 5 / 3;
+        width: 100%;
+        position: relative;
+      }
+
+      .swatch-fill::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.04) 100%);
+        pointer-events: none;
+      }
+
+      .swatch-meta {
+        padding: 1.4rem 1.5rem 1.6rem;
+      }
+
+      .swatch-top {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.1rem;
+        border-bottom: 1px solid var(--color-border-soft);
+      }
+
+      .swatch-name {
+        font-family: var(--font-serif);
+        font-size: 1.55rem;
+        font-weight: 500;
+        color: var(--color-ink);
+        margin-top: 0.4rem;
+        letter-spacing: -0.025em;
+        line-height: 1.05;
+      }
+
+      .swatch-spec {
+        display: grid;
+        gap: 0.55rem;
+        margin: 0;
+      }
+
+      .swatch-spec > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+      }
+
+      .swatch-spec dt {
+        font-size: 0.68rem;
+        font-weight: 650;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin: 0;
+      }
+
+      .swatch-spec dd {
+        font-size: 0.82rem;
+        color: var(--color-ink-soft);
+        margin: 0;
+      }
+
+      .type-frame {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border-soft);
+        border-radius: var(--radius-card);
+        padding: 0 clamp(1.5rem, 3vw, 2.5rem);
+      }
+
+      .type-row {
+        display: grid;
+        grid-template-columns: minmax(15rem, 18rem) 1fr;
+        gap: 3rem;
+        padding: clamp(1.75rem, 3vw, 2.5rem) 0;
+        border-top: 1px solid var(--color-border-soft);
+        align-items: center;
+      }
+
+      .type-row:first-child {
+        border-top: none;
+      }
+
+      .type-label .meta-label {
+        margin-bottom: 0.5rem;
+      }
+
+      .surface-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+        gap: var(--grid-gap);
+      }
+
+      .surface-demo {
+        padding: 2.25rem;
+        min-height: 18rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        justify-content: space-between;
+      }
+
+      .surface-demo .meta-label {
+        margin-bottom: 0.5rem;
+      }
+
+      .surface-spec {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border-soft);
+      }
+
+      .button-stage {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border-soft);
+        border-radius: var(--radius-card);
+        padding: clamp(1.75rem, 3vw, 3rem);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: clamp(1.5rem, 3vw, 2.5rem);
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid transparent;
+        border-radius: var(--radius-control);
+        padding: 0.85rem 1.5rem;
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        transition: background 220ms ease, color 220ms ease, border-color 220ms ease, transform 220ms ease;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .btn-primary {
+        background: var(--color-leather);
+        color: var(--color-surface);
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: var(--color-leather-dark);
+      }
+
+      .btn-dark {
+        background: var(--color-ink);
+        color: var(--color-surface);
+      }
+      .btn-dark:hover:not(:disabled) {
+        background: var(--color-ink-soft);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--color-ink);
+        border-color: var(--color-ink);
+      }
+      .btn-secondary:hover:not(:disabled) {
+        background: var(--color-ink);
+        color: var(--color-surface);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--color-ink);
+        border-color: var(--color-border);
+      }
+      .btn-ghost:hover:not(:disabled) {
+        border-color: var(--color-ink);
+        background: var(--color-surface);
+      }
+
+      .btn-gold {
+        background: var(--color-gold-soft);
+        color: var(--color-surface);
+      }
+      .btn-gold:hover:not(:disabled) {
+        background: var(--color-leather);
+      }
+
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .spacing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: var(--grid-gap);
+      }
+
+      .spacing-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border-soft);
+        border-radius: var(--radius-card);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .spacing-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+      }
+
+      .spacing-bar {
+        height: 8rem;
+        display: flex;
+        align-items: flex-end;
+        background-image: repeating-linear-gradient(
+          to right,
+          var(--color-border-soft) 0,
+          var(--color-border-soft) 4px,
+          transparent 4px,
+          transparent 8px
+        );
+        padding: 0 2px;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .spacing-fill {
+        width: 100%;
+        background: var(--color-leather);
+        border-radius: 1px;
+      }
+
+      .container-vis {
+        height: 4.5rem;
+        max-width: var(--container-max);
+        background: var(--color-leather);
+        border-radius: var(--radius-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-surface);
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        width: 100%;
+      }
+
+      .composition-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        gap: var(--grid-gap);
+      }
+
+      .product-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border-soft);
+        border-radius: var(--radius-card);
+        overflow: hidden;
+      }
+
+      .product-image {
+        position: relative;
+        aspect-ratio: 4 / 5;
+        background: var(--color-surface-muted);
+      }
+
+      .product-image-fill {
+        position: absolute;
+        inset: 12% 14%;
+        background: linear-gradient(135deg, var(--color-leather) 0%, var(--color-leather-dark) 100%);
+        border-radius: var(--radius-card);
+      }
+
+      .product-tag {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: var(--color-ink);
+        color: var(--color-surface);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.75rem;
+        border-radius: var(--radius-control);
+      }
+
+      .product-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.75rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border-soft);
+      }
+
+      .product-ref {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+      }
+
+      .product-link {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-leather);
+        text-decoration: none;
+        transition: color 220ms ease;
+      }
+
+      .product-link:hover {
+        color: var(--color-leather-dark);
+      }
+
+      .feature-stack {
+        display: grid;
+        gap: var(--grid-gap);
+      }
+
+      .feature-card {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .feature-num {
+        font-family: var(--font-serif);
+        font-size: 0.95rem;
+        color: var(--color-leather);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+      }
+
+      .header-example {
+        padding: clamp(2rem, 4vw, 3rem) clamp(1.75rem, 3.5vw, 2.5rem);
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        justify-content: center;
+      }
+
+      .header-example .heading-section {
+        max-width: 16ch;
+      }
+
+      .header-example .copy-lead {
+        max-width: 44ch;
+      }
+
+      .header-link {
+        color: var(--color-leather);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 0.5rem;
+        align-self: flex-start;
+        transition: color 220ms ease;
+      }
+
+      .header-link:hover {
+        color: var(--color-leather-dark);
+      }
+
+      .museum-footer {
+        padding-block: 2.75rem;
+        border-top: 1px solid var(--color-border-soft);
+        text-align: center;
+        background: var(--color-surface);
+      }
+
+      @media (max-width: 768px) {
+        .section-head {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+        }
+
+        .type-row {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+          padding: 1.75rem 0;
+        }
+
+        .hero-nav {
+          gap: 0.75rem 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .swatch-spec > div {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.15rem;
+        }
+      }
+    </style>
+  </body>
+</html>

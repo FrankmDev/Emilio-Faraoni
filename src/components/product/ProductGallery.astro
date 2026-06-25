@@ -15,11 +15,11 @@ const primaryImage = product.images[0];
       <img
         src={primaryImage}
         alt={`${product.name} Emilio Faraoni`}
-        class="aspect-[4/3] w-full rounded-sm border border-border object-cover"
+        class="aspect-[4/5] w-full rounded-card border border-border-soft bg-surface-muted object-cover"
       />
     ) : (
       <div
-        class="aspect-[4/3] rounded-sm border border-border bg-bg"
+        class="product-surface aspect-[4/5] border border-border-soft"
         aria-label={product.name}
       />
     )

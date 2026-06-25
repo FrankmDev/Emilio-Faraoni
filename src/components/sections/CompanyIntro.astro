@@ -1,15 +1,16 @@
 ---
-import { company } from '@/data/company';
 import Container from '@/components/ui/Container.astro';
-import SectionHeader from '@/components/ui/SectionHeader.astro';
 ---
 
-<section class="py-14">
+<section class="section-y-compact">
   <Container>
-    <SectionHeader
-      eyebrow={`Desde ${company.foundedYear}`}
-      title="Fabricante mayorista en Elche"
-      description={company.description}
-    />
+    <p class="eyebrow">Desde 1976</p>
+    <h2 class="heading-section mt-4 max-w-2xl text-ink">
+      Fabricante mayorista en Elche
+    </h2>
+    <p class="copy-lead mt-6 max-w-2xl">
+      Más de cuatro décadas de experiencia en la fabricación y distribución
+      de artículos de marroquinería para clientes profesionales.
+    </p>
   </Container>
 </section>

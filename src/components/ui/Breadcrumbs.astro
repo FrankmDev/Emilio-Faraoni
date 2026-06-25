@@ -11,14 +11,14 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<nav aria-label="Migas de pan" class="text-sm text-muted">
-  <ol class="flex flex-wrap items-center gap-2">
+<nav aria-label="Migas de pan" class="meta-label text-muted">
+  <ol class="flex flex-wrap items-center gap-2.5">
     {
       items.map((item, index) => (
-        <li class="flex items-center gap-2">
-          {index > 0 && <span aria-hidden="true">/</span>}
+        <li class="flex items-center gap-2.5">
+          {index > 0 && <span aria-hidden="true" class="text-muted-light">/</span>}
           {item.href ? (
-            <a href={item.href} class="hover:text-ink">
+            <a href={item.href} class="transition-colors hover:text-ink">
               {item.label}
             </a>
           ) : (

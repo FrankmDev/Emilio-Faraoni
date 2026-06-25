@@ -1,6 +1,4 @@
 ---
-import { cn } from '@/lib/utils';
-
 interface Props {
   href?: string;
   type?: 'button' | 'submit' | 'reset';
@@ -15,17 +13,13 @@ const {
   class: className,
 } = Astro.props;
 
-const classes = cn(
-  'inline-flex min-h-11 items-center justify-center rounded-sm border px-5 text-sm font-semibold transition-colors',
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-leather',
-  variant === 'primary' &&
-    'border-leather-dark bg-leather-dark text-white hover:bg-leather',
-  variant === 'secondary' &&
-    'border-border bg-surface text-ink hover:border-leather',
-  variant === 'ghost' &&
-    'border-transparent bg-transparent text-leather-dark hover:bg-white/50',
-  className,
-);
+const classes = `inline-flex min-h-10 items-center justify-center border px-6 text-[0.8125rem] font-normal tracking-[0.02em] transition-colors duration-300 ${
+  variant === 'primary'
+    ? 'border-ink bg-ink text-bg hover:bg-ink-soft hover:border-ink-soft'
+    : variant === 'secondary'
+    ? 'border-border bg-transparent text-ink hover:border-ink hover:bg-transparent'
+    : 'border-transparent bg-transparent text-muted hover:text-ink'
+} ${className || ''}`;
 ---
 
 {

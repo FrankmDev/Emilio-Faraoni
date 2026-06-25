@@ -1,23 +1,24 @@
 ---
-import { categories } from '@/data/categories';
 import Container from '@/components/ui/Container.astro';
 import SectionHeader from '@/components/ui/SectionHeader.astro';
+import { categories } from '@/data/categories';
 ---
 
-<section class="py-14">
-  <Container class="grid gap-8">
+<section class="section-y-compact">
+  <Container class="grid gap-12">
     <SectionHeader
-      title="Categorías iniciales"
+      eyebrow="Categorías"
+      title="Líneas de producto"
       description="Datos locales mínimos para validar estructura."
     />
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid gap-px bg-border-soft sm:grid-cols-2 lg:grid-cols-4">
       {
         categories.map((category) => (
-          <article class="rounded-sm border border-border bg-surface p-5">
-            <h3 class="font-semibold text-ink">{category.name}</h3>
-            <p class="mt-2 text-sm leading-6 text-muted">
-              {category.description}
-            </p>
+          <article class="bg-bg p-8">
+            <h3 class="font-serif text-2xl font-light tracking-[-0.01em] text-ink">
+              {category.name}
+            </h3>
+            <p class="copy-small mt-3">{category.description}</p>
           </article>
         ))
       }

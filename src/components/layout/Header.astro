@@ -1,53 +1,57 @@
 ---
-import { COMPANY_NAME } from '@/lib/constants';
 import { ROUTES } from '@/lib/routes';
-import { mainNavigation, wholesaleAccessCta } from '@/data/navigation';
-import Button from '@/components/ui/Button.astro';
-import Container from '@/components/ui/Container.astro';
-
-const currentPath = Astro.url.pathname;
 ---
 
-<header class="border-b border-border bg-bg">
-  <Container class="flex min-h-20 items-center justify-between gap-6">
+<header class="border-b border-border-soft bg-bg/80 backdrop-blur-sm">
+  <Container class="flex h-20 items-center justify-between gap-8">
     <a
       href={ROUTES.HOME}
-      class="flex flex-col leading-tight"
-      aria-label={`${COMPANY_NAME} inicio`}
+      class="flex flex-col leading-none"
+      aria-label="Emilio Faraoni inicio"
     >
-      <strong class="text-lg font-semibold tracking-normal"
-        >{COMPANY_NAME}</strong
-      >
-      <span class="text-xs font-semibold uppercase tracking-wide text-muted"
-        >Catálogo B2B</span
-      >
+      <strong class="font-serif text-2xl font-light tracking-[-0.02em] text-ink">
+        Emilio Faraoni
+      </strong>
+      <span class="mt-1 text-[0.625rem] font-normal uppercase tracking-[0.2em] text-muted">
+        Catálogo B2B
+      </span>
     </a>
 
     <nav
-      class="hidden items-center gap-6 md:flex"
+      class="hidden items-center gap-8 md:flex"
       aria-label="Navegación principal"
     >
-      {
-        mainNavigation.map((item) => (
-          <a
-            href={item.href}
-            class:list={[
-              'text-sm font-semibold text-muted transition-colors hover:text-ink',
-              currentPath === item.href && 'text-ink',
-            ]}
-          >
-            {item.label}
-          </a>
-        ))
-      }
+      <a
+        href={ROUTES.HOME}
+        class="text-[0.8125rem] font-normal tracking-[0.02em] text-muted transition-colors hover:text-ink"
+      >
+        Inicio
+      </a>
+      <a
+        href={ROUTES.CATALOG}
+        class="text-[0.8125rem] font-normal tracking-[0.02em] text-muted transition-colors hover:text-ink"
+      >
+        Catálogo
+      </a>
+      <a
+        href={ROUTES.COMPANY}
+        class="text-[0.8125rem] font-normal tracking-[0.02em] text-muted transition-colors hover:text-ink"
+      >
+        Empresa
+      </a>
+      <a
+        href={ROUTES.CONTACT}
+        class="text-[0.8125rem] font-normal tracking-[0.02em] text-muted transition-colors hover:text-ink"
+      >
+        Contacto
+      </a>
     </nav>
 
-    <Button
-      href={wholesaleAccessCta.href}
-      variant="secondary"
-      class="hidden sm:inline-flex"
+    <a
+      href={ROUTES.WHOLESALE_ACCESS}
+      class="hidden border border-ink px-5 py-2 text-[0.8125rem] font-normal tracking-[0.02em] text-ink transition-colors hover:bg-ink hover:text-bg sm:inline-flex"
     >
-      {wholesaleAccessCta.label}
-    </Button>
+      Acceso mayorista
+    </a>
   </Container>
 </header>

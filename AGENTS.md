@@ -1138,6 +1138,47 @@ No hacer secciones comprimidas.
 
 ---
 
+## 15.6 Sistema visual global vigente
+
+La base visual actual queda definida en:
+
+```txt
+src/styles/global.css
+tailwind.config.mjs
+src/layouts/BaseLayout.astro
+```
+
+Reglas vigentes:
+
+* Usar primero los tokens CSS globales antes de crear estilos nuevos.
+* Mantener la web mayoritariamente clara: marfil, blanco, gris cálido muy claro.
+* Usar `Cormorant Garamond` como serif editorial para marca, H1, H2, H3 y momentos destacados.
+* Usar `Instrument Sans` como sans principal para navegación, cuerpo, botones, formularios y metadatos.
+* Mantener radio bajo en cards y controles: `5px` (`--radius-card`, `--radius-control`).
+* Usar `surface-card`, `surface-muted`, `product-surface`, `section-y`, `section-y-compact`, `eyebrow`, `meta-label`, `copy-lead`, `copy-small`, `heading-display`, `heading-section` y `heading-card` cuando aplique.
+* No duplicar escalas tipográficas o paddings si ya existe una utilidad global.
+* No añadir gradientes, sombras fuertes, colores saturados ni botones agresivos.
+* Las cards de producto deben mantener superficie plana, gris cálido/blanco, imagen 4/5 y jerarquía silenciosa.
+* Los CTAs deben ser contenidos, sobrios, sin sombra y con hover sutil.
+
+Tokens principales actuales:
+
+```txt
+--color-bg: #f4f2ee;
+--color-surface: #ffffff;
+--color-surface-muted: #eeeeea;
+--color-ink: #151515;
+--color-muted: #6f6b64;
+--color-border: #dedbd4;
+--color-leather: #7a4f2c;
+--color-leather-dark: #3a2518;
+--color-gold-soft: #a98b5f;
+--radius-card: 5px;
+--container-max: 77.5rem;
+```
+
+---
+
 # 16. Copywriting
 
 ## 16.1 Tono

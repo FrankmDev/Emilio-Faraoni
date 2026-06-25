@@ -1,15 +1,24 @@
 ---
-import RestrictedPriceCTA from '@/components/product/RestrictedPriceCTA.astro';
 import Container from '@/components/ui/Container.astro';
-import SectionHeader from '@/components/ui/SectionHeader.astro';
+import Button from '@/components/ui/Button.astro';
+import { ROUTES } from '@/lib/routes';
 ---
 
-<section class="py-14">
-  <Container class="grid gap-8 md:grid-cols-[1fr_420px] md:items-start">
-    <SectionHeader
-      title="Precios privados para mayoristas aprobados"
-      description="La arquitectura separa datos y UI para que, en fases futuras, los precios salgan solo de consultas server-side protegidas."
-    />
-    <RestrictedPriceCTA />
+<section class="section-y">
+  <Container>
+    <p class="eyebrow">Acceso mayorista</p>
+    <h2 class="heading-section mt-4 max-w-2xl text-ink">
+      Solicite acceso profesional
+    </h2>
+    <p class="copy-lead mt-6 max-w-2xl">
+      Precios y condiciones disponibles exclusivamente para clientes
+      mayoristas registrados y aprobados por la empresa.
+    </p>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href={ROUTES.WHOLESALE_ACCESS}>Solicitar acceso mayorista</Button>
+      <Button href={ROUTES.CONTACT} variant="secondary">
+        Contactar con ventas
+      </Button>
+    </div>
   </Container>
 </section>
