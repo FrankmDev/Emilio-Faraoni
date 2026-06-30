@@ -1,46 +1,96 @@
 ---
+/**
+ * ProductGallery · editorial retail product viewer.
+ *
+ * A big hero image on the right, a vertical thumbnail
+ * rail on the left. Each thumb is a small square. The
+ * active thumb has a hairline ring. On mobile the rail
+ * moves below the image and scrolls horizontally with
+ * snap-points for a tactile feel.
+ *
+ * Renders as a presentational list (no JavaScript) with
+ * the first image visually marked as the "active" one.
+ * Interactive galleries will be added in a later phase.
+ */
 import type { PublicProduct } from '@/lib/products/getters';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder.astro';
+
+type GalleryRatio = 'square' | 'portrait' | 'wide' | 'tall';
 
 interface Props {
   product: PublicProduct;
+  /** Aspect ratio of the main image. Defaults to portrait
+   *  (4 / 5) — the editorial retail standard. */
+  ratio?: GalleryRatio;
+  /** Render a discreet corner stamp on the main image. */
+  withStamps?: boolean;
+  class?: string;
 }
 
-const { product } = Astro.props;
-const primaryImage = product.images[0];
-const galleryImages = product.images.slice(0, 4);
+const {
+  product,
+  ratio = 'portrait',
+  withStamps = true,
+  class: className,
+} = Astro.props;
+
+const galleryImages = product.images.slice(0, 5);
+const primaryImage = galleryImages[0];
+
+const ratioClass = `ratio-${ratio}`;
+
+const wrapperClass = ['product-gallery', className].filter(Boolean).join(' ');
 ---
 
-<div class="grid gap-4">
-  {
-    primaryImage ? (
-      <figure class="editorial-frame overflow-hidden">
+<div class={wrapperClass}>
+  <figure
+    class:list={['product-gallery__main', ratioClass]}
+    aria-label={product.name}
+  >
+    {
+      primaryImage ? (
         <img
           src={primaryImage}
-          alt={`${product.name} Emilio Faraoni`}
-          class="aspect-[4/5] w-full bg-surface-muted object-cover"
+          alt={`${product.name} · Emilio Faraoni`}
+          loading="eager"
+          decoding="async"
         />
-      </figure>
-    ) : (
-      <div
-        class="image-ground relative aspect-[4/5] overflow-hidden border border-border-hairline"
-        aria-label={product.name}
-      >
-        <div class="absolute inset-[14%] border border-border-strong bg-surface-accent" />
-      </div>
-    )
-  }
+      ) : (
+        <ImagePlaceholder
+          variant={ratio}
+          tone="muted"
+          frame="editorial"
+          label={product.reference ?? product.category}
+          kicker="Emilio Faraoni"
+        />
+      )
+    }
+    {
+      withStamps && primaryImage && (
+        <>
+          <span class="media-stamp media-stamp--tl" aria-hidden="true" />
+          <span class="media-stamp media-stamp--br" aria-hidden="true" />
+        </>
+      )
+    }
+  </figure>
+
   {
     galleryImages.length > 1 && (
-      <div class="grid grid-cols-4 gap-3">
-        {galleryImages.map((image, index) => (
-          <img
-            src={image}
-            alt={`${product.name} detalle ${index + 1}`}
-            class="aspect-square border border-border-hairline bg-surface-muted object-cover"
-            loading="lazy"
-          />
+      <ol class="product-gallery__thumbs" role="list">
+        {galleryImages.map((src, index) => (
+          <li class="product-gallery__thumb">
+            <button
+              type="button"
+              class="product-gallery__thumb-button"
+              aria-current={index === 0 ? 'true' : undefined}
+              aria-label={`Ver imagen ${index + 1} de ${product.name}`}
+            >
+              <img src={src} alt="" loading="lazy" decoding="async" />
+            </button>
+          </li>
         ))}
-      </div>
+      </ol>
     )
   }
 </div>

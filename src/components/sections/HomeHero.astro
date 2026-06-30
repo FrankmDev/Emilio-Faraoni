@@ -1,50 +1,245 @@
 ---
+/**
+ * HomeHero · editorial retail entrance.
+ *
+ * Four composition shapes (set via `variant`):
+ * - default : split, content left + media right (or reversed).
+ * - split   : alias of default for semantic clarity.
+ * - bleed   : full-bleed image, content layered over it.
+ * - type    : no image at all, pure typography.
+ *
+ * Image support:
+ * - `image` (required for default/split/bleed) — real image URL.
+ * - `imageAlt` (required when image is set) — descriptive alt.
+ * - `imageFocus` — optional CSS object-position keyword.
+ *
+ * Editorial details:
+ * - Top rail with kicker / index / meta.
+ * - Big serif title (light, almost engraved).
+ * - Optional italic accent inside the title (e.g. <em>1988</em>).
+ * - One or two small CTAs.
+ *
+ * No "boxed" SaaS hero. The section is image-led first, type
+ * second, ornament third. Composition tokens live in
+ * `src/styles/global.css` under `.home-hero*` so this file
+ * stays structural.
+ */
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 import { ROUTES } from '@/lib/routes';
+
+type HomeHeroVariant = 'default' | 'split' | 'bleed' | 'type';
+type HomeHeroTone = 'dark' | 'light';
+type HomeHeroAlign = 'left' | 'center';
+
+interface CtaSpec {
+  label: string;
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'inverse' | 'gold';
+}
+
+interface Props {
+  variant?: HomeHeroVariant;
+  tone?: HomeHeroTone;
+  align?: HomeHeroAlign;
+  reverse?: boolean;
+  index?: string;
+  eyebrow?: string;
+  meta?: string;
+  kicker?: string;
+  /** Title. Supports inline HTML for <em> accents. */
+  title?: string;
+  /** Short lead paragraph. */
+  description?: string;
+  /** Background or split image URL. Required for default/split/bleed. */
+  image?: string;
+  imageAlt?: string;
+  /** Optional CSS object-position for the cover image. */
+  imageFocus?: string;
+  /** Optional caption rendered on the media (e.g. "Línea 01"). */
+  caption?: string;
+  /** Primary CTA. */
+  primaryCta?: CtaSpec;
+  /** Optional secondary CTA. */
+  secondaryCta?: CtaSpec;
+  class?: string;
+}
+
+const {
+  variant = 'default',
+  tone = 'dark',
+  align = 'left',
+  reverse = false,
+  index = '01',
+  eyebrow,
+  meta,
+  kicker,
+  title = 'Fabricación editorial de <em>marroquinería</em> nacional',
+  description = 'Catálogo profesional para tiendas, distribuidores y compradores especializados. Producto en piel, fabricación nacional y atención comercial directa desde Elche, Alicante.',
+  image,
+  imageAlt,
+  imageFocus,
+  caption,
+  primaryCta = { label: 'Ver catálogo', href: ROUTES.CATALOG },
+  secondaryCta = { label: 'Solicitar acceso', href: ROUTES.WHOLESALE_ACCESS },
+  class: className,
+} = Astro.props;
+
+const hasImage = Boolean(image);
+// `default` and `split` map to the same global composition
+// (see `.home-hero--default` and `.home-hero--split` in
+// src/styles/global.css). Normalising keeps the template
+// single-branch.
+const composedVariant = variant === 'split' ? 'default' : variant;
+const isImageSplit = composedVariant === 'default' && hasImage;
+const isBleed = composedVariant === 'bleed';
+
+const sectionClass = [
+  'home-hero',
+  `home-hero--${composedVariant}`,
+  tone === 'light' && 'home-hero--tone-light',
+  align === 'center' && 'home-hero--center',
+  reverse && 'home-hero--reverse',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const titleClass = ['home-hero__title', align === 'center' && 'text-center']
+  .filter(Boolean)
+  .join(' ');
+
+const railClass = ['home-hero__rail', align === 'center' && 'justify-center']
+  .filter(Boolean)
+  .join(' ');
+
+const actionsClass = [
+  'home-hero__actions',
+  align === 'center' && 'justify-center',
+]
+  .filter(Boolean)
+  .join(' ');
+
+const mediaStyle = imageFocus ? `object-position: ${imageFocus};` : undefined;
+const bleedStyle = image ? `--home-hero-image: url('${image}');` : undefined;
+
+const showTopRail = Boolean(eyebrow || meta || kicker || index);
+const useImageFigure = isImageSplit && image;
 ---
 
-<section class="section-y">
-  <Container
-    class="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.72fr)] lg:items-end"
-  >
-    <div>
-      <div class="mb-8 flex items-center gap-4">
-        <span class="h-px w-10 bg-border-strong"></span>
-        <p class="eyebrow">Catálogo mayorista</p>
+<section class={sectionClass} style={bleedStyle}>
+  {
+    isBleed && hasImage && (
+      <div class="home-hero__media" aria-hidden="true">
+        <img
+          src={image}
+          alt=""
+          loading="eager"
+          decoding="async"
+          style={mediaStyle}
+        />
       </div>
-      <h1 class="display-serif max-w-4xl text-ink">
-        Fabricación mayorista de cinturones y marroquinería
-      </h1>
-      <p class="copy-lead mt-8 max-w-xl">
-        Catálogo profesional para tiendas, distribuidores y compradores
-        especializados. Producto en piel, fabricación nacional y atención
-        comercial directa.
-      </p>
-      <div class="mt-10 flex flex-wrap gap-3">
-        <Button href={ROUTES.CATALOG}>Ver catálogo</Button>
-        <Button href={ROUTES.WHOLESALE_ACCESS} variant="secondary">
-          Solicitar acceso
-        </Button>
-      </div>
-    </div>
+    )
+  }
 
-    <aside class="surface-card relative overflow-hidden p-5">
-      <div class="image-ground relative aspect-[4/5] overflow-hidden">
-        <div
-          class="absolute inset-[14%] border border-border-strong bg-surface-accent"
-        >
+  <Container class="home-hero__inner">
+    {
+      useImageFigure ? (
+        <div class="home-hero__grid">
+          <div class="home-hero__content">
+            {showTopRail && (
+              <div class={railClass}>
+                {index && (
+                  <span class="home-hero__index" aria-hidden="true">
+                    {index}
+                  </span>
+                )}
+                {eyebrow && (
+                  <span class="eyebrow home-hero__eyebrow">{eyebrow}</span>
+                )}
+                {kicker && <span class="meta-label">{kicker}</span>}
+                {meta && <span class="meta-label home-hero__meta">{meta}</span>}
+              </div>
+            )}
+            <h1 class={titleClass} set:html={title} />
+            {description && <p class="home-hero__lead">{description}</p>}
+            <div class={actionsClass}>
+              <Button
+                href={primaryCta.href}
+                variant={primaryCta.variant ?? 'primary'}
+              >
+                {primaryCta.label}
+              </Button>
+              {secondaryCta && (
+                <Button
+                  href={secondaryCta.href}
+                  variant={secondaryCta.variant ?? 'secondary'}
+                >
+                  {secondaryCta.label}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <figure
+            class="home-hero__media"
+            aria-hidden={imageAlt ? undefined : 'true'}
+          >
+            <img
+              src={image}
+              alt={imageAlt ?? ''}
+              loading="eager"
+              decoding="async"
+              style={mediaStyle}
+            />
+            {caption && (
+              <figcaption class="home-hero__caption meta-label">
+                {caption}
+              </figcaption>
+            )}
+          </figure>
         </div>
-        <div class="absolute bottom-[18%] left-[18%] h-px w-[46%] bg-ink"></div>
+      ) : (
         <div
-          class="absolute right-[21%] top-[18%] h-[52%] w-px bg-border-strong"
+          class:list={[
+            'home-hero__content',
+            align === 'center' && 'home-hero__content--centered',
+          ]}
         >
+          {showTopRail && (
+            <div class={railClass}>
+              {index && (
+                <span class="home-hero__index" aria-hidden="true">
+                  {index}
+                </span>
+              )}
+              {eyebrow && (
+                <span class="eyebrow home-hero__eyebrow">{eyebrow}</span>
+              )}
+              {kicker && <span class="meta-label">{kicker}</span>}
+              {meta && <span class="meta-label home-hero__meta">{meta}</span>}
+            </div>
+          )}
+          <h1 class={titleClass} set:html={title} />
+          {description && <p class="home-hero__lead">{description}</p>}
+          <div class={actionsClass}>
+            <Button
+              href={primaryCta.href}
+              variant={primaryCta.variant ?? 'primary'}
+            >
+              {primaryCta.label}
+            </Button>
+            {secondaryCta && (
+              <Button
+                href={secondaryCta.href}
+                variant={secondaryCta.variant ?? 'secondary'}
+              >
+                {secondaryCta.label}
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
-      <div class="mt-5 flex items-center justify-between gap-4">
-        <p class="meta-label text-ink">Desde 1988</p>
-        <p class="copy-small text-right">Elche · Alicante</p>
-      </div>
-    </aside>
+      )
+    }
   </Container>
 </section>

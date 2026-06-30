@@ -1,31 +1,60 @@
 ---
 import '@/styles/global.css';
+
+import { site } from '@/data/site';
+
+type Props = {
+  /** Page title. When provided, formatted as "Title · Site". */
+  title?: string;
+  /** Meta description. Falls back to the site default. */
+  description?: string;
+  /** Optional OG image override (absolute or root-relative). */
+  ogImage?: string;
+  /** Canonical path. Defaults to the current URL. */
+  canonicalPath?: string;
+};
+
+const {
+  title,
+  description = site.description,
+  ogImage = '/og-image.svg',
+  canonicalPath,
+} = Astro.props as Props;
+
+const fullTitle = title ? `${title} · ${site.name}` : site.title;
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? site.url).toString();
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={site.language}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f3f2ee" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta
-      name="description"
-      content="Fabricación y distribución mayorista de cinturones, bolsos y artículos de marroquinería para tiendas y compradores profesionales."
-    />
-    <meta property="og:title" content="Emilio Faraoni" />
-    <meta
-      property="og:description"
-      content="Catálogo profesional B2B de cinturones y marroquinería."
-    />
-    <meta property="og:image" content="/og-image.svg" />
+    <link rel="canonical" href={canonical} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title ?? site.title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ?? site.title} />
+    <meta name="twitter:description" content={description} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..700;1,9..144,100..700&family=Manrope:wght@200..700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <title>Emilio Faraoni</title>
   </head>
   <body>
     <slot />

@@ -1,34 +1,79 @@
 ---
+/**
+ * RestrictedPriceCTA · commercial note for B2B products.
+ *
+ * A clean, inline commercial block. No heavy panel, no
+ * corner stamp, no oversized box. Two hairline rules frame
+ * a short label, a discreet "precio bajo solicitud" line
+ * and two quiet CTAs. Reads as a printed note inside a
+ * catalogue spread, not as a banner.
+ *
+ * Consumers can override the actions slot to plug in a
+ * different button group (e.g. show a single "Volver" link
+ * in admin contexts) — the head stays as the canonical
+ * commercial copy.
+ */
 import Button from '@/components/ui/Button.astro';
 import { ROUTES } from '@/lib/routes';
 
 interface Props {
   class?: string;
+  /** Optional override of the lead label. */
+  label?: string;
+  /** Optional override of the supporting note. */
+  note?: string;
+  /** Hide the default action buttons. Useful when the
+   *  consumer injects its own action slot. */
+  hideActions?: boolean;
+  /** Variant: 'default' (commercial block) or 'compact'
+   *  (single line, smaller spacing). */
+  variant?: 'default' | 'compact';
 }
 
-const { class: className } = Astro.props;
+const {
+  class: className,
+  label = 'Consulta comercial',
+  note = 'Precio disponible para clientes profesionales. Solicite acceso mayorista o contacte directamente con el equipo de ventas.',
+  hideActions = false,
+  variant = 'default',
+} = Astro.props;
+
+const hasActionsSlot = Astro.slots.has('actions');
+const showActions = !hideActions && !hasActionsSlot;
+
+const wrapperClass = [
+  'price-cta',
+  variant === 'compact' && 'price-cta--compact',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<section
-  class={`surface-accent relative overflow-hidden p-6 md:p-8 ${className || ''}`}
->
-  <div
-    class="absolute right-6 top-6 hidden h-px w-24 bg-border-strong sm:block"
-    aria-hidden="true"
-  >
+<section class={wrapperClass}>
+  <div class="price-cta__head">
+    <p class="price-cta__label">{label}</p>
+    <p class="price-cta__note">
+      <em>Precio bajo solicitud</em> · {note}
+    </p>
   </div>
-  <p class="meta-label text-ink">Precio restringido</p>
-  <h2 class="heading-card mt-3 max-w-md text-ink">
-    Disponible para clientes mayoristas registrados.
-  </h2>
-  <p class="copy-small mt-3 max-w-lg text-ink-soft">
-    Solicite acceso profesional para consultar tarifas y condiciones
-    comerciales.
-  </p>
-  <div class="mt-7 flex flex-wrap gap-3">
-    <Button href={ROUTES.WHOLESALE_ACCESS}>Solicitar acceso</Button>
-    <Button href={ROUTES.CONTACT} variant="secondary">
-      Contactar con ventas
-    </Button>
-  </div>
+  {
+    hasActionsSlot && (
+      <div class="price-cta__actions">
+        <slot name="actions" />
+      </div>
+    )
+  }
+  {
+    showActions && (
+      <div class="price-cta__actions">
+        <Button href={ROUTES.WHOLESALE_ACCESS} variant="primary" size="sm">
+          Solicitar acceso
+        </Button>
+        <Button href={ROUTES.CONTACT} variant="secondary" size="sm">
+          Contactar con ventas
+        </Button>
+      </div>
+    )
+  }
 </section>

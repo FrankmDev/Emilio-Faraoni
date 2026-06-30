@@ -2,7 +2,10 @@
 /**
  * SectionDivider · editorial rule between sections.
  * Three weights, two tones, optional label and decorative
- * marks, vertical orientation support for sidebar use.
+ * marks, vertical orientation support for sidebar use. Built
+ * on the global `.section-divider` token (gradient hairline,
+ * optional label, responsive). This component adds spacing
+ * tokens, alignment, weight and tone refinements.
  */
 type DividerOrientation = 'horizontal' | 'vertical';
 type DividerSpacing = 'compact' | 'default' | 'loose' | 'section';
@@ -97,18 +100,13 @@ const classes = [
 
 <style>
   /* =========================================================
-     Section divider — editorial rule with optional label and
-     marks. Spacing, weight and tone are independent dials.
-     Horizontal by default, with a vertical sidebar variant.
+     Section divider — quiet hairline with optional label.
+     Built on the global `.section-divider` token (gradient
+     hairline). This layer adds spacing tokens, alignment
+     refinements, weight and tone variants.
      ========================================================= */
   .section-divider {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    width: 100%;
-    color: var(--color-muted);
-    min-height: 2rem;
+    gap: 1rem;
   }
 
   /* =========================================================
@@ -141,28 +139,22 @@ const classes = [
   }
 
   /* =========================================================
-     Line — single-pixel rule. Weight controls opacity, not
-     thickness, so the rule stays hairline-quiet.
+     Line — the global token uses a gradient hairline; the
+     local weight variants fade the gradient and re-colour
+     the line. This keeps the divider quiet and editorial.
      ========================================================= */
   .section-divider__line {
     flex: 1 1 auto;
-    height: 1px;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0 0.55rem,
-      currentColor 0.55rem 0.68rem
-    );
-    opacity: 0.38;
+    min-width: 0;
   }
 
   .section-divider--hairline .section-divider__line {
-    background: var(--color-border-hairline);
-    opacity: 1;
+    opacity: 0.55;
   }
 
   .section-divider--bold .section-divider__line {
     background: var(--color-ink);
-    opacity: 0.85;
+    opacity: 0.55;
   }
 
   /* Tone */
@@ -170,16 +162,20 @@ const classes = [
     color: var(--color-ink);
   }
   .section-divider--ink .section-divider__line {
-    opacity: 0.5;
+    opacity: 0.45;
   }
   .section-divider--soft {
     color: var(--color-muted-light);
   }
+  .section-divider--soft .section-divider__line {
+    opacity: 0.4;
+  }
   .section-divider--leather {
-    color: var(--color-leather-dark);
+    color: var(--color-ink);
   }
   .section-divider--leather .section-divider__line {
-    opacity: 0.7;
+    background: var(--color-leather);
+    opacity: 0.55;
   }
 
   /* =========================================================
@@ -188,54 +184,21 @@ const classes = [
   .section-divider__core {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.55rem;
     flex: 0 0 auto;
-  }
-
-  .section-divider__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.4rem;
-    height: 1.4rem;
-    color: currentColor;
-  }
-  .section-divider__icon :global(svg) {
-    width: 1rem;
-    height: 1rem;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .section-divider__kicker,
   .section-divider__meta {
     color: var(--color-muted);
-    opacity: 0.7;
   }
 
   .section-divider__label {
     white-space: nowrap;
     color: var(--color-ink);
     font-variant-numeric: lining-nums tabular-nums;
-    padding: 0.32rem 0.7rem;
-    border: 1px solid var(--color-border-hairline);
-    background: var(--color-surface);
-    border-radius: var(--radius-control);
-  }
-
-  /* =========================================================
-     Marks — three small squares after the line, an editorial
-     "and so…" cue. Restrained, no glow.
-     ========================================================= */
-  .section-divider__mark {
-    display: inline-block;
-    width: 3px;
-    height: 3px;
-    background: currentColor;
-    opacity: 0.5;
-    flex: 0 0 auto;
-  }
-
-  .section-divider__mark + .section-divider__mark {
-    margin-left: 0.5rem;
   }
 
   /* =========================================================
@@ -256,16 +219,12 @@ const classes = [
     width: 1px;
     height: auto;
     flex: 1 1 auto;
-    background: repeating-linear-gradient(
+    background: linear-gradient(
       180deg,
-      transparent 0 0.55rem,
-      currentColor 0.55rem 0.68rem
+      transparent,
+      var(--color-border),
+      transparent
     );
-  }
-
-  .section-divider--vertical::before {
-    inset: 0 50% auto auto;
-    transform: translate(50%, 0) rotate(45deg);
   }
 
   .section-divider--vertical .section-divider__core {
@@ -273,8 +232,17 @@ const classes = [
     gap: 0.4rem;
   }
 
-  .section-divider--vertical .section-divider__mark + .section-divider__mark {
-    margin-left: 0;
-    margin-top: 0.45rem;
+  /* =========================================================
+     Mobile — labels stay calm, the gap tightens so the
+     divider never wraps to two lines by itself.
+     ========================================================= */
+  @media (max-width: 640px) {
+    .section-divider {
+      gap: 0.75rem;
+    }
+
+    .section-divider__core {
+      gap: 0.4rem;
+    }
   }
 </style>

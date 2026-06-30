@@ -1,8 +1,31 @@
 ---
+/**
+ * FinalCTA · editorial close of a page.
+ *
+ * Three composition shapes (set via `variant`):
+ * - default : paper panel, calm and editorial.
+ * - image   : full-bleed image with overlay, dark or light tone.
+ * - split   : image on one side, content on the other.
+ *
+ * Tones:
+ * - light  : default for paper variants; lighter overlay for image.
+ * - dark   : default for image variants; ink-coloured overlay.
+ *
+ * CTAs are compact and refined. No banner-ad feel. Composition
+ * tokens live in src/styles/global.css under `.final-cta*` so
+ * this file stays structural.
+ */
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 
+type FinalCTAVariant = 'default' | 'image' | 'split';
+type FinalCTATone = 'light' | 'dark';
+type FinalCTAAlign = 'left' | 'center';
+
 interface Props {
+  variant?: FinalCTAVariant;
+  tone?: FinalCTATone;
+  align?: FinalCTAAlign;
   eyebrow?: string;
   title: string;
   description?: string;
@@ -10,15 +33,18 @@ interface Props {
   primaryHref: string;
   secondaryLabel?: string;
   secondaryHref?: string;
-  backgroundImage?: string;
+  /** Image URL. Required for `image` and `split` variants. */
+  image?: string;
   imageAlt?: string;
-  /** Tint of the image overlay. Defaults to 'ink'. */
-  overlay?: 'ink' | 'light' | 'leather';
-  align?: 'left' | 'center';
+  /** Optional CSS object-position keyword. */
+  imageFocus?: string;
   class?: string;
 }
 
 const {
+  variant = 'default',
+  tone = 'light',
+  align = 'left',
   eyebrow,
   title,
   description,
@@ -26,290 +52,84 @@ const {
   primaryHref,
   secondaryLabel,
   secondaryHref,
-  backgroundImage,
+  image,
   imageAlt,
-  overlay = 'ink',
-  align = 'left',
+  imageFocus,
   class: className,
 } = Astro.props;
 
 const hasSecondary = Boolean(secondaryLabel && secondaryHref);
-const hasImage = Boolean(backgroundImage);
+const isImage = variant === 'image';
+const isSplit = variant === 'split';
+
+// Tone only applies to the image variant; the other variants
+// render on the paper surface, where tone is irrelevant.
+const effectiveTone = isImage ? tone : 'light';
+
 const sectionClass = [
   'final-cta',
-  hasImage && 'final-cta--has-bg',
-  `final-cta--overlay-${overlay}`,
-  `final-cta--${align}`,
+  isImage && 'final-cta--image',
+  isSplit && 'final-cta--split',
+  align === 'center' && 'final-cta--center',
+  align === 'left' && 'final-cta--align-end',
+  isImage && effectiveTone === 'light' && 'final-cta--tone-light',
   className,
 ]
   .filter(Boolean)
   .join(' ');
+
+const bleedStyle =
+  isImage && image ? `--final-cta-image: url('${image}');` : undefined;
+const mediaStyle = imageFocus ? `object-position: ${imageFocus};` : undefined;
+
+const isImageLight = isImage && effectiveTone === 'light';
+const primaryVariant = isImageLight
+  ? 'primary'
+  : isImage
+    ? 'inverse'
+    : 'primary';
+const secondaryVariant = isImageLight
+  ? 'secondary'
+  : isImage
+    ? 'inverse'
+    : 'secondary';
 ---
 
-<section class={sectionClass}>
+<section class={sectionClass} style={bleedStyle}>
   {
-    hasImage && (
-      <div class="final-cta__background" aria-hidden="true">
+    isSplit && image && (
+      <figure
+        class="final-cta__media"
+        aria-hidden={imageAlt ? undefined : 'true'}
+      >
         <img
-          src={backgroundImage}
+          src={image}
           alt={imageAlt ?? ''}
-          class="final-cta__background-image"
           loading="lazy"
           decoding="async"
+          style={mediaStyle}
         />
-        <span class="final-cta__overlay" aria-hidden="true" />
-        <span class="final-cta__vignette" aria-hidden="true" />
-        <span class="final-cta__grid" aria-hidden="true" />
-      </div>
+      </figure>
     )
   }
-  <Container>
-    <div class="final-cta__inner">
-      <div class="final-cta__body">
-        {eyebrow && <p class="eyebrow final-cta__eyebrow">{eyebrow}</p>}
-        <h2 class="final-cta__title">{title}</h2>
-        {
-          description && (
-            <p class="copy-lead final-cta__description">{description}</p>
-          )
-        }
-        {
-          hasSecondary && (
-            <p class="meta-label final-cta__secondary-hint" aria-hidden="true">
-              {secondaryLabel}
-            </p>
-          )
-        }
-      </div>
-      <div class="final-cta__actions">
-        <Button href={primaryHref} variant={hasImage ? 'inverse' : 'primary'}>
-          {primaryLabel}
-        </Button>
-        {
-          hasSecondary && (
-            <Button
-              href={secondaryHref!}
-              variant={hasImage ? 'inverse' : 'secondary'}
-            >
-              {secondaryLabel!}
-            </Button>
-          )
-        }
-      </div>
+
+  <Container class="final-cta__inner">
+    <div class="final-cta__body">
+      {eyebrow && <p class="final-cta__eyebrow">{eyebrow}</p>}
+      <h2 class="final-cta__title" set:html={title} />
+      {description && <p class="final-cta__description">{description}</p>}
+    </div>
+    <div class="final-cta__actions">
+      <Button href={primaryHref} variant={primaryVariant}>
+        {primaryLabel}
+      </Button>
+      {
+        hasSecondary && (
+          <Button href={secondaryHref!} variant={secondaryVariant}>
+            {secondaryLabel!}
+          </Button>
+        )
+      }
     </div>
   </Container>
 </section>
-
-<style>
-  /* =========================================================
-     Final CTA — editorial close. Always present, sometimes
-     set over an image. Default treatment is calm, paper-
-     bordered; image treatment is a layered composition with
-     multiple overlays and a hairline inset frame.
-     ========================================================= */
-  .final-cta {
-    position: relative;
-    border-top: 1px solid var(--color-border-hairline);
-    padding-block: var(--section-y);
-    overflow: hidden;
-    background: var(--color-surface);
-  }
-
-  /* Default (no image) — bordered block, two-column on desktop. */
-  .final-cta:not(.final-cta--has-bg) {
-    border: 1px solid var(--color-border-hairline);
-    margin-block: var(--section-y);
-    border-radius: var(--radius-card-lg);
-    background:
-      linear-gradient(
-        180deg,
-        rgb(255 255 255 / 0.78) 0%,
-        rgb(255 255 255 / 0.3) 100%
-      ),
-      var(--color-surface);
-  }
-
-  .final-cta--has-bg {
-    color: var(--color-ink-on-inverse);
-    border-radius: 0;
-    border: 0;
-    margin: 0;
-  }
-
-  .final-cta--has-bg .final-cta__title {
-    color: var(--color-ink-on-inverse);
-  }
-
-  .final-cta--has-bg .final-cta__description {
-    color: color-mix(in srgb, var(--color-ink-on-inverse) 84%, transparent);
-  }
-
-  .final-cta--has-bg .final-cta__eyebrow {
-    color: var(--color-gold-soft);
-  }
-
-  /* =========================================================
-     Background layers — image, flat overlay, vignette, and
-     a faint grid for the catalogue feel.
-     ========================================================= */
-  .final-cta__background {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-  }
-
-  .final-cta__background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transform: scale(1.04);
-  }
-
-  .final-cta__overlay {
-    position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--color-ink) 70%, transparent);
-  }
-
-  .final-cta__vignette {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      120% 80% at 50% 30%,
-      transparent 0%,
-      color-mix(in srgb, var(--color-ink) 30%, transparent) 100%
-    );
-  }
-
-  .final-cta__grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
-    background-size: 3.5rem 3.5rem;
-    pointer-events: none;
-  }
-
-  .final-cta--overlay-light .final-cta__overlay {
-    background: color-mix(in srgb, var(--color-surface) 78%, transparent);
-  }
-  .final-cta--overlay-leather .final-cta__overlay {
-    background: color-mix(in srgb, var(--color-leather-dark) 68%, transparent);
-  }
-
-  /* =========================================================
-     Inset frame — only present in the image variant. Sits
-     inside the section like a printed contact sheet.
-     ========================================================= */
-  .final-cta--has-bg::before {
-    content: '';
-    position: absolute;
-    inset: 1.1rem;
-    border: 1px solid
-      color-mix(in srgb, var(--color-ink-on-inverse) 18%, transparent);
-    border-radius: calc(var(--radius-card-lg) - 4px);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .final-cta--has-bg::after {
-    content: '';
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    width: 0.55rem;
-    height: 0.55rem;
-    border-top: 1px solid
-      color-mix(in srgb, var(--color-ink-on-inverse) 50%, transparent);
-    border-right: 1px solid
-      color-mix(in srgb, var(--color-ink-on-inverse) 50%, transparent);
-    z-index: 1;
-    opacity: 0.7;
-  }
-
-  /* =========================================================
-     Inner layout.
-     ========================================================= */
-  .final-cta__inner {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    gap: clamp(2rem, 4vw, 3.5rem);
-    align-items: end;
-    grid-template-columns: 1fr;
-  }
-
-  .final-cta--center .final-cta__inner {
-    text-align: center;
-    justify-items: center;
-  }
-
-  @media (min-width: 768px) {
-    .final-cta__inner {
-      grid-template-columns: minmax(0, 1fr) auto;
-    }
-
-    .final-cta--center .final-cta__inner {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .final-cta__body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    max-width: 36rem;
-  }
-
-  .final-cta--center .final-cta__body {
-    align-items: center;
-  }
-
-  .final-cta--has-bg .final-cta__title {
-    font-family: var(--font-serif);
-    font-weight: 300;
-    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-    line-height: 1;
-    letter-spacing: -0.012em;
-    text-wrap: balance;
-    max-width: 18ch;
-  }
-
-  .final-cta:not(.final-cta--has-bg) .final-cta__title {
-    font-family: var(--font-serif);
-    font-weight: 300;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1;
-    letter-spacing: -0.012em;
-    text-wrap: balance;
-    max-width: 22ch;
-  }
-
-  .final-cta__description {
-    max-width: 44ch;
-  }
-
-  .final-cta__secondary-hint {
-    margin-top: 0.5rem;
-    opacity: 0.7;
-  }
-
-  .final-cta__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  @media (min-width: 768px) {
-    .final-cta__actions {
-      justify-content: flex-end;
-    }
-
-    .final-cta--center .final-cta__actions {
-      justify-content: center;
-    }
-  }
-</style>

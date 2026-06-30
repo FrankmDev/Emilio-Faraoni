@@ -52,7 +52,7 @@ function buildProducts(): Product[] {
         'Cinturón de piel con hebilla metálica y acabado sobrio.',
       description:
         'Modelo base para surtido profesional, pensado para tiendas que buscan una referencia versátil y estable.',
-      images: ['/images/products/cinturon-piel-clasico-01.webp'],
+      images: [],
       colors: ['Negro', 'Marrón', 'Cuero'],
       sizes: ['90', '95', '100', '105', '110'],
       measurements: 'Ancho aproximado: 3,5 cm',
@@ -71,7 +71,7 @@ function buildProducts(): Product[] {
         'Bandolera de piel con formato compacto para catálogo profesional.',
       description:
         'Artículo de marroquinería pensado para compradores mayoristas que necesitan una pieza funcional y clara.',
-      images: ['/images/products/bolso-bandolera-piel-01.webp'],
+      images: [],
       colors: ['Negro', 'Marrón'],
       sizes: ['Única'],
       measurements: 'Medidas editables pendientes de confirmar',
@@ -90,7 +90,7 @@ function buildProducts(): Product[] {
         'Cartera de piel con distribución interior para uso diario.',
       description:
         'Referencia inicial de cartera para validar estructura de producto, variantes y presentación pública sin precios.',
-      images: ['/images/products/cartera-piel-hombre-01.webp'],
+      images: [],
       colors: ['Negro', 'Cuero'],
       sizes: ['Única'],
       materials: 'Piel',

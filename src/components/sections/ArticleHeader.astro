@@ -2,10 +2,13 @@
 /**
  * ArticleHeader · editorial article opener.
  * Two-column composition: copy on the left (eyebrow, title,
- * excerpt, meta, index numeral), cover on the right (image
+ * excerpt, byline, index numeral), cover on the right (image
  * with a hairline frame and corner stamp). When no `image`
  * is provided the cover falls back to a tonal placeholder
  * so the layout never collapses.
+ *
+ * Pass an `author` to render the byline strip (author · date
+ * · reading time) below the excerpt.
  */
 import Container from '@/components/ui/Container.astro';
 
@@ -16,10 +19,15 @@ type BaseProps = {
   excerpt?: string;
   date?: string;
   readingTime?: string;
+  /** Author of the article. When provided, a byline strip
+   *  is rendered. */
+  author?: string;
   /** Editorial signature, e.g. "N° 01" or "01 / 06". */
   index?: string;
   /** Cover caption rendered as a small label in the lower-left. */
   caption?: string;
+  /** Visual order — 'cover-right' (default) or 'cover-left'. */
+  align?: 'cover-right' | 'cover-left';
   class?: string;
 };
 
@@ -44,28 +52,31 @@ const {
   excerpt,
   date,
   readingTime,
+  author,
   index = 'N° 01',
   image,
   imageAlt,
   caption,
+  align = 'cover-right',
   class: className,
 } = Astro.props;
 
-const hasMeta = Boolean(category || date || readingTime);
-const sectionClass = ['article-header', className].filter(Boolean).join(' ');
+const hasMeta = Boolean(category || date || readingTime || author);
+const hasByline = Boolean(author || date || readingTime);
+
+const sectionClass = [
+  'article-header',
+  align === 'cover-left' && 'article-header--reverse',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <section class={sectionClass}>
   <Container class="article-header__inner">
     <div class="article-header__body">
-      {
-        eyebrow && (
-          <p class="eyebrow article-header__eyebrow">
-            <span class="article-header__eyebrow-mark" aria-hidden="true" />
-            <span>{eyebrow}</span>
-          </p>
-        )
-      }
+      {eyebrow && <p class="article-header__eyebrow">{eyebrow}</p>}
 
       <h1 class="article-header__title">
         <Fragment set:html={title} />
@@ -74,7 +85,17 @@ const sectionClass = ['article-header', className].filter(Boolean).join(' ');
       {excerpt && <p class="article-header__excerpt copy-lead">{excerpt}</p>}
 
       {
-        hasMeta && (
+        hasByline && (
+          <ul class="fine-meta article-header__byline" aria-label="Byline">
+            {author && <li class="article-header__byline__author">{author}</li>}
+            {date && <li>{date}</li>}
+            {readingTime && <li>{readingTime}</li>}
+          </ul>
+        )
+      }
+
+      {
+        hasMeta && !hasByline && (
           <dl class="article-header__meta">
             {category && (
               <div class="article-header__meta-row">
@@ -115,6 +136,7 @@ const sectionClass = ['article-header', className].filter(Boolean).join(' ');
             alt={imageAlt}
             loading="eager"
             decoding="async"
+            fetchpriority="high"
             class="article-header__cover-image"
           />
         )
@@ -135,34 +157,3 @@ const sectionClass = ['article-header', className].filter(Boolean).join(' ');
     </figure>
   </Container>
 </section>
-
-<style>
-  /* The .article-header, .article-header__body, .article-header__title,
-     .article-header__cover, .article-header__excerpt, .article-header__meta
-     and .article-header__index rules live in src/styles/global.css so
-     the article header can be used elsewhere without recreating the
-     layout. This scoped block only contains component-specific
-     refinements. */
-
-  .article-header {
-    border-top: 1px solid var(--color-border-soft);
-  }
-
-  .article-header__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-  }
-
-  .article-header__eyebrow-mark {
-    display: inline-block;
-    width: 1.5rem;
-    height: 1px;
-    background: currentColor;
-    flex-shrink: 0;
-  }
-
-  .article-header__cover-image {
-    display: block;
-  }
-</style>

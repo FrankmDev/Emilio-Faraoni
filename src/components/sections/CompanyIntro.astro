@@ -1,16 +1,18 @@
 ---
 /**
  * CompanyIntro · editorial company block.
- * Asymmetric two-column composition: atelier year panel on the
- * left (the 1988 brand mark, framed with a corner stamp and a
- * location mark) and a narrative column on the right (eyebrow,
- * h2, lead, hairline-separated differentiator list, fine-link).
  *
- * Uses global tokens from `src/styles/global.css`. No props are
- * required for the default editorial copy used on the home
- * page; the optional props are there so the block can be reused
- * on `/empresa` or other internal pages without duplicating the
- * composition.
+ * Two-column composition: the atelier year panel (the 1988
+ * brand mark) on the left, narrative + differentiators on
+ * the right. The image is optional; when present, it
+ * replaces the year panel as the visual anchor. A `reverse`
+ * modifier flips the column order.
+ *
+ * The rail, title, lead and body stack reuse the global
+ * `.cluster`, `.heading-section`, `.copy-lead` and
+ * `.stack-md` tokens. The differentiators list reuses
+ * `.differentiator-list`. The atelier year panel and the
+ * top rail are owned by the global `.company-intro*` block.
  */
 import Container from '@/components/ui/Container.astro';
 import { ROUTES } from '@/lib/routes';
@@ -39,6 +41,12 @@ interface Props {
   ctaHref?: string;
   /** Optional CTA label. */
   ctaLabel?: string;
+  /** Optional media (workshop photo). When provided the year
+   *  panel is replaced by the image. */
+  image?: string;
+  imageAlt?: string;
+  /** Reverse the column order (image/panel on the right). */
+  reverse?: boolean;
   /** Section id (for skip-links / deep linking). */
   id?: string;
   class?: string;
@@ -77,60 +85,88 @@ const {
   differentiators = defaultDifferentiators,
   ctaHref = ROUTES.COMPANY,
   ctaLabel = 'Conocer la empresa',
+  image,
+  imageAlt,
+  reverse = false,
   id = 'empresa',
   class: className,
 } = Astro.props;
 
-const sectionClass = ['company-intro', 'surface-soft', className]
+const sectionClass = [
+  'company-intro',
+  reverse && 'company-intro--reverse',
+  className,
+]
   .filter(Boolean)
   .join(' ');
 ---
 
 <section class={sectionClass} aria-labelledby={`${id}-title`}>
   <Container>
-    <header class="company-intro__rail">
-      <p class="meta-label company-intro__rail-tag">
-        <span class="company-intro__rail-index" aria-hidden="true">
+    <header class="company-intro__rail cluster-between">
+      <p class="cluster company-intro__rail-tag">
+        <span
+          class="editorial-numeral company-intro__rail-index"
+          aria-hidden="true"
+        >
           {index}
         </span>
-        <span>{railLabel} · La empresa</span>
+        <span class="meta-label">{railLabel} · La empresa</span>
       </p>
-      <p class="meta-label company-intro__rail-location" aria-label="Ubicación">
+      <p
+        class="cluster meta-label company-intro__rail-location"
+        aria-label="Ubicación"
+      >
         <span class="company-intro__rail-dot" aria-hidden="true"></span>
         {location}
       </p>
     </header>
 
     <div class="company-intro__grid">
-      <aside
-        class="company-intro__panel atelier-surface"
-        aria-label="Fundada en 1988"
-      >
-        <span class="company-intro__panel-corner" aria-hidden="true"></span>
+      {
+        image ? (
+          <figure
+            class="company-intro__media"
+            aria-label={imageAlt ?? 'Imagen de taller o proceso'}
+          >
+            <img
+              src={image}
+              alt={imageAlt ?? ''}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        ) : (
+          <aside class="company-intro__atelier" aria-label="Fundada en 1988">
+            <span class="company-intro__atelier-corner" aria-hidden="true" />
+            <div class="company-intro__atelier-top">
+              <span class="meta-label">Fundada en</span>
+              <span class="company-intro__stamp" aria-hidden="true">
+                F · 1988
+              </span>
+            </div>
+            <p
+              class="company-intro__atelier-year editorial-year"
+              aria-hidden="true"
+            >
+              1988
+            </p>
+            <div class="company-intro__atelier-foot">
+              <span class="meta-label">{location}</span>
+              <span class="meta-label" aria-hidden="true">
+                Tres décadas
+              </span>
+            </div>
+          </aside>
+        )
+      }
 
-        <div class="company-intro__panel-top">
-          <span class="meta-label">Fundada en</span>
-          <span class="company-intro__stamp" aria-hidden="true">F · 1988</span>
-        </div>
-
-        <p class="editorial-year company-intro__year" aria-hidden="true">
-          1988
-        </p>
-
-        <div class="company-intro__panel-bottom">
-          <span class="meta-label">Elche · Alicante</span>
-          <span class="meta-label company-intro__panel-meta" aria-hidden="true">
-            Tres décadas
-          </span>
-        </div>
-      </aside>
-
-      <div class="company-intro__body">
+      <div class="company-intro__body stack-md">
         <p class="eyebrow">{eyebrow}</p>
-        <h2 id={`${id}-title`} class="heading-section company-intro__title">
+        <h2 id={`${id}-title`} class="heading-section">
           {title}
         </h2>
-        <p class="copy-lead company-intro__lead">{description}</p>
+        <p class="copy-lead">{description}</p>
 
         <dl class="differentiator-list" aria-label="Diferenciales de empresa">
           {
@@ -150,221 +186,14 @@ const sectionClass = ['company-intro', 'surface-soft', className]
 
         {
           ctaHref && ctaLabel && (
-            <div class="company-intro__cta">
+            <p class="company-intro__cta">
               <a href={ctaHref} class="fine-link company-intro__link">
                 {ctaLabel}
               </a>
-            </div>
+            </p>
           )
         }
       </div>
     </div>
   </Container>
 </section>
-
-<style>
-  /* =========================================================
-     CompanyIntro · editorial company block.
-     Asymmetric two-column composition with a top hairline rail.
-     Left column is an atelier year panel that anchors the
-     1988 brand mark; right column carries the narrative,
-     differentiators and a fine-link.
-     ========================================================= */
-  .company-intro {
-    position: relative;
-    padding-bottom: var(--section-y-md);
-    border-top: 1px solid var(--color-border-soft);
-  }
-
-  /* ----- Top rail · section number on the left, location mark
-     on the right. Hairline rules above and below. */
-  .company-intro__rail {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.25rem;
-    padding-block: 1.1rem;
-    border-bottom: 1px solid var(--color-border-soft);
-  }
-
-  .company-intro__rail-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.85rem;
-    color: var(--color-ink-soft);
-  }
-
-  .company-intro__rail-index {
-    color: var(--color-leather-dark);
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    font-variant-numeric: lining-nums tabular-nums;
-    padding: 0.18rem 0.45rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xs);
-    background: var(--color-surface);
-  }
-
-  .company-intro__rail-location {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-left: auto;
-  }
-
-  .company-intro__rail-dot {
-    display: inline-block;
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: var(--radius-pill);
-    background: var(--color-leather);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--color-leather) 18%, transparent);
-  }
-
-  /* ----- Two-column grid · atelier panel on the left (narrower),
-     narrative on the right. Stacks on mobile. */
-  .company-intro__grid {
-    display: grid;
-    gap: clamp(2rem, 4vw, 3.25rem);
-    align-items: start;
-    padding-top: clamp(2.5rem, 5vw, 4rem);
-  }
-
-  @media (min-width: 64rem) {
-    .company-intro__grid {
-      grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-      gap: clamp(2.75rem, 5vw, 5rem);
-    }
-  }
-
-  /* ----- Year panel · atelier surface with a hairline border,
-     vertical stack of [kicker · numeral · location] plus a
-     corner stamp. The panel is taller than wide on desktop so
-     it reads as a small catalogue card. */
-  .company-intro__panel {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: clamp(18rem, 34vw, 24rem);
-    padding: clamp(1.5rem, 2.6vw, 2.1rem);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-  }
-
-  /* Decorative top-right corner stamp — tiny L-shape that
-     echoes the editorial catalogue cards. */
-  .company-intro__panel-corner {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    width: 0.55rem;
-    height: 0.55rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-ink) 36%, transparent);
-    border-right: 1px solid
-      color-mix(in srgb, var(--color-ink) 36%, transparent);
-    pointer-events: none;
-  }
-
-  .company-intro__panel-top,
-  .company-intro__panel-bottom {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .company-intro__panel-bottom {
-    padding-top: 0.85rem;
-    border-top: 1px solid var(--color-border-soft);
-  }
-
-  .company-intro__panel-meta {
-    color: var(--color-leather-dark);
-  }
-
-  /* The 1988 numeral sits between the two rails and stretches
-     to fill the remaining vertical space without forcing a
-     fixed height. */
-  .company-intro__year {
-    position: relative;
-    z-index: 1;
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding-block: clamp(0.5rem, 1.5vw, 1.25rem);
-    text-align: center;
-  }
-
-  /* Corner stamp — small bordered badge in the top-right of
-     the panel. Reads as a maker's mark. */
-  .company-intro__stamp {
-    color: var(--color-leather-dark);
-    font-family: var(--font-display);
-    font-size: 0.7rem;
-    font-weight: 400;
-    letter-spacing: 0.18em;
-    line-height: 1;
-    font-variant-numeric: lining-nums tabular-nums;
-    padding: 0.32rem 0.5rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xs);
-    background: var(--color-surface);
-    text-transform: uppercase;
-    opacity: 0.92;
-  }
-
-  /* ----- Narrative column · eyebrow, h2, lead, list, cta. */
-  .company-intro__body {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(1.4rem, 2.6vw, 1.85rem);
-    max-width: 40rem;
-  }
-
-  .company-intro__title {
-    max-width: 22ch;
-  }
-
-  .company-intro__lead {
-    max-width: 38ch;
-  }
-
-  .company-intro__cta {
-    margin-top: 0.25rem;
-  }
-
-  .company-intro__link {
-    color: var(--color-ink);
-  }
-
-  /* ----- Responsive · the year panel stretches full-width and
-     sits above the narrative on mobile/tablet; the rail collapses
-     to a single line when the location wraps below. */
-  @media (max-width: 63.9375rem) {
-    .company-intro__panel {
-      min-height: clamp(15rem, 60vw, 20rem);
-    }
-  }
-
-  @media (max-width: 47.9375rem) {
-    .company-intro__rail-location {
-      margin-left: 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .company-intro__panel,
-    .company-intro__year,
-    .company-intro__stamp {
-      transition: none;
-    }
-  }
-</style>

@@ -1,29 +1,34 @@
 ---
 /**
  * CategoryPillList · editorial filter strip.
- * Atelier treatment: notched edge, index reveal, monogram,
- * and a corner stamp on active. Each pill is a quiet
- * editorial chip with a notched bottom corner, an active
- * rail, and a count chip.
+ * A quiet, type-only filter row. Each pill is a small uppercase
+ * label; the active state reveals a thin underline. No filled
+ * chips, no SaaS corners, no app-like count badges.
+ *
+ * The `bordered` variant is opt-in and re-introduces the
+ * chip-shaped pill (rounded with hairline border) for cases
+ * that need a stronger filter presence, e.g. inside a card.
  */
 export interface CategoryPillItem {
   label: string;
   href: string;
-  /** Optional count to render as a tabular number suffix. */
+  /** Optional count rendered as a tabular suffix. Hidden by
+   *  default to keep the strip quiet. */
   count?: number | string;
   /** Optional disabled state — pill renders as inert span. */
   disabled?: boolean;
 }
 
 type PillOrientation = 'horizontal' | 'scroll' | 'wrap';
-type PillVariant = 'pill' | 'flat' | 'tag';
+type PillVariant = 'underline' | 'bordered';
 type PillDensity = 'compact' | 'default' | 'loose';
 type PillSize = 'sm' | 'md';
 
 interface Props {
   categories: Array<CategoryPillItem>;
   active?: string;
-  /** Visual treatment: 'pill' (default), 'flat', or 'tag'. */
+  /** Visual treatment: 'underline' (default) for an editorial
+   *  type-only filter, 'bordered' for chip-shaped pills. */
   variant?: PillVariant;
   /** Layout orientation. 'horizontal' wraps, 'scroll' is a
    *  horizontal scrollable strip, 'wrap' forces a wrapped grid. */
@@ -33,6 +38,8 @@ interface Props {
   size?: PillSize;
   /** Show a leading 01/02/03 monogram on each pill. */
   withIndex?: boolean;
+  /** Show a small tabular count suffix on each pill. */
+  withCount?: boolean;
   /** Optional leading slot (slot name: "leading"). */
   class?: string;
 }
@@ -40,11 +47,12 @@ interface Props {
 const {
   categories,
   active,
-  variant = 'pill',
+  variant = 'underline',
   orientation = 'wrap',
   density = 'default',
   size = 'md',
   withIndex = false,
+  withCount = false,
   class: className,
 } = Astro.props;
 
@@ -71,7 +79,11 @@ const classes = [
           <li class="pill-list__item">
             {item.disabled ? (
               <span
-                class:list={['pill', 'pill--disabled']}
+                class:list={[
+                  'pill',
+                  variant === 'bordered' && 'pill--bordered',
+                  'pill--disabled',
+                ]}
                 aria-disabled="true"
               >
                 {withIndex && (
@@ -80,14 +92,18 @@ const classes = [
                   </span>
                 )}
                 <span class="pill__label">{item.label}</span>
-                {item.count !== undefined && (
+                {withCount && item.count !== undefined && (
                   <span class="pill__count">{item.count}</span>
                 )}
               </span>
             ) : (
               <a
                 href={item.href}
-                class:list={['pill', isActive && 'pill--active']}
+                class:list={[
+                  'pill',
+                  variant === 'bordered' && 'pill--bordered',
+                  isActive && 'pill--active',
+                ]}
                 aria-current={isActive ? 'page' : undefined}
               >
                 {withIndex && (
@@ -96,7 +112,7 @@ const classes = [
                   </span>
                 )}
                 <span class="pill__label">{item.label}</span>
-                {item.count !== undefined && (
+                {withCount && item.count !== undefined && (
                   <span
                     class="pill__count"
                     aria-label={`${item.count} elementos`}
@@ -115,10 +131,11 @@ const classes = [
 
 <style>
   /* =========================================================
-     Pill list — atelier editorial filters. Each pill has a
-     notched corner, a quiet monogram slot, a count chip,
-     and a hairline rail. Active state is a fully filled
-     ink capsule with a hairline frame and a corner stamp.
+     Pill list — editorial filter strip.
+     The default 'underline' variant leans on the global .pill
+     token (which is now an editorial underline). The optional
+     'bordered' variant adds the chip-shaped .pill--bordered
+     modifier from the same global token.
      ========================================================= */
   .pill-list {
     width: 100%;
@@ -134,17 +151,14 @@ const classes = [
     flex-wrap: nowrap;
   }
 
-  .pill-list--horizontal .pill-list__list {
-    flex-wrap: wrap;
-  }
-
+  .pill-list--horizontal .pill-list__list,
   .pill-list--wrap .pill-list__list {
     flex-wrap: wrap;
   }
 
   .pill-list__list {
     display: flex;
-    gap: 0.5rem;
+    gap: 0;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -154,229 +168,131 @@ const classes = [
     flex: 0 0 auto;
   }
 
-  /* =========================================================
-     Density — internal padding tweaks.
-     ========================================================= */
-  .pill-list--density-compact .pill {
-    padding-block: 0.45rem;
+  /* The default gap lives in the global .pill-list token.
+     When using the underline variant we tighten the gap so
+     the strip reads as a single editorial line, not a row
+     of chips. */
+  .pill-list--underline .pill-list__list {
+    gap: 0;
   }
-  .pill-list--density-loose .pill {
-    padding-block: 0.78rem;
+
+  .pill-list--underline .pill-list__item + .pill-list__item {
+    margin-left: clamp(0.85rem, 1.8vw, 1.4rem);
+  }
+
+  /* Bordered variant keeps the original chip feel. */
+  .pill-list--bordered .pill-list__list {
+    gap: 0.45rem;
   }
 
   /* =========================================================
-     Base pill — notched corner via clip-path, hairline
-     border, subtle elevation. Hover and active states refine
-     the same surface rather than swapping it out.
+     Density — internal padding tweaks. Kept minimal.
+     Only the bordered variant honours these.
      ========================================================= */
-  .pill {
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    min-height: 2.4rem;
-    padding: 0.6rem 1.1rem 0.6rem 1.2rem;
-    border: 1px solid var(--color-border-hairline);
-    border-radius: 999px;
-    background:
-      linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(255 255 255 / 0)),
-      var(--color-surface);
-    color: var(--color-muted);
-    font-family: var(--font-sans);
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    line-height: 1;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    font-variant-numeric: lining-nums tabular-nums;
-    transition:
-      color var(--duration-base) var(--ease-soft),
-      background-color var(--duration-base) var(--ease-soft),
-      border-color var(--duration-base) var(--ease-soft),
-      transform var(--duration-base) var(--ease-out),
-      box-shadow var(--duration-base) var(--ease-soft);
+  .pill-list--density-compact .pill--bordered {
+    padding-block: 0.4rem;
+  }
+  .pill-list--density-loose .pill--bordered {
+    padding-block: 0.62rem;
   }
 
-  /* Bottom-right hairline that animates to a fuller rail on
-     hover, and becomes the underline of an active pill. */
-  .pill::before {
-    content: '';
-    position: absolute;
-    left: 1rem;
-    right: 1rem;
-    bottom: 0.45rem;
-    height: 1px;
-    background: currentColor;
-    opacity: 0;
-    transform: scaleX(0.4);
-    transform-origin: left center;
-    transition:
-      opacity var(--duration-base) var(--ease-soft),
-      transform var(--duration-slow) var(--ease-out);
+  /* =========================================================
+     Default (underline) pill — leave global rules intact.
+     ========================================================= */
+  .pill-list--underline .pill {
+    min-height: 1.5rem;
   }
 
-  /* Corner stamp — a small diamond that animates in on the
-     active state. */
-  .pill::after {
-    content: '';
-    position: absolute;
-    bottom: 0.55rem;
-    right: 0.95rem;
-    width: 0.34rem;
-    height: 0.34rem;
-    border-bottom: 1px solid currentColor;
-    border-right: 1px solid currentColor;
-    opacity: 0;
-    transform: translate(2px, 2px) scale(0.6);
-    transition:
-      opacity var(--duration-base) var(--ease-soft),
-      transform var(--duration-slow) var(--ease-out);
+  /* =========================================================
+     Bordered pill — chip-shaped. Mirrors the older chunkier
+     language, kept for callers that need stronger chips.
+     ========================================================= */
+  .pill--bordered {
+    min-height: 2rem;
+    padding: 0.5rem 0.95rem;
+    gap: 0.5rem;
   }
 
   .pill__label {
     position: relative;
-    z-index: 1;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  /* Optional monogram index — drawn as a small monogram chip. */
+  /* Optional monogram index — small numeral in muted ink. */
   .pill__index {
     color: var(--color-muted-light);
-    font-family: var(--font-serif);
-    font-size: 0.7rem;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 300;
     letter-spacing: 0;
     text-transform: none;
     line-height: 1;
     font-variant-numeric: lining-nums tabular-nums;
-    padding-right: 0.5rem;
-    border-right: 1px solid var(--color-border-hairline);
+    padding-right: 0.45rem;
+    border-right: 1px solid var(--color-border);
     transition:
       color var(--duration-base) var(--ease-soft),
       border-color var(--duration-base) var(--ease-soft);
   }
 
-  /* Optional count — quiet tabular suffix, becomes ink on hover. */
+  /* Optional count — quiet tabular suffix. Only renders when
+     the consumer opts in with `withCount`. Hidden by default
+     to keep the strip quiet. */
   .pill__count {
     position: relative;
-    z-index: 1;
     color: var(--color-muted-light);
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    min-width: 1.55rem;
-    padding: 0.28rem 0.42rem;
-    border: 1px solid var(--color-border-hairline);
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    min-width: 1.4rem;
+    padding: 0.1rem 0.3rem;
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
     text-align: center;
-    transition: color var(--duration-base) var(--ease-soft);
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft);
   }
 
   /* =========================================================
-     Variants.
+     Bordered hover.
      ========================================================= */
-  .pill-list--flat .pill {
-    border-radius: 10px;
-    padding: 0.6rem 1.1rem;
-  }
-
-  .pill-list--tag .pill {
-    border-radius: 0;
-    padding: 0.55rem 1rem;
-  }
-  .pill-list--tag .pill::before,
-  .pill-list--tag .pill::after {
-    display: none;
-  }
-
-  /* Size — controls the overall type scale. */
-  .pill-list--size-sm .pill {
-    min-height: 2.1rem;
-    padding: 0.45rem 0.95rem;
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-  }
-
-  /* =========================================================
-     Hover — quiet border + text darken. No background flash.
-     The hairline rail grows and the label darkens. No
-     dramatic lift, no shadow.
-     ========================================================= */
-  .pill:hover,
-  .pill:focus-visible {
+  .pill--bordered:hover,
+  .pill--bordered:focus-visible {
     color: var(--color-ink);
     border-color: var(--color-ink);
   }
 
-  .pill:hover::before,
-  .pill:focus-visible::before {
-    opacity: 0.4;
-    transform: scaleX(1);
-  }
-
-  .pill:hover .pill__count,
-  .pill:focus-visible .pill__count {
+  .pill--bordered:hover .pill__count,
+  .pill--bordered:focus-visible .pill__count,
+  .pill--bordered:hover .pill__index,
+  .pill--bordered:focus-visible .pill__index {
     color: var(--color-ink);
-  }
-
-  .pill:hover .pill__index,
-  .pill:focus-visible .pill__index {
-    color: var(--color-ink);
-    border-color: color-mix(in srgb, var(--color-ink) 30%, transparent);
+    border-color: var(--color-ink);
   }
 
   /* =========================================================
-     Active — restrained ink treatment. The pill flips to a
-     fully filled ink capsule with ivory text, the rail is
-     always drawn, the corner stamp pushes in.
+     Active — restrained ink fill on the bordered variant.
+     The underline variant inherits the global hairline
+     treatment (no fill, just ink text + bottom rule).
      ========================================================= */
-  .pill--active {
-    color: var(--color-ink-on-inverse);
+  .pill--bordered.pill--active {
+    color: var(--color-inverse);
     border-color: var(--color-ink);
-    background:
-      linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0)),
-      var(--color-ink);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+    background: var(--color-ink);
   }
 
-  .pill--active::before {
-    background: var(--color-ink-on-inverse);
-    opacity: 0.45;
-    transform: scaleX(1);
+  .pill--bordered.pill--active .pill__index {
+    color: var(--color-inverse);
+    border-color: color-mix(in srgb, var(--color-inverse) 28%, transparent);
   }
 
-  .pill--active::after {
-    border-color: var(--color-ink-on-inverse);
-    opacity: 0.7;
-    transform: translate(0, 0) scale(1);
-  }
-
-  .pill--active .pill__index {
-    color: var(--color-ink-on-inverse);
-    border-color: color-mix(
-      in srgb,
-      var(--color-ink-on-inverse) 28%,
-      transparent
-    );
-  }
-
-  .pill--active .pill__count {
-    color: var(--color-ink-on-inverse);
-    border-color: color-mix(
-      in srgb,
-      var(--color-ink-on-inverse) 35%,
-      transparent
-    );
-    background: color-mix(
-      in srgb,
-      var(--color-ink-on-inverse) 12%,
-      transparent
-    );
+  .pill--bordered.pill--active .pill__count {
+    color: var(--color-inverse);
+    border-color: color-mix(in srgb, var(--color-inverse) 35%, transparent);
+    background: transparent;
   }
 
   /* =========================================================
@@ -392,27 +308,34 @@ const classes = [
   /* Focus ring — tokenized, kept just outside the pill. */
   .pill:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: var(--focus-ring-offset);
+    outline-offset: 3px;
   }
 
-  /* Mobile — the strip wraps cleanly, padding tightens. */
+  /* Mobile — the strip wraps cleanly, padding tightens.
+     Scroll orientation collapses to wrap on small viewports
+     so the user never has to swipe to see all options. */
   @media (max-width: 640px) {
-    .pill {
-      padding: 0.55rem 0.95rem;
-      font-size: 0.62rem;
+    .pill-list--scroll .pill-list__list {
+      flex-wrap: wrap;
+      overflow-x: visible;
+    }
+
+    .pill--bordered {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.6rem;
       letter-spacing: 0.12em;
+    }
+
+    .pill__label {
+      max-width: 22ch;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .pill,
-    .pill::before,
-    .pill::after {
+    .pill__index,
+    .pill__count {
       transition-duration: 1ms;
-    }
-
-    .pill--active::after {
-      transform: translate(2px, 2px) scale(0.6);
     }
   }
 </style>

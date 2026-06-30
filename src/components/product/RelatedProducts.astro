@@ -1,32 +1,84 @@
 ---
+/**
+ * RelatedProducts · catalogue tail section.
+ *
+ * Built on the global `.section-header` system: eyebrow,
+ * title, kicker, optional "ver todo" link, all sitting
+ * inside a clean editorial header. Below it, a
+ * `.product-grid-editorial` of 3 cards.
+ *
+ * Renders nothing if no products are passed.
+ */
 import type { PublicProduct } from '@/lib/products/getters';
+import { ROUTES } from '@/lib/routes';
+import Container from '@/components/ui/Container.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
 import ProductCard from './ProductCard.astro';
 
 interface Props {
   products: PublicProduct[];
+  /** Optional eyebrow shown above the title. */
+  eyebrow?: string;
+  /** Optional section title. */
+  title?: string;
+  /** Optional kicker shown after the title. */
+  kicker?: string;
+  /** Optional short description below the title. */
+  description?: string;
+  /** Optional "ver todo" link label. */
+  viewAllLabel?: string;
+  /** Optional "ver todo" href. Defaults to the catalogue root. */
+  viewAllHref?: string;
+  class?: string;
 }
 
-const { products } = Astro.props;
+const {
+  products,
+  eyebrow = 'Catálogo',
+  title = 'Productos relacionados',
+  kicker,
+  description,
+  viewAllLabel = 'Ver catálogo completo',
+  viewAllHref = ROUTES.CATALOG,
+  class: className,
+} = Astro.props;
+
+const wrapperClass = [
+  'section',
+  'section-y-compact',
+  'related-products',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 {
   products.length > 0 && (
-    <section class="section-y-compact border-t border-border-hairline">
-      <div class="mb-12 flex items-end justify-between gap-6">
-        <div>
-          <p class="eyebrow">Catálogo</p>
-          <h2 class="heading-section mt-4 text-ink">Productos relacionados</h2>
+    <section class={wrapperClass}>
+      <Container class="related-products__inner">
+        <SectionHeader
+          class="related-products__head"
+          eyebrow={eyebrow}
+          title={title}
+          {...(description ? { description } : {})}
+          {...(kicker ? { kicker } : {})}
+        >
+          <a
+            slot="action"
+            href={viewAllHref}
+            class="fine-link related-products__link"
+          >
+            {viewAllLabel}
+          </a>
+        </SectionHeader>
+
+        <div class="product-grid-editorial related-products__grid">
+          {products.map((product) => (
+            <ProductCard product={product} />
+          ))}
         </div>
-        <span
-          class="hidden h-px w-24 bg-border-strong md:block"
-          aria-hidden="true"
-        />
-      </div>
-      <div class="grid gap-x-grid-gap gap-y-14 md:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard product={product} />
-        ))}
-      </div>
+      </Container>
     </section>
   )
 }

@@ -3,6 +3,9 @@ export type Category = {
   name: string;
   slug: string;
   description: string;
+  /** Optional cover image (path under /public). When absent,
+   *  editorial placeholders are rendered in the public UI. */
+  image?: string;
   isActive: boolean;
 };
 

@@ -1,53 +1,161 @@
 ---
+/**
+ * B2BAccessBlock · editorial commercial close.
+ *
+ * Sober, premium composition. Default is a paper panel with
+ * a serif pull-quote and a hairline process list. --split
+ * adds a media column (image of the workshop, atelier
+ * detail, etc.). --dark renders against the ink surface
+ * using gold accents.
+ *
+ * CTAs are compact and refined. The block never feels like
+ * a SaaS banner. Composition tokens live in
+ * src/styles/global.css under `.b2b-access*` so this file
+ * stays structural.
+ */
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 import { ROUTES } from '@/lib/routes';
+
+type B2BVariant = 'default' | 'split';
+type B2BTone = 'light' | 'dark';
+
+interface ProcessStep {
+  label: string;
+}
+
+interface Props {
+  variant?: B2BVariant;
+  tone?: B2BTone;
+  eyebrow?: string;
+  title?: string;
+  /** Pull-quote in serif — appears as the editorial heart. */
+  quote?: string;
+  quoteAuthor?: string;
+  description?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  process?: ProcessStep[];
+  /** Optional media (image URL). Required for `split` variant. */
+  image?: string;
+  imageAlt?: string;
+  imageFocus?: string;
+  class?: string;
+}
+
+const {
+  variant = 'default',
+  tone = 'light',
+  eyebrow = 'Acceso mayorista',
+  title = 'Tarifas privadas para compradores profesionales',
+  quote = 'Una atención directa, sin formularios eternos, y un catálogo preparado para crecer con cada cliente.',
+  quoteAuthor = 'Departamento comercial · Elche',
+  description = 'Precios y condiciones disponibles exclusivamente para clientes mayoristas registrados y aprobados por la empresa.',
+  primaryLabel = 'Solicitar acceso',
+  primaryHref = ROUTES.WHOLESALE_ACCESS,
+  secondaryLabel = 'Contactar ventas',
+  secondaryHref = ROUTES.CONTACT,
+  process = [
+    { label: 'Solicitud de empresa y datos fiscales.' },
+    { label: 'Validación manual por el equipo comercial.' },
+    { label: 'Apertura de tarifas y condiciones privadas.' },
+  ],
+  image,
+  imageAlt,
+  imageFocus,
+  class: className,
+} = Astro.props;
+
+const hasSecondary = Boolean(secondaryLabel && secondaryHref);
+const hasImage = Boolean(image);
+const isSplit = variant === 'split' && hasImage;
+const isDark = tone === 'dark';
+
+const sectionClass = [
+  'b2b-access',
+  isSplit && 'b2b-access--split',
+  isDark && 'b2b-access--dark',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const mediaStyle = imageFocus ? `object-position: ${imageFocus};` : undefined;
+
+const primaryVariant =
+  isDark || (variant === 'split' && tone !== 'light') ? 'inverse' : 'primary';
+const secondaryVariant =
+  isDark || (variant === 'split' && tone !== 'light') ? 'inverse' : 'secondary';
 ---
 
-<section class="section-y border-t border-border-hairline">
+<section class="section-y">
   <Container>
-    <div
-      class="surface-inverse grid gap-10 overflow-hidden p-8 md:grid-cols-[minmax(0,1fr)_minmax(18rem,0.58fr)] md:p-12"
-    >
-      <div>
-        <p class="eyebrow text-gold-soft">Acceso mayorista</p>
-        <h2 class="heading-section mt-4 max-w-2xl text-ink-on-inverse">
-          Tarifas privadas para compradores profesionales
-        </h2>
-        <p
-          class="copy-lead mt-6 max-w-2xl text-[color-mix(in_srgb,var(--color-ink-on-inverse)_76%,transparent)]"
-        >
-          Precios y condiciones disponibles exclusivamente para clientes
-          mayoristas registrados y aprobados por la empresa.
-        </p>
-        <div class="mt-10 flex flex-wrap gap-3">
-          <Button href={ROUTES.WHOLESALE_ACCESS} variant="gold">
-            Solicitar acceso
-          </Button>
-          <Button
-            href={ROUTES.CONTACT}
-            variant="ghost"
-            class="border-[color-mix(in_srgb,var(--color-ink-on-inverse)_32%,transparent)] text-ink-on-inverse hover:border-ink-on-inverse hover:bg-[color-mix(in_srgb,var(--color-ink-on-inverse)_10%,transparent)]"
+    <div class={sectionClass}>
+      {
+        isSplit && image && (
+          <figure
+            class="b2b-access__media"
+            aria-hidden={imageAlt ? undefined : 'true'}
           >
-            Contactar ventas
-          </Button>
+            <img
+              src={image}
+              alt={imageAlt ?? ''}
+              loading="lazy"
+              decoding="async"
+              style={mediaStyle}
+            />
+          </figure>
+        )
+      }
+
+      <div class="b2b-access__body">
+        <p class="b2b-access__eyebrow">{eyebrow}</p>
+        <h2 class="b2b-access__title">{title}</h2>
+
+        <blockquote class="b2b-access__quote">
+          {quote}
+          {
+            quoteAuthor && (
+              <span class="b2b-access__quote-author">— {quoteAuthor}</span>
+            )
+          }
+        </blockquote>
+
+        {description && <p class="b2b-access__lead">{description}</p>}
+
+        <div class="b2b-access__actions">
+          {
+            primaryHref && primaryLabel && (
+              <Button href={primaryHref} variant={primaryVariant}>
+                {primaryLabel}
+              </Button>
+            )
+          }
+          {
+            hasSecondary && (
+              <Button href={secondaryHref!} variant={secondaryVariant}>
+                {secondaryLabel!}
+              </Button>
+            )
+          }
         </div>
-      </div>
-      <div
-        class="border border-[color-mix(in_srgb,var(--color-ink-on-inverse)_16%,transparent)] p-6"
-      >
-        <p
-          class="meta-label text-[color-mix(in_srgb,var(--color-ink-on-inverse)_72%,transparent)]"
-        >
-          Proceso
-        </p>
-        <ol
-          class="mt-8 grid gap-5 text-sm text-[color-mix(in_srgb,var(--color-ink-on-inverse)_76%,transparent)]"
-        >
-          <li>01 · Solicitud de empresa</li>
-          <li>02 · Validación manual</li>
-          <li>03 · Consulta de tarifas</li>
-        </ol>
+
+        {
+          process.length > 0 && (
+            <ol class="b2b-access__rail" aria-label="Proceso de acceso">
+              {process.map((step, index) => (
+                <li class="b2b-access__step">
+                  <span class="b2b-access__step-num" aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <p class="b2b-access__step-text">{step.label}</p>
+                </li>
+              ))}
+            </ol>
+          )
+        }
       </div>
     </div>
   </Container>

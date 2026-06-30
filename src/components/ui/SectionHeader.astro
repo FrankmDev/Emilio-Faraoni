@@ -9,12 +9,16 @@
  *
  * All visual tokens live in src/styles/global.css under
  * `.section-header*` so the component itself is structural.
+ *
+ * The `title` can be passed as a string prop or as a named
+ * slot (used to inject inline `<em>` or other formatting
+ * inside the heading). The slot wins when provided.
  */
 type SectionAlign = 'start' | 'center';
 
 interface Props {
   eyebrow?: string;
-  title: string;
+  title?: string;
   description?: string;
   meta?: string;
   /** Optional kicker shown before the eyebrow. */
@@ -59,6 +63,7 @@ const hasLeading =
   Boolean(index) || Boolean(eyebrow) || Boolean(kicker) || Boolean(meta);
 const hasAction = Astro.slots.has('action');
 const showRail = withRail && hasLeading;
+const hasTitleSlot = Astro.slots.has('title');
 ---
 
 <header
@@ -91,9 +96,15 @@ const showRail = withRail && hasLeading;
   }
   <div class="section-header__body">
     <div class="section-header__body-inner">
-      <HeadingTag class={titleClass}>
-        {title}
-      </HeadingTag>
+      {
+        hasTitleSlot ? (
+          <HeadingTag class={titleClass}>
+            <slot name="title" />
+          </HeadingTag>
+        ) : (
+          title && <HeadingTag class={titleClass}>{title}</HeadingTag>
+        )
+      }
       {description && <p class="section-header__description">{description}</p>}
       {withRule && <span class="section-header__rail" aria-hidden="true" />}
     </div>

@@ -1,19 +1,48 @@
 ---
+/**
+ * FeaturedProducts · image-led editorial product section.
+ *
+ * Renders the featured products from the public catalogue
+ * as a clean editorial grid. The first product is
+ * automatically promoted to a featured (2-column, side-by-
+ * side) layout so the section reads as a magazine spread.
+ *
+ * Always uses the public getters — never imports raw data
+ * — so private fields like `wholesalePrice` never leak
+ * into the DOM.
+ */
 import Container from '@/components/ui/Container.astro';
-import SectionHeader from '@/components/ui/SectionHeader.astro';
 import ProductGrid from '@/components/product/ProductGrid.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
 import { getPublicFeaturedProducts } from '@/lib/products/getters';
+import { ROUTES } from '@/lib/routes';
 
 const products = getPublicFeaturedProducts();
 ---
 
-<section class="section-y-compact border-t border-border-hairline">
-  <Container class="grid gap-12">
-    <SectionHeader
-      eyebrow="Productos destacados"
-      title="Selección de catálogo"
-      description="Referencias iniciales para validar presentación de producto, navegación y consulta pública sin exponer tarifas mayoristas."
-    />
-    <ProductGrid products={products} />
-  </Container>
-</section>
+{
+  products.length > 0 && (
+    <section class="section section-y-compact featured-products">
+      <Container class="featured-products__inner">
+        <SectionHeader
+          class="featured-products__head"
+          eyebrow="Catálogo"
+          description="Referencias iniciales para validar presentación de producto, navegación y consulta pública sin exponer tarifas mayoristas."
+        >
+          <span slot="title">
+            Selección <em>editorial</em>
+          </span>
+          <a
+            slot="action"
+            href={ROUTES.CATALOG}
+            class="fine-link featured-products__link"
+          >
+            Ver catálogo completo
+          </a>
+        </SectionHeader>
+
+        <ProductGrid products={products} featured />
+      </Container>
+    </section>
+  )
+}

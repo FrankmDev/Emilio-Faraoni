@@ -1,25 +1,37 @@
 ---
 /**
- * ProductInfo · editorial product B2B page block.
+ * ProductInfo · editorial product detail body.
+ *
  * Two-column composition: media on the left, body on the
- * right. Soft surface, generous radius, no top/bottom hard
- * rules, no chip underlines. Definition list uses hairline
- * internal separators only — the surrounding box has no
- * border so it reads as a continuous catalogue spread.
+ * right. Reads as a professional catalogue spread — soft
+ * surface, generous radius, no top/bottom hard rules, no
+ * chip underlines.
+ *
+ * The body carries the same hierarchy as a printed
+ * catalogue page: eyebrow, big serif title, reference
+ * with a hairline prefix, lead description, italic
+ * materials line, a soft spec list, and the commercial
+ * CTA slot. Everything lives in `src/styles/global.css`
+ * under `.product-info*` and `.price-cta*`.
  */
 import type { PublicProduct } from '@/lib/products/getters';
 import Container from '@/components/ui/Container.astro';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder.astro';
 import RestrictedPriceCTA from './RestrictedPriceCTA.astro';
+
+type Spec = { term: string; detail?: string; chips?: string[] };
 
 interface Props {
   product: PublicProduct;
+  /** Optional override of the restricted price CTA. When
+   *  false, the commercial block is omitted (e.g. for
+   *  pages where pricing is handled elsewhere). */
+  withCommercialCta?: boolean;
+  class?: string;
 }
 
-const { product } = Astro.props;
-const primaryImage = product.images[0];
-const galleryImages = product.images.slice(0, 4);
+const { product, withCommercialCta = true, class: className } = Astro.props;
 
-type Spec = { term: string; detail?: string; chips?: string[] };
 const specs: Spec[] = [
   ...(product.colors.length > 0
     ? [{ term: 'Colores', chips: product.colors }]
@@ -30,21 +42,31 @@ const specs: Spec[] = [
   ...(product.measurements
     ? [{ term: 'Medidas', detail: product.measurements }]
     : []),
-  ...(product.materials
-    ? [{ term: 'Materiales', detail: product.materials }]
-    : []),
 ];
+
+const detailItems = [
+  { label: 'Categoría', value: product.category },
+  ...(product.reference
+    ? [{ label: 'Referencia', value: `Ref. ${product.reference}` }]
+    : []),
+  { label: 'Origen', value: 'Fabricación nacional · Elche' },
+];
+
+const galleryImages = product.images.slice(0, 5);
+const primaryImage = galleryImages[0];
+
+const wrapperClass = ['product-info', className].filter(Boolean).join(' ');
 ---
 
 <section class="section">
-  <Container class="product-info">
+  <Container class={wrapperClass}>
     <div class="product-info__media">
       {
         primaryImage ? (
           <figure class="product-info__media-main">
             <img
               src={primaryImage}
-              alt={`${product.name} Emilio Faraoni`}
+              alt={`${product.name} · Emilio Faraoni`}
               loading="eager"
               decoding="async"
             />
@@ -53,7 +75,15 @@ const specs: Spec[] = [
           <div
             class="product-info__media-main product-info__media-main--placeholder"
             aria-label={product.name}
-          />
+          >
+            <ImagePlaceholder
+              variant="portrait"
+              tone="muted"
+              frame="editorial"
+              label={product.reference ?? product.category}
+              kicker="Emilio Faraoni"
+            />
+          </div>
         )
       }
       {
@@ -88,6 +118,12 @@ const specs: Spec[] = [
       <p class="product-info__lead">{product.description}</p>
 
       {
+        product.materials && (
+          <p class="product-info__materials">{product.materials}</p>
+        )
+      }
+
+      {
         specs.length > 0 && (
           <dl class="product-info__spec">
             {specs.map((spec) => (
@@ -112,17 +148,18 @@ const specs: Spec[] = [
         )
       }
 
-      <RestrictedPriceCTA class="product-info__cta" />
+      <ul class="product-info__detail" aria-label="Ficha técnica">
+        {
+          detailItems.map((item) => (
+            <li class="product-info__detail-item">
+              <span class="product-info__detail-label">{item.label}</span>
+              <span class="product-info__detail-value">{item.value}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      {withCommercialCta && <RestrictedPriceCTA class="product-info__cta" />}
     </div>
   </Container>
 </section>
-
-<style>
-  /* All visual tokens for .product-info live in
-     src/styles/global.css. This block only contains
-     component-level adjustments that depend on context. */
-
-  .product-info__cta {
-    margin-top: 0.6rem;
-  }
-</style>

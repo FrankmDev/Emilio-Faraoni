@@ -1,0 +1,1962 @@
+---
+import '@/styles/global.css';
+
+import BlogCard from '@/components/blog/BlogCard.astro';
+import BlogGrid from '@/components/blog/BlogGrid.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Header from '@/components/layout/Header.astro';
+import NavLink from '@/components/layout/NavLink.astro';
+import PageShell from '@/components/layout/PageShell.astro';
+import ProductCard from '@/components/product/ProductCard.astro';
+import ProductGallery from '@/components/product/ProductGallery.astro';
+import ProductGrid from '@/components/product/ProductGrid.astro';
+import ProductInfo from '@/components/product/ProductInfo.astro';
+import RelatedProducts from '@/components/product/RelatedProducts.astro';
+import RestrictedPriceCTA from '@/components/product/RestrictedPriceCTA.astro';
+import ArticleHeader from '@/components/sections/ArticleHeader.astro';
+import B2BAccessBlock from '@/components/sections/B2BAccessBlock.astro';
+import CompanyIntro from '@/components/sections/CompanyIntro.astro';
+import FeaturedCategories from '@/components/sections/FeaturedCategories.astro';
+import FeaturedGrid from '@/components/sections/FeaturedGrid.astro';
+import FeaturedProducts from '@/components/sections/FeaturedProducts.astro';
+import FinalCTA from '@/components/sections/FinalCTA.astro';
+import HomeHero from '@/components/sections/HomeHero.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import Badge from '@/components/ui/Badge.astro';
+import Breadcrumbs from '@/components/ui/Breadcrumbs.astro';
+import Button from '@/components/ui/Button.astro';
+import CategoryPillList from '@/components/ui/CategoryPillList.astro';
+import ContactInfoCard from '@/components/ui/ContactInfoCard.astro';
+import Container from '@/components/ui/Container.astro';
+import FeaturedCard from '@/components/ui/FeaturedCard.astro';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder.astro';
+import SectionDivider from '@/components/ui/SectionDivider.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
+import { getPublicProducts } from '@/lib/products/getters';
+
+const demoProducts = getPublicProducts();
+const demoProduct = demoProducts[0];
+
+const componentFamilies = [
+  {
+    id: 'ui',
+    label: 'src/components/ui',
+    title: 'UI',
+    count: 10,
+    files: [
+      'Badge.astro',
+      'Breadcrumbs.astro',
+      'Button.astro',
+      'CategoryPillList.astro',
+      'ContactInfoCard.astro',
+      'Container.astro',
+      'FeaturedCard.astro',
+      'ImagePlaceholder.astro',
+      'SectionDivider.astro',
+      'SectionHeader.astro',
+    ],
+  },
+  {
+    id: 'layout',
+    label: 'src/components/layout',
+    title: 'Layout',
+    count: 4,
+    files: ['Header.astro', 'Footer.astro', 'NavLink.astro', 'PageShell.astro'],
+  },
+  {
+    id: 'sections',
+    label: 'src/components/sections',
+    title: 'Sections',
+    count: 9,
+    files: [
+      'ArticleHeader.astro',
+      'B2BAccessBlock.astro',
+      'CompanyIntro.astro',
+      'FeaturedCategories.astro',
+      'FeaturedGrid.astro',
+      'FeaturedProducts.astro',
+      'FinalCTA.astro',
+      'HomeHero.astro',
+      'PageHero.astro',
+    ],
+  },
+  {
+    id: 'blog',
+    label: 'src/components/blog',
+    title: 'Blog',
+    count: 2,
+    files: ['BlogCard.astro', 'BlogGrid.astro'],
+  },
+  {
+    id: 'product',
+    label: 'src/components/product',
+    title: 'Product',
+    count: 6,
+    files: [
+      'ProductCard.astro',
+      'ProductGallery.astro',
+      'ProductGrid.astro',
+      'ProductInfo.astro',
+      'RelatedProducts.astro',
+      'RestrictedPriceCTA.astro',
+    ],
+  },
+];
+
+const colorTokens = [
+  ['--color-bg', '#f1f0ec', 'Base exterior'],
+  ['--color-page', '#fbfaf7', 'Página'],
+  ['--color-surface', '#ffffff', 'Superficie'],
+  ['--color-surface-soft', '#f5f4f0', 'Plano suave'],
+  ['--color-surface-muted', '#ecede9', 'Fondo editorial'],
+  ['--color-surface-sand', '#e2e0d8', 'Arena neutra'],
+  ['--color-surface-clay', '#d6d3cb', 'Arcilla neutra'],
+  ['--color-surface-inverse', '#15110d', 'Bloque oscuro'],
+  ['--color-ink', '#141210', 'Tinta'],
+  ['--color-ink-soft', '#2e2823', 'Tinta suave'],
+  ['--color-muted', '#6c6660', 'Texto secundario'],
+  ['--color-leather', '#765033', 'Cuero'],
+  ['--color-leather-dark', '#2e1c10', 'Cuero oscuro'],
+  ['--color-brass', '#a18458', 'Latón'],
+  ['--color-border-soft', '#e8e7e2', 'Hairline'],
+  ['--color-border', '#d8d6d0', 'Borde'],
+];
+
+const tokenFamilies = [
+  {
+    id: 'global-tokens-color',
+    title: 'Color tokens',
+    eyebrow: ':root · color',
+    items: colorTokens.map(([token, value, usage]) => ({
+      token,
+      value,
+      usage,
+    })),
+  },
+  {
+    id: 'global-tokens-type',
+    title: 'Typography tokens',
+    eyebrow: ':root · fonts',
+    items: [
+      {
+        token: '--font-display',
+        value: 'Fraunces',
+        usage: 'Display editorial',
+      },
+      { token: '--font-serif', value: 'Fraunces', usage: 'Serif base' },
+      { token: '--font-sans', value: 'Manrope', usage: 'Texto y UI' },
+      {
+        token: '--font-mono',
+        value: 'JetBrains Mono',
+        usage: 'Código y tokens',
+      },
+    ],
+  },
+  {
+    id: 'global-tokens-layout',
+    title: 'Layout tokens',
+    eyebrow: ':root · layout',
+    items: [
+      { token: '--container', value: '77rem', usage: 'Ancho editorial' },
+      { token: '--container-wide', value: '92rem', usage: 'Spreads amplios' },
+      {
+        token: '--container-narrow',
+        value: '58rem',
+        usage: 'Páginas internas',
+      },
+      { token: '--container-reading', value: '44rem', usage: 'Lectura' },
+      {
+        token: '--section-y',
+        value: 'clamp(4rem, 7.5vw, 8rem)',
+        usage: 'Sección',
+      },
+      { token: '--grid-gap', value: 'clamp(1rem, 2vw, 1.5rem)', usage: 'Grid' },
+    ],
+  },
+  {
+    id: 'global-tokens-shape',
+    title: 'Shape, motion and focus',
+    eyebrow: ':root · system',
+    items: [
+      { token: '--radius-xs', value: '2px', usage: 'Control fino' },
+      { token: '--radius-card', value: '4px', usage: 'Card editorial' },
+      { token: '--radius-card-lg', value: '8px', usage: 'Módulos premium' },
+      { token: '--radius-button', value: '999px', usage: 'Botón pill' },
+      {
+        token: '--ease-out',
+        value: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        usage: 'Hover',
+      },
+      {
+        token: '--focus-ring-color',
+        value: 'cuero oscuro',
+        usage: 'Accesibilidad',
+      },
+    ],
+  },
+];
+
+const globalFamilies = [
+  {
+    id: 'global-layout',
+    label: 'src/styles/global.css',
+    title: 'Layout globals',
+    description:
+      'Estructura base para páginas, contenedores, secciones, stacks, clusters, grids y composiciones split.',
+    classes: [
+      'site-shell',
+      'page-frame',
+      'container',
+      'container-wide',
+      'container-narrow',
+      'container-reading',
+      'container-full',
+      'section',
+      'section-lg',
+      'section-md',
+      'section-sm',
+      'section-top',
+      'section-bottom',
+      'stack-xs',
+      'stack-sm',
+      'stack-md',
+      'stack-lg',
+      'stack-xl',
+      'stack-section',
+      'cluster',
+      'cluster-between',
+      'grid',
+      'grid-wide',
+      'grid-2',
+      'grid-3',
+      'grid-4',
+      'split',
+      'split-visual-heavy',
+      'split-copy-heavy',
+      'full-bleed',
+      'overflow-hidden',
+    ],
+  },
+  {
+    id: 'global-surfaces',
+    label: 'src/styles/global.css',
+    title: 'Surface globals',
+    description:
+      'Capas, paneles y fondos de materialidad: papel, arena, arcilla, bloque oscuro, taller y lavados de cuero/latón.',
+    classes: [
+      'surface',
+      'surface-page',
+      'surface-soft',
+      'surface-muted',
+      'surface-sand',
+      'surface-clay',
+      'surface-line',
+      'surface-inverse',
+      'panel',
+      'panel-soft',
+      'panel-muted',
+      'atelier-surface',
+      'image-surface',
+      'image-surface-warm',
+      'leather-wash',
+      'brass-wash',
+      'card',
+      'card-soft',
+      'card-muted',
+    ],
+  },
+  {
+    id: 'global-type',
+    label: 'src/styles/global.css',
+    title: 'Typography globals',
+    description:
+      'Escala editorial reutilizable para titulares, etiquetas, metadatos, cuerpo, numerales y acentos serif.',
+    classes: [
+      'display-serif',
+      'display-soft',
+      'display-italic',
+      'heading-display',
+      'heading-section',
+      'heading-card',
+      'heading-sans',
+      'eyebrow',
+      'meta-label',
+      'micro-label',
+      'copy-lead',
+      'copy-body',
+      'copy-small',
+      'copy-serif',
+      'editorial-accent',
+      'editorial-numeral',
+      'editorial-year',
+      'label-fine',
+      'text-muted',
+      'text-soft',
+      'text-inverse',
+      'text-balance',
+      'text-pretty',
+      'text-nowrap',
+    ],
+  },
+  {
+    id: 'global-actions',
+    label: 'src/styles/global.css',
+    title: 'Navigation and action globals',
+    description:
+      'Lenguaje común para enlaces, botones, badges, pills, breadcrumbs y estados de interacción.',
+    classes: [
+      'nav-link',
+      'fine-link',
+      'link-subtle',
+      'breadcrumb',
+      'breadcrumb-separator',
+      'button',
+      'button-primary',
+      'button-dark',
+      'button-secondary',
+      'button-ghost',
+      'button-inverse',
+      'button-gold',
+      'button-group',
+      'badge',
+      'badge-dark',
+      'pill-list',
+      'pill',
+      'skip-link',
+      'visually-hidden',
+    ],
+  },
+  {
+    id: 'global-editorial',
+    label: 'src/styles/global.css',
+    title: 'Editorial block globals',
+    description:
+      'Patrones para abrir páginas, ordenar secciones, diferenciales, estadísticas, citas y bloques editoriales.',
+    classes: [
+      'page-hero',
+      'page-hero-inner',
+      'page-hero-content',
+      'page-hero-centered',
+      'section-header',
+      'section-header-centered',
+      'section-header-row',
+      'feature-card',
+      'feature-card-muted',
+      'feature-card-dark',
+      'editorial-block',
+      'editorial-block-reverse',
+      'quote-block',
+      'stat-strip',
+      'stat-item',
+      'differentiator-list',
+      'differentiator-item',
+      'final-cta',
+      'final-cta-content',
+    ],
+  },
+  {
+    id: 'global-media',
+    label: 'src/styles/global.css',
+    title: 'Media, article and utility globals',
+    description:
+      'Clases para imágenes, ratios, placeholders, blog, artículos, contacto, separadores, hovers y catálogo.',
+    classes: [
+      'media',
+      'media-contain',
+      'ratio-square',
+      'ratio-portrait',
+      'ratio-wide',
+      'ratio-hero',
+      'image-placeholder',
+      'image-placeholder-warm',
+      'blog-grid',
+      'blog-grid--featured-first',
+      'blog-grid--list',
+      'blog-card',
+      'blog-card--featured',
+      'blog-card--compact',
+      'blog-card--row',
+      'blog-card-media',
+      'blog-card-numeral',
+      'blog-card-cover-tag',
+      'blog-card-meta',
+      'blog-card-title',
+      'blog-card-excerpt',
+      'blog-card-link',
+      'article-header',
+      'article-header__byline',
+      'article-body',
+      'article-pull-quote',
+      'article-section-break',
+      'article-figure',
+      'article-figure-caption',
+      'article-byline',
+      'article-drop-cap',
+      'fine-meta',
+      'fine-meta__category',
+      'fine-meta__author',
+      'contact-grid',
+      'contact-card',
+      'form-grid',
+      'form-grid-2',
+      'form-field',
+      'divider',
+      'divider-soft',
+      'divider-editorial',
+      'rule',
+      'rule-soft',
+      'rule-brass',
+      'section-divider',
+      'section-divider-label',
+      'category-tile',
+      'product-info',
+      'featured-grid',
+      'hover-fade',
+      'hover-image',
+      'hover-line',
+      'hover-craft',
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..700;1,9..144,100..700&family=Manrope:wght@200..700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <title>Style Museum · Emilio Faraoni</title>
+  </head>
+  <body>
+    <main class="museum">
+      <header class="museum-hero">
+        <div class="museum-container">
+          <div class="museum-hero__rail">
+            <span class="eyebrow">Sistema de diseño</span>
+            <span class="museum-rule" aria-hidden="true"></span>
+            <span class="meta-label">31 componentes · global.css indexado</span>
+          </div>
+          <div class="museum-hero__grid">
+            <div class="museum-hero__copy">
+              <h1 class="display-serif museum-hero__title">
+                Style <span class="editorial-accent">Museum</span>
+              </h1>
+              <p class="copy-lead museum-hero__lead">
+                Inventario visual de la web de Emilio Faraoni. Todo sigue el
+                mismo patrón: familia, nombre exacto, ruta o clase, y una
+                muestra real del sistema.
+              </p>
+            </div>
+            <aside class="museum-hero__panel" aria-label="Resumen del sistema">
+              <p class="editorial-numeral">01</p>
+              <p class="meta-label">Lectura recomendada</p>
+              <p class="copy-small">
+                Primero componentes por carpeta. Después tokens y clases
+                globales de <code>src/styles/global.css</code>.
+              </p>
+            </aside>
+          </div>
+          <nav class="museum-nav" aria-label="Navegación del Style Museum">
+            <a href="#components">Componentes</a>
+            <a href="#family-ui">UI</a>
+            <a href="#family-layout">Layout</a>
+            <a href="#family-sections">Sections</a>
+            <a href="#family-blog">Blog</a>
+            <a href="#family-product">Product</a>
+            <a href="#globals">Globals</a>
+            <a href="#global-tokens">Tokens</a>
+            <a href="#global-classes">Clases</a>
+          </nav>
+        </div>
+      </header>
+
+      <section id="components" class="museum-section">
+        <div class="museum-container">
+          <header class="museum-section__head">
+            <span class="museum-section__num">01</span>
+            <div>
+              <p class="eyebrow">src/components</p>
+              <h2 class="heading-section">Componentes por carpeta</h2>
+              <p class="copy-lead">
+                Inventario completo de componentes Astro, empezando por
+                <code>src/components/ui</code>. Cada pieza mantiene su nombre de
+                archivo visible y su preview aislada.
+              </p>
+            </div>
+          </header>
+
+          <div class="museum-family-index" aria-label="Resumen de carpetas">
+            {
+              componentFamilies.map((family) => (
+                <a href={`#family-${family.id}`} class="museum-index-card">
+                  <span class="meta-label">{family.label}</span>
+                  <strong>{family.title}</strong>
+                  <span>{family.count} componentes</span>
+                </a>
+              ))
+            }
+          </div>
+
+          <div class="museum-directory">
+            <section id="family-ui" class="museum-family">
+              <header class="museum-family__head">
+                <div>
+                  <p class="eyebrow">src/components/ui</p>
+                  <h3 class="heading-card">UI · 10 componentes</h3>
+                </div>
+                <p class="copy-small">
+                  Primitivas reutilizables para construir páginas y secciones.
+                </p>
+              </header>
+              <div class="museum-file-strip">
+                {
+                  componentFamilies[0]?.files.map((file) => (
+                    <span class="museum-file">{file}</span>
+                  ))
+                }
+              </div>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>Badge.astro</strong><code
+                    >src/components/ui/Badge.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--inline">
+                  <Badge label="Neutral" />
+                  <Badge label="Ink" tone="ink" dot />
+                  <Badge label="Outline" variant="outline" count="12" />
+                  <Badge href="/catalogo" label="Link badge" tone="sand" />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>Breadcrumbs.astro</strong><code
+                    >src/components/ui/Breadcrumbs.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <Breadcrumbs
+                    context="Catálogo"
+                    home
+                    separator="diamond"
+                    meta="B2B"
+                    items={[
+                      { label: 'Inicio', href: '/' },
+                      { label: 'Catálogo', href: '/catalogo' },
+                      { label: 'Cinturones', href: '/catalogo/cinturones' },
+                      { label: 'Cinturón de piel clásico' },
+                    ]}
+                  />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>Button.astro</strong><code
+                    >src/components/ui/Button.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--inline">
+                  <Button variant="primary">Solicitar acceso</Button>
+                  <Button variant="secondary">Contactar</Button>
+                  <Button variant="ghost" iconAfter>Ver más</Button>
+                  <Button variant="gold">Destacado</Button>
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>CategoryPillList.astro</strong><code
+                    >src/components/ui/CategoryPillList.astro</code
+                  > · underline
+                </header>
+                <div class="museum-preview">
+                  <CategoryPillList
+                    variant="underline"
+                    categories={[
+                      { label: 'Todos', href: '/blog' },
+                      { label: 'Empresa', href: '/blog/empresa' },
+                      { label: 'Marroquinería', href: '/blog/marroquineria' },
+                      { label: 'Fabricación', href: '/blog/fabricacion' },
+                      { label: 'Materiales', href: '/blog/materiales' },
+                      { label: 'Sector', href: '/blog/sector' },
+                    ]}
+                    active="Materiales"
+                  />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>CategoryPillList.astro</strong><code
+                    >src/components/ui/CategoryPillList.astro</code
+                  > · bordered
+                </header>
+                <div class="museum-preview">
+                  <CategoryPillList
+                    variant="bordered"
+                    withIndex
+                    categories={[
+                      { label: 'Todos', href: '/catalogo' },
+                      { label: 'Cinturones', href: '/catalogo/cinturones' },
+                      { label: 'Bolsos', href: '/catalogo/bolsos' },
+                      { label: 'Carteras', href: '/catalogo/carteras' },
+                    ]}
+                    active="Cinturones"
+                  />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>ContactInfoCard.astro</strong><code
+                    >src/components/ui/ContactInfoCard.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--grid-2">
+                  <ContactInfoCard
+                    index="01"
+                    label="Email comercial"
+                    value="ventas@emiliofaraoni.com"
+                    href="mailto:ventas@emiliofaraoni.com"
+                    description="Atención directa para clientes mayoristas."
+                    variant="frame"
+                  />
+                  <ContactInfoCard
+                    index="02"
+                    label="Ubicación"
+                    value="Elche, Alicante"
+                    description="Fabricación y showroom con visita concertada."
+                    variant="frame"
+                  />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>Container.astro</strong><code
+                    >src/components/ui/Container.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--flush">
+                  <Container
+                    framed
+                    density="compact"
+                    class="museum-demo-container"
+                  >
+                    <p class="meta-label">Container default framed</p>
+                    <p class="copy-small">
+                      Primitiva de ancho y padding usada por layout y secciones.
+                    </p>
+                  </Container>
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>FeaturedCard.astro</strong><code
+                    >src/components/ui/FeaturedCard.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--grid-2">
+                  <FeaturedCard
+                    index={1}
+                    eyebrow="Oficio"
+                    title="Empresa familiar"
+                    description="Trayectoria de marroquinería en Elche desde 1988."
+                  />
+                  <FeaturedCard
+                    index={2}
+                    href="/empresa"
+                    eyebrow="Producto"
+                    title="Fabricación nacional"
+                    description="Control de materiales, acabados y continuidad comercial."
+                  />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>ImagePlaceholder.astro</strong><code
+                    >src/components/ui/ImagePlaceholder.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--grid-4">
+                  <ImagePlaceholder variant="wide" label="Wide" />
+                  <ImagePlaceholder variant="portrait" label="Portrait" />
+                  <ImagePlaceholder variant="square" label="Square" />
+                  <ImagePlaceholder variant="hero" tone="light" label="Hero" />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>SectionDivider.astro</strong><code
+                    >src/components/ui/SectionDivider.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <SectionDivider label="Capítulo de muestra" />
+                  <SectionDivider spacing="compact" tone="leather" marks />
+                </div>
+              </article>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>SectionHeader.astro</strong><code
+                    >src/components/ui/SectionHeader.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <SectionHeader
+                    index="08"
+                    eyebrow="Sistema"
+                    kicker="Catálogo"
+                    meta="B2B"
+                    title="Cabecera editorial de sección"
+                    description="Componente base para abrir bloques de contenido con jerarquía clara."
+                  >
+                    <Button slot="action" variant="secondary">Acción</Button>
+                  </SectionHeader>
+                </div>
+              </article>
+            </section>
+
+            <section id="family-layout" class="museum-family">
+              <header class="museum-family__head">
+                <div>
+                  <p class="eyebrow">src/components/layout</p>
+                  <h3 class="heading-card">Layout · 4 componentes</h3>
+                </div>
+                <p class="copy-small">
+                  Estructura principal de página y navegación.
+                </p>
+              </header>
+              <div class="museum-file-strip">
+                {
+                  componentFamilies[1]?.files.map((file) => (
+                    <span class="museum-file">{file}</span>
+                  ))
+                }
+              </div>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>Header.astro</strong><code
+                    >src/components/layout/Header.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--header"
+                >
+                  <Header />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>Footer.astro</strong><code
+                    >src/components/layout/Footer.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <Footer />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>NavLink.astro</strong><code
+                    >src/components/layout/NavLink.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <nav class="museum-nav-row" aria-label="Inventario NavLink">
+                    <NavLink href="/" label="Inicio" />
+                    <NavLink href="/catalogo" label="Catálogo" active />
+                    <NavLink href="/empresa" label="Empresa" />
+                    <NavLink href="/contacto" label="Contacto" />
+                  </nav>
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>PageShell.astro</strong><code
+                    >src/components/layout/PageShell.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <PageShell>
+                    <div class="museum-demo-shell">
+                      <p class="eyebrow">Demo PageShell</p>
+                      <h4 class="heading-card">
+                        Header, main y footer en una estructura de página.
+                      </h4>
+                    </div>
+                  </PageShell>
+                </div>
+              </article>
+            </section>
+
+            <section id="family-sections" class="museum-family">
+              <header class="museum-family__head">
+                <div>
+                  <p class="eyebrow">src/components/sections</p>
+                  <h3 class="heading-card">Sections · 9 componentes</h3>
+                </div>
+                <p class="copy-small">
+                  Bloques completos para páginas editoriales y catálogo B2B.
+                </p>
+              </header>
+              <div class="museum-file-strip">
+                {
+                  componentFamilies[2]?.files.map((file) => (
+                    <span class="museum-file">{file}</span>
+                  ))
+                }
+              </div>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>ArticleHeader.astro</strong><code
+                    >src/components/sections/ArticleHeader.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--flush">
+                  <ArticleHeader
+                    eyebrow="Materiales"
+                    category="Marroquinería"
+                    title="Sobre la elección de <em>pieles</em> en curtición local"
+                    excerpt="Nota de ejemplo sobre selección, trazabilidad y uniformidad de tono dentro de la cadena de curtición nacional."
+                    author="Emilio Faraoni"
+                    date="Marzo 2026"
+                    readingTime="4 min lectura"
+                    index="N° 01"
+                  />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>B2BAccessBlock.astro</strong><code
+                    >src/components/sections/B2BAccessBlock.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <B2BAccessBlock />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>CompanyIntro.astro</strong><code
+                    >src/components/sections/CompanyIntro.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <CompanyIntro />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>FeaturedCategories.astro</strong><code
+                    >src/components/sections/FeaturedCategories.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <FeaturedCategories />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>FeaturedGrid.astro</strong><code
+                    >src/components/sections/FeaturedGrid.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <FeaturedGrid columns={3}>
+                    <FeaturedCard
+                      eyebrow="Uno"
+                      title="Primera card"
+                      description="Elemento dentro de FeaturedGrid."
+                    />
+                    <FeaturedCard
+                      eyebrow="Dos"
+                      title="Segunda card"
+                      description="Grid responsive para cards editoriales."
+                    />
+                    <FeaturedCard
+                      eyebrow="Tres"
+                      title="Tercera card"
+                      description="Preview del contenedor de cuadrícula."
+                    />
+                  </FeaturedGrid>
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>FeaturedProducts.astro</strong><code
+                    >src/components/sections/FeaturedProducts.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <FeaturedProducts />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>FinalCTA.astro</strong><code
+                    >src/components/sections/FinalCTA.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--flush">
+                  <FinalCTA
+                    eyebrow="Contacto comercial"
+                    title="Hable con el equipo de ventas"
+                    description="Solicite acceso mayorista o consulte disponibilidad y condiciones."
+                    primaryLabel="Solicitar acceso"
+                    primaryHref="/acceso-mayorista"
+                    secondaryLabel="Ver catálogo"
+                    secondaryHref="/catalogo"
+                  />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>HomeHero.astro</strong><code
+                    >src/components/sections/HomeHero.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <HomeHero />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>PageHero.astro</strong><code
+                    >src/components/sections/PageHero.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--flush">
+                  <PageHero
+                    eyebrow="Acceso mayorista"
+                    title="Tarifas y condiciones para clientes profesionales"
+                    description="Hero base para páginas internas con variantes de alineación y tamaño."
+                    variant="compact"
+                    align="center"
+                  />
+                </div>
+              </article>
+            </section>
+
+            <section id="family-blog" class="museum-family">
+              <header class="museum-family__head">
+                <div>
+                  <p class="eyebrow">src/components/blog</p>
+                  <h3 class="heading-card">Blog · 2 componentes</h3>
+                </div>
+                <p class="copy-small">
+                  Sistema editorial para artículos y listados.
+                </p>
+              </header>
+              <div class="museum-file-strip">
+                {
+                  componentFamilies[3]?.files.map((file) => (
+                    <span class="museum-file">{file}</span>
+                  ))
+                }
+              </div>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>BlogCard.astro</strong><code
+                    >src/components/blog/BlogCard.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--narrow">
+                  <BlogCard
+                    title="El proceso de selección de pieles"
+                    excerpt="Descripción breve para validar la tarjeta editorial de artículo."
+                    href="/blog/seleccion-pieles"
+                    category="Materiales"
+                    author="Emilio Faraoni"
+                    date="Marzo 2026"
+                    readingTime="4 min"
+                    number="N° 01"
+                  />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>BlogGrid.astro</strong><code
+                    >src/components/blog/BlogGrid.astro</code
+                  > · default
+                </header>
+                <div class="museum-preview">
+                  <BlogGrid variant="default">
+                    <BlogCard
+                      title="Selección de pieles"
+                      excerpt="Criterio de materiales para cada partida."
+                      href="/blog/seleccion-pieles"
+                      category="Materiales"
+                      date="Marzo 2026"
+                      readingTime="4 min"
+                    />
+                    <BlogCard
+                      title="Fabricación nacional"
+                      excerpt="Producción propia y control de calidad."
+                      href="/blog/fabricacion-nacional"
+                      category="Fabricación"
+                      date="Febrero 2026"
+                      readingTime="3 min"
+                    />
+                    <BlogCard
+                      title="Catálogo profesional"
+                      excerpt="Estructura del catálogo para mayoristas."
+                      href="/blog/catalogo-profesional"
+                      category="Mayorista"
+                      date="Enero 2026"
+                      readingTime="5 min"
+                    />
+                  </BlogGrid>
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>BlogGrid.astro</strong><code
+                    >src/components/blog/BlogGrid.astro</code
+                  > · featured-first
+                </header>
+                <div class="museum-preview">
+                  <BlogGrid variant="featured-first">
+                    <BlogCard
+                      variant="featured"
+                      title="Criterio de selección de pieles para una partida"
+                      excerpt="Criterio editorial de materiales: cómo se escoge el cuero para una colección de cinturones y bolsos."
+                      href="/blog/seleccion-pieles"
+                      category="Materiales"
+                      author="Emilio Faraoni"
+                      date="Marzo 2026"
+                      readingTime="6 min"
+                      number="N° 01"
+                    />
+                    <BlogCard
+                      title="Fabricación nacional"
+                      excerpt="Producción propia y control de calidad."
+                      href="/blog/fabricacion-nacional"
+                      category="Fabricación"
+                      date="Febrero 2026"
+                      readingTime="3 min"
+                      number="N° 02"
+                    />
+                    <BlogCard
+                      title="Catálogo profesional"
+                      excerpt="Estructura del catálogo para mayoristas."
+                      href="/blog/catalogo-profesional"
+                      category="Mayorista"
+                      date="Enero 2026"
+                      readingTime="5 min"
+                      number="N° 03"
+                    />
+                  </BlogGrid>
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>BlogGrid.astro</strong><code
+                    >src/components/blog/BlogGrid.astro</code
+                  > · list
+                </header>
+                <div class="museum-preview">
+                  <BlogGrid variant="list">
+                    <BlogCard
+                      variant="row"
+                      title="El proceso de selección de pieles"
+                      excerpt="Criterio editorial de materiales."
+                      href="/blog/seleccion-pieles"
+                      category="Materiales"
+                      date="Marzo 2026"
+                      readingTime="4 min"
+                      number="N° 01"
+                    />
+                    <BlogCard
+                      variant="row"
+                      title="Fabricación nacional"
+                      excerpt="Producción propia y control de calidad."
+                      href="/blog/fabricacion-nacional"
+                      category="Fabricación"
+                      date="Febrero 2026"
+                      readingTime="3 min"
+                      number="N° 02"
+                    />
+                    <BlogCard
+                      variant="row"
+                      title="Catálogo profesional"
+                      excerpt="Estructura del catálogo para mayoristas."
+                      href="/blog/catalogo-profesional"
+                      category="Mayorista"
+                      date="Enero 2026"
+                      readingTime="5 min"
+                      number="N° 03"
+                    />
+                  </BlogGrid>
+                </div>
+              </article>
+            </section>
+
+            <section id="family-product" class="museum-family">
+              <header class="museum-family__head">
+                <div>
+                  <p class="eyebrow">src/components/product</p>
+                  <h3 class="heading-card">Product · 6 componentes</h3>
+                </div>
+                <p class="copy-small">
+                  Scaffold editorial B2B sin precios públicos.
+                </p>
+              </header>
+              <div class="museum-file-strip">
+                {
+                  componentFamilies[4]?.files.map((file) => (
+                    <span class="museum-file">{file}</span>
+                  ))
+                }
+              </div>
+
+              <article class="museum-spec">
+                <header>
+                  <strong>ProductCard.astro</strong><code
+                    >src/components/product/ProductCard.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--narrow">
+                  {demoProduct && <ProductCard product={demoProduct} />}
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>ProductGallery.astro</strong><code
+                    >src/components/product/ProductGallery.astro</code
+                  >
+                </header>
+                <div class="museum-preview museum-preview--narrow">
+                  {demoProduct && <ProductGallery product={demoProduct} />}
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>ProductGrid.astro</strong><code
+                    >src/components/product/ProductGrid.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <ProductGrid products={demoProducts} />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>ProductInfo.astro</strong><code
+                    >src/components/product/ProductInfo.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  {demoProduct && <ProductInfo product={demoProduct} />}
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>RelatedProducts.astro</strong><code
+                    >src/components/product/RelatedProducts.astro</code
+                  >
+                </header>
+                <div
+                  class="museum-preview museum-preview--flush museum-preview--scroll"
+                >
+                  <RelatedProducts products={demoProducts} />
+                </div>
+              </article>
+              <article class="museum-spec">
+                <header>
+                  <strong>RestrictedPriceCTA.astro</strong><code
+                    >src/components/product/RestrictedPriceCTA.astro</code
+                  >
+                </header>
+                <div class="museum-preview">
+                  <RestrictedPriceCTA />
+                </div>
+              </article>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="globals" class="museum-section museum-section--dark">
+        <div class="museum-container">
+          <header class="museum-section__head">
+            <span class="museum-section__num">02</span>
+            <div>
+              <p class="eyebrow">src/styles/global.css</p>
+              <h2 class="heading-section">Globals del sistema</h2>
+              <p class="copy-lead">
+                Tokens y clases globales agrupados con el mismo criterio del
+                inventario de componentes. Ya no son secciones sueltas:
+                pertenecen al archivo global y se documentan como tal.
+              </p>
+            </div>
+          </header>
+
+          <div class="museum-family-index" aria-label="Resumen de globals">
+            <a href="#global-tokens" class="museum-index-card">
+              <span class="meta-label">:root</span>
+              <strong>Tokens</strong>
+              <span>color, tipo, layout, motion</span>
+            </a>
+            {
+              globalFamilies.map((family) => (
+                <a href={`#${family.id}`} class="museum-index-card">
+                  <span class="meta-label">{family.label}</span>
+                  <strong>{family.title}</strong>
+                  <span>{family.classes.length} clases</span>
+                </a>
+              ))
+            }
+          </div>
+
+          <section id="global-tokens" class="museum-family">
+            <header class="museum-family__head">
+              <div>
+                <p class="eyebrow">:root</p>
+                <h3 class="heading-card">Tokens CSS</h3>
+              </div>
+              <p class="copy-small">
+                Variables base que gobiernan color, tipo, espaciado, forma, foco
+                y movimiento.
+              </p>
+            </header>
+
+            <div class="museum-token-sections">
+              {
+                tokenFamilies.map((family) => (
+                  <article id={family.id} class="museum-token-family">
+                    <header>
+                      <span class="meta-label">{family.eyebrow}</span>
+                      <h4>{family.title}</h4>
+                    </header>
+                    <div
+                      class:list={[
+                        'museum-token-grid',
+                        family.id === 'global-tokens-color' &&
+                          'museum-token-grid--color',
+                      ]}
+                    >
+                      {family.items.map((item) => (
+                        <div class="museum-token">
+                          {'value' in item &&
+                            String(item.value).startsWith('#') && (
+                              <span
+                                class="museum-token__swatch"
+                                style={`background:${item.value}`}
+                                aria-hidden="true"
+                              />
+                            )}
+                          <code>{item.token}</code>
+                          <span>{item.value}</span>
+                          <small>{item.usage}</small>
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))
+              }
+            </div>
+          </section>
+
+          <section id="global-classes" class="museum-family">
+            <header class="museum-family__head">
+              <div>
+                <p class="eyebrow">Clases globales</p>
+                <h3 class="heading-card">Inventario de clases reutilizables</h3>
+              </div>
+              <p class="copy-small">
+                Agrupación por responsabilidad visual y funcional. Cada familia
+                lista todas las clases relevantes y muestra un ejemplo compacto.
+              </p>
+            </header>
+
+            <div class="museum-directory">
+              {
+                globalFamilies.map((family) => (
+                  <article id={family.id} class="museum-global-spec">
+                    <header class="museum-global-spec__head">
+                      <div>
+                        <span class="meta-label">{family.label}</span>
+                        <h4>{family.title}</h4>
+                        <p>{family.description}</p>
+                      </div>
+                      <strong>{family.classes.length}</strong>
+                    </header>
+                    <div class="museum-class-list">
+                      {family.classes.map((className) => (
+                        <code>.{className}</code>
+                      ))}
+                    </div>
+                    <div class="museum-global-preview">
+                      {family.id === 'global-layout' && (
+                        <div class="museum-layout-demo">
+                          <div class="stack-sm">
+                            <p class="meta-label">.container · .grid-3</p>
+                            <div class="grid grid-3">
+                              <span />
+                              <span />
+                              <span />
+                            </div>
+                          </div>
+                          <div class="split">
+                            <span />
+                            <span />
+                          </div>
+                        </div>
+                      )}
+                      {family.id === 'global-surfaces' && (
+                        <div class="museum-surface-demo grid grid-3">
+                          <div class="surface panel">surface panel</div>
+                          <div class="surface-soft panel-soft">
+                            surface-soft
+                          </div>
+                          <div class="surface-inverse panel">
+                            surface-inverse
+                          </div>
+                        </div>
+                      )}
+                      {family.id === 'global-type' && (
+                        <div class="stack-md">
+                          <p class="eyebrow">Eyebrow editorial</p>
+                          <h5 class="display-soft">Fabricación nacional</h5>
+                          <p class="copy-lead">
+                            Copy lead para presentar una sección con tono sobrio
+                            y jerarquía clara.
+                          </p>
+                          <p class="copy-small">Meta y apoyo de lectura.</p>
+                        </div>
+                      )}
+                      {family.id === 'global-actions' && (
+                        <div class="museum-preview--inline">
+                          <a href="#components" class="fine-link">
+                            Fine link
+                          </a>
+                          <span class="badge">Badge</span>
+                          <a
+                            href="#global-classes"
+                            class="button button-secondary"
+                          >
+                            Button
+                          </a>
+                          <span class="pill">Pill</span>
+                        </div>
+                      )}
+                      {family.id === 'global-editorial' && (
+                        <div class="feature-card">
+                          <span class="editorial-numeral">01</span>
+                          <h5 class="heading-card">Feature card global</h5>
+                          <p class="copy-small">
+                            Bloques editoriales, diferenciales y cierres de
+                            página comparten estos patrones.
+                          </p>
+                        </div>
+                      )}
+                      {family.id === 'global-media' && (
+                        <div class="museum-media-demo">
+                          <div class="image-placeholder ratio-wide">
+                            <span class="meta-label">image-placeholder</span>
+                          </div>
+                          <div class="divider-editorial" />
+                          <p class="copy-small">
+                            Ratios, media, blog, artículos, contacto,
+                            separadores, hover y producto.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                ))
+              }
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <footer class="museum-footer">
+        <p class="meta-label">Emilio Faraoni · Style Museum</p>
+      </footer>
+    </main>
+
+    <style>
+      .museum {
+        background: var(--color-bg);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+      }
+
+      .museum code {
+        font-family: var(--font-mono);
+        font-size: 0.78em;
+      }
+
+      .museum-container {
+        width: min(100% - clamp(2rem, 5vw, 5rem), var(--container-wide));
+        margin-inline: auto;
+        min-width: 0;
+      }
+
+      .museum-hero {
+        min-height: 100dvh;
+        display: flex;
+        align-items: end;
+        padding-block: clamp(5rem, 9vw, 8rem) var(--section-y);
+        background: var(--color-bg);
+      }
+
+      .museum-hero__rail,
+      .museum-nav,
+      .museum-section__head,
+      .museum-family__head,
+      .museum-spec > header,
+      .museum-global-spec__head {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .museum-hero__rail {
+        grid-template-columns: auto minmax(2rem, 1fr) auto;
+        align-items: center;
+        margin-bottom: clamp(3rem, 6vw, 5rem);
+      }
+
+      .museum-rule {
+        height: 1px;
+        background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+      }
+
+      .museum-hero__grid {
+        display: grid;
+        gap: clamp(2rem, 5vw, 4rem);
+        align-items: end;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .museum-hero__copy,
+      .museum-hero__grid > * {
+        min-width: 0;
+      }
+
+      @media (min-width: 58rem) {
+        .museum-hero__grid {
+          grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
+        }
+      }
+
+      .museum-hero__title {
+        max-width: 9ch;
+        margin: 0;
+      }
+
+      .museum-hero__lead {
+        width: 100%;
+        max-width: 58ch;
+        margin-top: 1.75rem;
+        overflow-wrap: break-word;
+      }
+
+      .museum-hero__panel {
+        display: grid;
+        gap: 0.8rem;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        padding: clamp(1.25rem, 3vw, 2rem);
+        border: 1px solid var(--color-border-soft);
+        background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+        border-radius: var(--radius-card);
+      }
+
+      .museum-hero__panel .copy-small {
+        overflow-wrap: break-word;
+      }
+
+      .museum-nav {
+        grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+        margin-top: clamp(3rem, 6vw, 5rem);
+        padding-top: 1.25rem;
+        border-top: 1px solid
+          color-mix(in srgb, var(--color-ink) 16%, transparent);
+      }
+
+      .museum-nav a,
+      .museum-index-card {
+        color: var(--color-muted);
+        text-decoration: none;
+        transition:
+          color var(--duration-base) var(--ease-soft),
+          border-color var(--duration-base) var(--ease-soft),
+          background var(--duration-base) var(--ease-soft);
+      }
+
+      .museum-nav a {
+        font-size: 0.68rem;
+        font-weight: 650;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .museum-nav a:hover,
+      .museum-index-card:hover {
+        color: var(--color-ink);
+      }
+
+      .museum-section {
+        padding-block: var(--section-y);
+        border-top: 1px solid var(--color-border-soft);
+      }
+
+      .museum-section--dark {
+        background: var(--color-surface-inverse);
+        color: var(--color-inverse);
+      }
+
+      .museum-section--dark .heading-section,
+      .museum-section--dark .heading-card,
+      .museum-section--dark .copy-lead,
+      .museum-section--dark .copy-small,
+      .museum-section--dark .eyebrow {
+        color: inherit;
+      }
+
+      .museum-section--dark .meta-label {
+        color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
+      }
+
+      .museum-section__head {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: start;
+        margin-bottom: clamp(2.75rem, 5vw, 4.5rem);
+      }
+
+      .museum-section__num {
+        min-width: 2.6rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid currentColor;
+        color: var(--color-leather-dark);
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 300;
+      }
+
+      .museum-section--dark .museum-section__num {
+        color: var(--color-gold-soft);
+      }
+
+      .museum-section__head .copy-lead {
+        max-width: 66ch;
+        margin-top: 1rem;
+      }
+
+      .museum-family-index {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+        gap: var(--grid-gap);
+        margin-bottom: clamp(3rem, 6vw, 5rem);
+      }
+
+      .museum-index-card {
+        display: grid;
+        gap: 0.55rem;
+        padding: 1.2rem;
+        border: 1px solid var(--color-border-soft);
+        background: var(--color-surface);
+        border-radius: var(--radius-card);
+      }
+
+      .museum-section--dark .museum-index-card {
+        border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+        background: color-mix(in srgb, var(--color-inverse) 5%, transparent);
+      }
+
+      .museum-index-card strong {
+        color: var(--color-ink);
+        font-family: var(--font-display);
+        font-size: 1.55rem;
+        font-weight: 300;
+      }
+
+      .museum-section--dark .museum-index-card strong {
+        color: var(--color-inverse);
+      }
+
+      .museum-index-card span:last-child {
+        font-size: 0.78rem;
+      }
+
+      .museum-directory {
+        display: grid;
+        gap: clamp(3rem, 6vw, 5rem);
+      }
+
+      .museum-family {
+        display: grid;
+        gap: 1.25rem;
+        scroll-margin-top: 2rem;
+      }
+
+      .museum-family__head {
+        grid-template-columns: minmax(0, 1fr);
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--color-border-soft);
+      }
+
+      @media (min-width: 56rem) {
+        .museum-family__head {
+          grid-template-columns: minmax(0, 0.8fr) minmax(16rem, 0.4fr);
+          align-items: end;
+        }
+      }
+
+      .museum-section--dark .museum-family__head {
+        border-color: color-mix(in srgb, var(--color-inverse) 16%, transparent);
+      }
+
+      .museum-file-strip,
+      .museum-class-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .museum-file,
+      .museum-class-list code {
+        display: inline-flex;
+        border: 1px solid var(--color-border-soft);
+        background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+        color: var(--color-muted);
+        border-radius: var(--radius-pill);
+        padding: 0.45rem 0.7rem;
+        font-family: var(--font-mono);
+        font-size: 0.67rem;
+      }
+
+      .museum-section--dark .museum-class-list code {
+        border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+        background: color-mix(in srgb, var(--color-inverse) 6%, transparent);
+        color: color-mix(in srgb, var(--color-inverse) 74%, transparent);
+      }
+
+      .museum-spec,
+      .museum-global-spec,
+      .museum-token-family {
+        overflow: hidden;
+        border: 1px solid var(--color-border-soft);
+        border-radius: var(--radius-card);
+        background: var(--color-surface);
+      }
+
+      .museum-spec > header {
+        grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr);
+        align-items: baseline;
+        padding: 1.1rem clamp(1rem, 2vw, 1.5rem);
+        border-bottom: 1px solid var(--color-border-soft);
+        background: var(--color-surface-muted);
+      }
+
+      .museum-spec strong {
+        color: var(--color-ink);
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2vw, 1.85rem);
+        font-weight: 300;
+      }
+
+      .museum-spec code {
+        color: var(--color-muted);
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
+
+      .museum-preview {
+        padding: clamp(1.25rem, 2vw, 1.75rem);
+        background: var(--color-bg);
+        overflow: hidden;
+      }
+
+      .museum-preview--flush {
+        padding: 0;
+      }
+
+      .museum-preview--inline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .museum-preview--grid-2,
+      .museum-preview--grid-4 {
+        display: grid;
+        gap: var(--grid-gap);
+      }
+
+      .museum-preview--grid-2 {
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+      }
+
+      .museum-preview--grid-4 {
+        grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      }
+
+      .museum-preview--narrow {
+        max-width: 30rem;
+      }
+
+      .museum-preview--scroll {
+        max-height: 36rem;
+        overflow: auto;
+        overscroll-behavior: contain;
+      }
+
+      .museum-preview--header :global(header) {
+        position: relative;
+        top: auto;
+      }
+
+      .museum-demo-container {
+        padding-block: 2rem;
+      }
+
+      .museum-demo-shell {
+        min-height: 12rem;
+        display: grid;
+        align-content: center;
+        gap: 0.75rem;
+        padding: clamp(2rem, 4vw, 4rem);
+        background: var(--color-bg);
+      }
+
+      .museum-nav-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 2.25rem;
+      }
+
+      .museum-token-sections {
+        display: grid;
+        gap: var(--grid-gap);
+      }
+
+      .museum-token-family {
+        padding: clamp(1.25rem, 2vw, 1.75rem);
+        background: color-mix(in srgb, var(--color-inverse) 4%, transparent);
+        border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+      }
+
+      .museum-token-family header {
+        display: grid;
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+      }
+
+      .museum-token-family h4,
+      .museum-global-spec h4 {
+        margin: 0;
+        color: var(--color-inverse);
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2vw, 1.8rem);
+        font-weight: 300;
+      }
+
+      .museum-token-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: 0.75rem;
+      }
+
+      .museum-token-grid--color {
+        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      }
+
+      .museum-token {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 0.35rem 0.75rem;
+        align-items: center;
+        min-height: 4.5rem;
+        padding: 0.85rem;
+        border: 1px solid
+          color-mix(in srgb, var(--color-inverse) 12%, transparent);
+        background: color-mix(in srgb, var(--color-inverse) 5%, transparent);
+        border-radius: var(--radius-card);
+      }
+
+      .museum-token__swatch {
+        grid-row: span 3;
+        width: 2.4rem;
+        height: 2.4rem;
+        border: 1px solid
+          color-mix(in srgb, var(--color-inverse) 24%, transparent);
+        border-radius: 50%;
+      }
+
+      .museum-token code {
+        color: var(--color-inverse);
+      }
+
+      .museum-token span,
+      .museum-token small {
+        color: color-mix(in srgb, var(--color-inverse) 68%, transparent);
+      }
+
+      .museum-global-spec {
+        display: grid;
+        gap: 0;
+        background: color-mix(in srgb, var(--color-inverse) 4%, transparent);
+        border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+      }
+
+      .museum-global-spec__head {
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding: 1.25rem;
+        border-bottom: 1px solid
+          color-mix(in srgb, var(--color-inverse) 12%, transparent);
+      }
+
+      .museum-global-spec__head p {
+        max-width: 68ch;
+        margin: 0.65rem 0 0;
+        color: color-mix(in srgb, var(--color-inverse) 68%, transparent);
+        font-size: 0.9rem;
+        line-height: 1.65;
+      }
+
+      .museum-global-spec__head strong {
+        color: var(--color-gold-soft);
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 300;
+      }
+
+      .museum-class-list {
+        padding: 1.25rem;
+        border-bottom: 1px solid
+          color-mix(in srgb, var(--color-inverse) 12%, transparent);
+      }
+
+      .museum-global-preview {
+        padding: 1.25rem;
+      }
+
+      .museum-layout-demo,
+      .museum-media-demo {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .museum-layout-demo .grid span,
+      .museum-layout-demo .split span {
+        min-height: 4rem;
+        border: 1px solid
+          color-mix(in srgb, var(--color-inverse) 16%, transparent);
+        background: color-mix(in srgb, var(--color-inverse) 8%, transparent);
+        border-radius: var(--radius-card);
+      }
+
+      .museum-surface-demo > * {
+        min-height: 7rem;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .museum-global-preview .display-soft {
+        margin: 0;
+      }
+
+      .museum-global-preview .feature-card {
+        max-width: 28rem;
+        background: var(--color-surface);
+        color: var(--color-ink);
+      }
+
+      .museum-media-demo .image-placeholder {
+        display: grid;
+        place-items: center;
+        min-height: 9rem;
+        border: 1px solid
+          color-mix(in srgb, var(--color-inverse) 14%, transparent);
+        background: color-mix(in srgb, var(--color-inverse) 6%, transparent);
+        color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
+      }
+
+      .museum-media-demo .divider-editorial {
+        background: color-mix(in srgb, var(--color-inverse) 16%, transparent);
+      }
+
+      .museum-footer {
+        padding-block: 2.75rem;
+        border-top: 1px solid var(--color-border-soft);
+        background: var(--color-surface);
+        text-align: center;
+      }
+
+      @media (max-width: 760px) {
+        .museum-container {
+          width: auto;
+          max-width: 100vw;
+          margin-inline: 1rem;
+          padding-inline: 0;
+        }
+
+        .museum-hero__lead,
+        .museum-hero__panel {
+          max-width: calc(100vw - 4rem);
+        }
+
+        .museum-hero__lead {
+          max-width: 29ch;
+        }
+
+        .museum-hero__rail,
+        .museum-section__head,
+        .museum-spec > header,
+        .museum-global-spec__head {
+          grid-template-columns: 1fr;
+        }
+
+        .museum-nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .museum-spec code {
+          text-align: left;
+        }
+      }
+    </style>
+  </body>
+</html>

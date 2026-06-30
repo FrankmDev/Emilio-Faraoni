@@ -1,98 +1,107 @@
 ---
 /**
- * FeaturedCategories · full-bleed editorial category strip.
- * Each category is a full-card editorial tile:
- * a tonal CSS-only surface (no external images, see the
- * `.category-tile` variants in global.css), an index stamp
- * in the top-left, the title in the lower-left and a small
- * corner mark in the top-right. No description, no bottom
- * underline. Tonal variation per category keeps the strip
- * visually rich without being noisy.
+ * FeaturedCategories · image-led category strip.
+ *
+ * Each category is a full-card editorial tile. Image
+ * fills the tile; a soft bottom rail keeps the title
+ * legible; a top rail carries an index stamp + count.
+ * The first tile is marked as `featured` and spans the
+ * full grid width on desktop, acting as the visual hero.
+ *
+ * When a category has no image, the tile falls back to
+ * the global `.category-tile-image--placeholder` look
+ * (flat surface, ink-on-paper, hairline frame) so the
+ * grid never feels broken.
  */
 import Container from '@/components/ui/Container.astro';
 import SectionHeader from '@/components/ui/SectionHeader.astro';
-import { categories } from '@/data/categories';
+import { categories, type Category } from '@/data/categories';
+import { ROUTES } from '@/lib/routes';
+import { getPublicProducts } from '@/lib/products/getters';
 
-/* Each category gets a tonal wash. Order is stable and
-   cycles through the available variants. */
-const variants = [
-  'category-tile--leather',
-  'category-tile--sand',
-  'category-tile--paper',
-  'category-tile--clay',
-] as const;
+const allProducts = getPublicProducts();
+const productCountByCategory = new Map<string, number>();
+for (const product of allProducts) {
+  productCountByCategory.set(
+    product.categorySlug,
+    (productCountByCategory.get(product.categorySlug) ?? 0) + 1,
+  );
+}
 ---
 
-<section class="section">
-  <Container class="grid gap-12">
+<section class="section featured-categories">
+  <Container class="featured-categories__inner">
     <SectionHeader
+      class="featured-categories__head"
       eyebrow="Categorías"
-      title="Líneas de producto"
       description="Una estructura clara para consultar cinturones, bolsos, carteras y complementos de marroquinería sin mostrar tarifas públicas."
-    />
-    <ul class="category-tile-list" role="list">
+    >
+      <span slot="title">
+        <em>Líneas</em> de producto
+      </span>
+    </SectionHeader>
+
+    <ul class="category-tile-grid" role="list">
       {
-        categories.map((category, index) => (
-          <li class="category-tile-list__cell">
-            <article
-              class:list={['category-tile', variants[index % variants.length]]}
-              aria-labelledby={`category-tile-${category.slug}`}
+        categories.map((category: Category, index: number) => {
+          const href = `${ROUTES.CATALOG}/${category.slug}`;
+          const isFeatured = index === 0;
+          const count = productCountByCategory.get(category.slug) ?? 0;
+          return (
+            <li
+              class:list={[isFeatured && 'category-tile-grid__cell--featured']}
             >
-              <span class="category-tile__corner" aria-hidden="true" />
-              <div class="category-tile__top">
-                <span class="category-tile__index" aria-hidden="true">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <span class="category-tile__count">Línea</span>
-              </div>
-              <h3
-                id={`category-tile-${category.slug}`}
-                class="category-tile__title"
+              <a
+                class:list={[
+                  'category-tile-image',
+                  isFeatured && 'category-tile-image--featured',
+                  !category.image && 'category-tile-image--placeholder',
+                ]}
+                href={href}
+                aria-label={`Ver la línea ${category.name}`}
               >
-                {category.name}
-              </h3>
-            </article>
-          </li>
-        ))
+                {category.image ? (
+                  <div class="category-tile-image__media" aria-hidden="true">
+                    <img
+                      src={category.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : (
+                  <div class="category-tile-image__media" aria-hidden="true">
+                    <span class="category-tile-image__placeholder-frame" />
+                  </div>
+                )}
+                <span class="category-tile-image__overlay" aria-hidden="true" />
+                <div class="category-tile-image__top">
+                  <span class="category-tile-image__index">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span class="category-tile-image__count">
+                    {count > 0
+                      ? `${String(count).padStart(2, '0')} referencias`
+                      : 'Próximamente'}
+                  </span>
+                </div>
+                <div class="category-tile-image__body">
+                  <p class="category-tile-image__eyebrow">Línea</p>
+                  <h3 class="category-tile-image__title">{category.name}</h3>
+                  {isFeatured && category.description && (
+                    <p class="category-tile-image__desc">
+                      {category.description}
+                    </p>
+                  )}
+                  <span class="category-tile-image__cta" aria-hidden="true">
+                    Explorar línea
+                  </span>
+                </div>
+              </a>
+            </li>
+          );
+        })
       }
     </ul>
   </Container>
 </section>
-
-<style>
-  /* The list itself is a clean responsive grid; the visual
-     treatment lives on the .category-tile classes in
-     src/styles/global.css. */
-  .category-tile-list {
-    display: grid;
-    gap: var(--grid-gap);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .category-tile-list {
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 40rem) {
-    .category-tile-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 70rem) {
-    .category-tile-list {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
-  .category-tile-list__cell {
-    display: flex;
-    min-width: 0;
-  }
-
-  .category-tile-list__cell .category-tile {
-    width: 100%;
-  }
-</style>

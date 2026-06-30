@@ -4,14 +4,20 @@
 
 /* =========================================================
    EMILIO FARAONI · GLOBAL DESIGN SYSTEM
-   Editorial ecommerce · Leather goods · Spanish manufacturer
+   Editorial ecommerce 80 / craftsmanship 20.
 
    Direction:
-   - professional, elegant, modern
-   - editorial ecommerce, not fashion mall clone
-   - subtle leather / atelier / manufacturing character
-   - scalable B2B catalogue foundation
-   - minimal Tailwind usage inside components
+   - 80% modern editorial ecommerce (Zara, Sfera, Mango, COS, Pull&Bear)
+   - 20% leather / atelier / family-manufacturer
+   - Light, image-led, retail-anchored surface system
+   - Leather, brass, walnut live as ACCENTS — never as atmosphere
+   - Generous negative space, hairline structure, no SaaS chrome
+   - B2B catalogue foundation, ready to scale
+
+   Layering:
+   - @layer base       — resets + element defaults
+   - @layer components — design-system classes (this file's vocabulary)
+   - @layer utilities  — micro-interactions and text helpers
    ========================================================= */
 
 :root {
@@ -19,52 +25,60 @@
 
   /* =========================================================
      COLOR · SURFACES
-     Warm, controlled, premium. Not sterile white, not rustic.
+     Light, clean, image-led. Warm only as a whisper so the
+     brand never reads as a generic cold-SaaS or a rustic
+     leather shop. Off-white exterior, near-white page, true
+     white surface, pale ivory soft plane, light cool gray
+     muted plane. Sand / clay / stone stay neutral and are
+     reserved for tonal washes, never the global background.
      ========================================================= */
-  --color-bg: #ede7dd;
-  --color-page: #fbfaf6;
-  --color-surface: #fffefb;
-  --color-surface-soft: #f4f0e8;
-  --color-surface-muted: #e8dfd2;
-  --color-surface-sand: #d7c9b7;
-  --color-surface-clay: #c4b29d;
-  --color-surface-stone: #b5aa9d;
-  --color-surface-inverse: #16110d;
+  --color-bg: #f1f0ec;
+  --color-page: #fbfaf7;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f5f4f0;
+  --color-surface-muted: #ecede9;
+  --color-surface-sand: #e2e0d8;
+  --color-surface-clay: #d6d3cb;
+  --color-surface-stone: #c9c6bd;
+  --color-surface-inverse: #15110d;
 
   /* =========================================================
      COLOR · TEXT
-     Warm ink gives leather/craft authority without heaviness.
+     Near-black ink, warm but quiet. Muted ramps lean cool
+     taupe so body copy never picks up an orange cast.
      ========================================================= */
-  --color-ink: #17120e;
-  --color-ink-soft: #332a22;
-  --color-ink-muted: #55483c;
-  --color-muted: #76695c;
-  --color-muted-light: #a89b8b;
-  --color-inverse: #fbf6ee;
+  --color-ink: #141210;
+  --color-ink-soft: #2e2823;
+  --color-ink-muted: #4f4640;
+  --color-muted: #6c6660;
+  --color-muted-light: #9a948c;
+  --color-inverse: #fafaf7;
 
   /* =========================================================
      COLOR · BORDERS
-     Printed hairlines, not app borders.
+     Cool, hairlined. No more warm tan rules.
      ========================================================= */
-  --color-border-soft: #e8dfd2;
-  --color-border: #d0c1ae;
-  --color-border-strong: #9d8870;
+  --color-border-soft: #e8e7e2;
+  --color-border: #d8d6d0;
+  --color-border-strong: #a8a59c;
 
   /* =========================================================
      COLOR · MATERIAL ACCENTS
-     Use leather/brass as identity notes, not as theme fill.
+     Leather, brass, walnut. Reserved for accents — index
+     numerals, fine rules, focus rings, image stamps. They
+     are NEVER the base of a section or the body background.
      ========================================================= */
   --color-leather: #765033;
   --color-leather-soft: #9b7456;
-  --color-leather-dark: #332014;
+  --color-leather-dark: #2e1c10;
   --color-walnut: #4a3020;
   --color-brass: #a18458;
   --color-brass-muted: #b8a078;
-  --color-charcoal: #201b17;
+  --color-charcoal: #1c1814;
   --color-gold-soft: #b8a078;
   --color-clay: #b59b7d;
   --color-oxide: #7a4a32;
-  --color-smoke: #b5aa9d;
+  --color-smoke: #a8a39a;
 
   /* Aliases — keep the design system backwards-compatible
      with the components that reference the extended palette. */
@@ -137,58 +151,56 @@
 
   /* =========================================================
      SHAPE
-     Editorial rounding — soft, not SaaS. Slightly more generous
-     than before so cards, controls and buttons read as crafted
-     rather than app-generated. The button token is its own value
-     because the pill is the language, not the default.
+     Tighter than the previous generation. Editorial retail
+     relies on square-ish cards (4–8px), not pillowy
+     containers. The button is the only true rounded form.
      ========================================================= */
   --radius-0: 0;
-  --radius-xs: 3px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 18px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
   --radius-pill: 999px;
 
   /* Aliases used by the UI primitives. */
   --radius-control: var(--radius-xs);
-  --radius-card: var(--radius-md);
-  --radius-card-lg: var(--radius-lg);
+  --radius-card: var(--radius-sm);
+  --radius-card-lg: var(--radius-md);
 
-  /* Button language — stadium / pill by default, softer than
-     the standard control rounding. Editorial, not generic. */
+  /* Button language — stadium / pill by default. The button
+     is the only place we round generously. */
   --radius-button: var(--radius-pill);
 
   /* =========================================================
      SHADOWS
-     Used sparingly. Editorial surfaces are mostly flat.
+     Almost gone. We rely on hairlines, surface contrast and
+     image weight, not on elevation. The only persistent
+     shadow is the page-frame shadow on viewports ≥ 64rem,
+     and even that is a hairline + a soft drop.
      ========================================================= */
   --shadow-page:
     0 0 0 1px color-mix(in srgb, var(--color-ink) 5%, transparent),
-    0 28px 80px -64px rgb(23 18 14 / 0.72);
+    0 24px 80px -56px rgb(20 18 16 / 0.45);
 
-  --shadow-soft:
-    0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent),
-    0 18px 48px -42px rgb(23 18 14 / 0.52);
+  --shadow-soft: 0 1px 0 color-mix(in srgb, var(--color-ink) 5%, transparent);
 
-  /* Atelier shadow — used by featured surfaces that need a
-     bit more presence. Quiet, not SaaS. */
-  --atelier-shadow:
-    0 1px 0 color-mix(in srgb, var(--color-ink) 5%, transparent),
-    0 24px 64px -48px rgb(23 18 14 / 0.4);
+  /* Atelier shadow — used sparingly, only when a single
+     surface must sit above a busy photo block. */
+  --atelier-shadow: 0 1px 0 color-mix(in srgb, var(--color-ink) 4%, transparent);
 
   --shadow-none: none;
 
   /* Paper texture — CSS-only grain for editorial surfaces.
-     Subtle, monochrome, used in light overlays. */
+     Reserved for opt-in overlays; not applied by default. */
   --paper-tex:
     radial-gradient(
       circle at 20% 30%,
-      color-mix(in srgb, var(--color-ink) 5%, transparent) 0.4px,
+      color-mix(in srgb, var(--color-ink) 4%, transparent) 0.4px,
       transparent 0.6px
     ),
     radial-gradient(
       circle at 70% 80%,
-      color-mix(in srgb, var(--color-ink) 4%, transparent) 0.4px,
+      color-mix(in srgb, var(--color-ink) 3%, transparent) 0.4px,
       transparent 0.6px
     );
   --paper-tex-size: 11rem 11rem;
@@ -205,7 +217,7 @@
   /* =========================================================
      FOCUS
      ========================================================= */
-  --focus-ring-color: var(--color-leather-dark);
+  --focus-ring-color: var(--color-ink);
   --focus-ring-width: 1.5px;
   --focus-ring-offset: 4px;
 }
@@ -247,15 +259,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at 8% 0%, rgb(118 80 51 / 0.1), transparent 32rem),
-    linear-gradient(
-      180deg,
-      rgb(255 254 251 / 0.82) 0,
-      rgb(255 254 251 / 0.32) 32rem,
-      transparent 72rem
-    ),
-    var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 15px;
@@ -314,12 +318,12 @@ a:not([class]) {
 }
 
 a:not([class]):hover {
-  color: var(--color-leather-dark);
+  color: var(--color-ink);
   text-decoration-color: currentColor;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-leather) 22%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
   color: var(--color-ink);
 }
 
@@ -401,8 +405,17 @@ a:not([class]):hover {
   .hover-image:hover img,
   .hover-image:focus-within img,
   .hover-craft:hover,
-  .hover-craft:focus-within {
+  .hover-craft:focus-within,
+  .transition-media,
+  [class*='__media'] img,
+  [class*='__media'] picture,
+  [class*='__media'] video {
     transform: none !important;
+  }
+
+  .hover-line-grow,
+  .hover-line {
+    transition-duration: 1ms !important;
   }
 }
 
@@ -496,7 +509,7 @@ textarea {
 select {
   appearance: none;
   padding-right: 2.5rem;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%2317120e' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23141210' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.95rem center;
   background-size: 0.65rem auto;
@@ -516,10 +529,9 @@ select:hover:not(:focus):not(:disabled) {
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--color-leather-dark);
+  border-color: var(--color-ink);
   outline: none;
-  box-shadow: 0 0 0 3px
-    color-mix(in srgb, var(--color-leather) 13%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ink) 8%, transparent);
 }
 
 label {
@@ -609,9 +621,7 @@ fieldset {
   .container--framed {
     border: 1px solid var(--color-border-soft);
     border-radius: var(--radius-card);
-    background:
-      linear-gradient(180deg, rgb(255 254 251 / 0.62), rgb(255 254 251 / 0)),
-      var(--color-surface);
+    background: var(--color-surface);
   }
 
   .section {
@@ -653,6 +663,41 @@ fieldset {
   .section-inverse {
     background: var(--color-surface-inverse);
     color: var(--color-inverse);
+  }
+
+  /* Top hairline rule — used by section openers that want
+     a hairline above their first content row instead of a
+     background change. */
+  .section-rule-top {
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .section-rule-bottom {
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  /* =========================================================
+     CATALOGUE / PRODUCT SECTION WRAPPERS
+     The product and section components share a common
+     pattern: a Container that stacks a section-header and
+     a grid below it. The vertical rhythm is owned here so
+     the components stay structural.
+     ========================================================= */
+  .related-products,
+  .featured-products,
+  .featured-categories {
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .related-products__inner,
+  .featured-products__inner,
+  .featured-categories__inner {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .related-products__link {
+    color: var(--color-ink);
   }
 
   .stack-xs {
@@ -760,10 +805,387 @@ fieldset {
       grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
     }
   }
+
+  /* =========================================================
+     SITE HEADER · STICKY EDITORIAL RAIL
+     Slim, hairline-bordered, retail-precise. Three slots:
+     brand (left) · nav (center, hidden on mobile) · CTA
+     (right). No boxy chrome, no buttons, no icons. The
+     brand is a serif wordmark; the CTA is a fine uppercase
+     link with a hairline arrow. The 20% atelier character
+     comes from a small leather dot before the CTA and a
+     tracked uppercase label — never from backgrounds.
+     ========================================================= */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-page);
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4rem;
+    padding-block: 0.7rem;
+  }
+
+  @media (min-width: 48rem) {
+    .site-header__inner {
+      gap: 2rem;
+    }
+  }
+
+  .site-header__brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    line-height: 1;
+    white-space: nowrap;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .site-header__brand:hover,
+  .site-header__brand:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .site-header__brand-mark {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+  }
+
+  .site-header__nav {
+    display: none;
+    align-items: center;
+    gap: clamp(1.1rem, 1.6vw, 1.8rem);
+  }
+
+  @media (min-width: 48rem) {
+    .site-header__nav {
+      display: inline-flex;
+    }
+  }
+
+  /* Tighter inner gap on the smallest phones so brand + CTA
+     fit on a single rail without wrapping. */
+  @media (max-width: 30rem) {
+    .site-header__inner {
+      gap: 1rem;
+    }
+  }
+
+  /* The italic 1988 stamp is the 20% atelier touch. Hide on
+     extra-small phones where every pixel matters. */
+  @media (max-width: 26rem) {
+    .site-header__brand-mark {
+      display: none;
+    }
+  }
+
+  /* The leather dot is an atelier detail. On extra-small
+     phones the dot + its gap consume more space than they
+     are worth, so the CTA collapses to text + arrow only. */
+  @media (max-width: 24rem) {
+    .site-header__cta-dot {
+      display: none;
+    }
+  }
+
+  .site-header__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .site-header__cta:hover,
+  .site-header__cta:focus-visible {
+    color: var(--color-leather-dark);
+  }
+
+  .site-header__cta-dot {
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather);
+    flex: 0 0 auto;
+    transition: background-color var(--duration-base) var(--ease-soft);
+  }
+
+  .site-header__cta:hover .site-header__cta-dot {
+    background: var(--color-leather-dark);
+  }
+
+  .site-header__cta-arrow {
+    display: inline-block;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .site-header__cta:hover .site-header__cta-arrow,
+  .site-header__cta:focus-visible .site-header__cta-arrow {
+    transform: translateX(0.2rem);
+  }
+
+  /* =========================================================
+     SITE FOOTER · EDITORIAL SPREAD
+     Three-column composition: brand + tagline + address,
+     navigation, contact. A hairline-separated legal bar
+     sits below. Light by default; a dark variant is
+     available for premium pages.
+     ========================================================= */
+
+  .site-footer {
+    background: var(--color-page);
+    border-top: 1px solid var(--color-border-soft);
+    color: var(--color-ink);
+  }
+
+  .site-footer-dark {
+    background: var(--color-surface-inverse);
+    color: var(--color-inverse);
+    border-top: 0;
+  }
+
+  .site-footer__inner {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    padding-block: clamp(3rem, 5vw, 4.5rem);
+  }
+
+  @media (min-width: 64rem) {
+    .site-footer__inner {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+
+  .site-footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 28rem;
+  }
+
+  .site-footer__brand-name {
+    color: inherit;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    line-height: 1;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 1px;
+    padding-bottom: 1px;
+    transition: background-size var(--duration-base) var(--ease-soft);
+  }
+
+  .site-footer__brand-name:hover,
+  .site-footer__brand-name:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  .site-footer-dark .site-footer__brand-name {
+    color: var(--color-inverse);
+  }
+
+  .site-footer__tagline {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 32ch;
+  }
+
+  .site-footer-dark .site-footer__tagline {
+    color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
+  }
+
+  .site-footer__address {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    font-style: normal;
+    margin: 0;
+  }
+
+  .site-footer-dark .site-footer__address {
+    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
+  }
+
+  .site-footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Column labels in the footer ride the global `.meta-label`
+     primitive. The dark variant only needs a colour override
+     so the design system stays the single source of truth. */
+  .site-footer-dark .meta-label {
+    color: color-mix(in srgb, var(--color-inverse) 56%, transparent);
+  }
+
+  .site-footer__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .site-footer__list a {
+    color: var(--color-ink-soft);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    line-height: 1.4;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .site-footer__list a:hover,
+  .site-footer__list a:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .site-footer-dark .site-footer__list a {
+    color: color-mix(in srgb, var(--color-inverse) 78%, transparent);
+  }
+
+  .site-footer-dark .site-footer__list a:hover,
+  .site-footer-dark .site-footer__list a:focus-visible {
+    color: var(--color-inverse);
+  }
+
+  .site-footer__meta {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .site-footer__meta a {
+    color: var(--color-ink-soft);
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .site-footer__meta a:hover,
+  .site-footer__meta a:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .site-footer-dark .site-footer__meta {
+    color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
+  }
+
+  .site-footer-dark .site-footer__meta a {
+    color: color-mix(in srgb, var(--color-inverse) 82%, transparent);
+  }
+
+  .site-footer-dark .site-footer__meta a:hover,
+  .site-footer-dark .site-footer__meta a:focus-visible {
+    color: var(--color-inverse);
+  }
+
+  .site-footer__bottom {
+    border-top: 1px solid var(--color-border-soft);
+    padding-block: 1.25rem;
+  }
+
+  .site-footer-dark .site-footer__bottom {
+    border-top-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  }
+
+  .site-footer__bottom-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  @media (min-width: 48rem) {
+    .site-footer__bottom-inner {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .site-footer__bottom-meta {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .site-footer-dark .site-footer__bottom-meta {
+    color: color-mix(in srgb, var(--color-inverse) 56%, transparent);
+  }
+
+  .site-footer__bottom-meta--accent {
+    color: var(--color-leather-dark);
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.62rem;
+  }
+
+  .site-footer-dark .site-footer__bottom-meta--accent {
+    color: var(--color-brass);
+  }
+
+  .site-footer__rule {
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+
+  /* Skip-link colour under the sticky header. */
+  .site-header + main .skip-link,
+  .site-header + .skip-link {
+    top: 5rem;
+  }
 }
 
 /* =========================================================
    SURFACES & MATERIAL PLANES
+   Surfaces are now mostly flat. Borders are hairlines, not
+   frames. Image-bearing blocks live on the surface plane
+   with a flat muted ground — no warm wash.
    ========================================================= */
 
 @layer components {
@@ -801,94 +1223,69 @@ fieldset {
     color: var(--color-inverse);
   }
 
-  .panel {
-    border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-sm);
+  /* Card surface — used as a bordered module on a page.
+     Hairline border, no shadow, white plane. */
+  .surface-card {
     background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+  }
+
+  .panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
   }
 
   .panel-soft {
-    border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-sm);
     background: var(--color-surface-soft);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
   }
 
   .panel-muted {
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
     background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
   }
 
+  /* Atelier surface — quiet, no artisan grid. Reserved for
+     where the brand needs a single, barely-warm plane. */
   .atelier-surface {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    border-radius: var(--radius-sm);
-    background:
-      linear-gradient(135deg, rgb(255 254 251 / 0.5), transparent 44%),
-      var(--color-surface-soft);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-soft);
   }
 
-  .atelier-surface::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.13;
-    background-image:
-      linear-gradient(90deg, rgb(23 18 14 / 0.075) 1px, transparent 1px),
-      linear-gradient(rgb(23 18 14 / 0.045) 1px, transparent 1px);
-    background-size: 3rem 3rem;
+  /* Image ground — the neutral plane that sits behind a
+     product photo or editorial hero. Used by ProductCard,
+     ProductGallery, HomeHero. No gradient, no warm cast. */
+  .image-ground {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
   }
 
   .image-surface {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.58),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-soft),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-muted);
   }
 
   .image-surface-warm {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.5),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-sand),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-sand);
   }
 
+  /* Leather wash — only used as a deliberately dark accent
+     surface (rare). The brand treats leather as colour, not
+     atmosphere. */
   .leather-wash {
-    background:
-      radial-gradient(
-        circle at 18% 0%,
-        rgb(161 132 88 / 0.22),
-        transparent 28rem
-      ),
-      linear-gradient(135deg, var(--color-walnut), var(--color-leather-dark));
+    background: var(--color-leather-dark);
     color: var(--color-inverse);
   }
 
   .brass-wash {
-    background:
-      linear-gradient(135deg, rgb(255 254 251 / 0.38), transparent 42%),
-      color-mix(
-        in srgb,
-        var(--color-brass-muted) 44%,
-        var(--color-surface-soft)
-      );
+    background: var(--color-surface-sand);
   }
 }
 
@@ -1169,7 +1566,7 @@ fieldset {
   }
 
   .breadcrumb a:hover {
-    color: var(--color-leather-dark);
+    color: var(--color-ink);
   }
 
   .breadcrumb-separator {
@@ -1188,6 +1585,8 @@ fieldset {
 
 @layer components {
   .button {
+    position: relative;
+    isolation: isolate;
     display: inline-flex;
     min-height: 2.7rem;
     align-items: center;
@@ -1275,43 +1674,42 @@ fieldset {
   }
 
   .button-primary:hover {
-    border-color: var(--color-leather-dark);
-    background: var(--color-leather-dark);
-    color: var(--color-inverse);
+    border-color: var(--color-ink);
+    background: var(--color-surface-muted);
+    color: var(--color-ink);
   }
 
   .button-dark {
-    border-color: var(--color-leather-dark);
-    background: var(--color-leather-dark);
-    color: var(--color-inverse);
-  }
-
-  .button-dark:hover {
     border-color: var(--color-ink);
     background: var(--color-ink);
     color: var(--color-inverse);
   }
 
-  .button-secondary {
+  .button-dark:hover {
     border-color: var(--color-leather-dark);
+    background: var(--color-leather-dark);
+    color: var(--color-inverse);
+  }
+
+  .button-secondary {
+    border-color: var(--color-ink);
     background: transparent;
-    color: var(--color-leather-dark);
+    color: var(--color-ink);
   }
 
   .button-secondary:hover {
-    background: var(--color-leather-dark);
+    background: var(--color-ink);
     color: var(--color-inverse);
   }
 
   .button-ghost {
     border-color: var(--color-border);
-    background: color-mix(in srgb, var(--color-surface) 56%, transparent);
+    background: var(--color-surface);
     color: var(--color-ink);
   }
 
   .button-ghost:hover {
-    border-color: var(--color-leather-dark);
-    background: var(--color-surface);
+    border-color: var(--color-ink);
   }
 
   .button-inverse {
@@ -1346,6 +1744,97 @@ fieldset {
     gap: 0.75rem;
     align-items: center;
   }
+
+  .button--block {
+    width: 100%;
+  }
+
+  .button__kicker,
+  .button__meta {
+    position: relative;
+    padding-inline: 0.4rem;
+    color: currentColor;
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .button__icon {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .button__icon svg {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .button__icon--after svg {
+    width: 14px;
+    height: 10px;
+  }
+
+  .button__icon--before svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .button--icon-after:hover:not(:disabled):not([aria-disabled='true'])
+    .button__icon--after {
+    transform: translateX(3px);
+  }
+
+  .button--icon-before:hover:not(:disabled):not([aria-disabled='true'])
+    .button__icon--before {
+    transform: translateX(-3px);
+  }
+
+  .button.is-loading .button__label-text {
+    opacity: 0.45;
+  }
+
+  .button__label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  .button__label-dot {
+    display: none;
+  }
+
+  .button__label-text {
+    display: inline-block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .button:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button,
+    .button__icon {
+      transition-duration: 1ms;
+    }
+
+    .button:hover {
+      padding-inline: 1.4rem;
+      letter-spacing: 0.155em;
+    }
+  }
 }
 
 /* =========================================================
@@ -1361,7 +1850,7 @@ fieldset {
     border-radius: var(--radius-pill);
     padding: 0.38rem 0.72rem;
     color: var(--color-ink-soft);
-    background: color-mix(in srgb, var(--color-surface) 74%, transparent);
+    background: var(--color-surface);
     font-size: 0.58rem;
     font-weight: 650;
     letter-spacing: 0.14em;
@@ -1378,37 +1867,67 @@ fieldset {
   .pill-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
+    gap: clamp(0.5rem, 1.4vw, 1.5rem);
     align-items: center;
   }
 
+  /* Editorial pill — text is the only marker. The active
+     state reveals a thin underline below the label. No
+     filled background, no SaaS chip chrome. */
   .pill {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-pill);
-    padding: 0.48rem 0.78rem;
+    gap: 0.45rem;
+    padding: 0.3rem 0.05rem;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
     color: var(--color-muted);
     background: transparent;
     font-size: 0.6rem;
     font-weight: 650;
-    letter-spacing: 0.13em;
-    line-height: 1;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
     text-decoration: none;
     text-transform: uppercase;
+    white-space: nowrap;
     transition:
       color var(--duration-base) var(--ease-soft),
-      border-color var(--duration-base) var(--ease-soft),
-      background-color var(--duration-base) var(--ease-soft);
+      border-color var(--duration-base) var(--ease-soft);
   }
 
   .pill:hover,
-  .pill:focus-visible,
+  .pill:focus-visible {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-border-strong);
+  }
+
   .pill.is-active,
   .pill[aria-current='true'] {
-    border-color: var(--color-leather-dark);
-    background: color-mix(in srgb, var(--color-leather) 8%, transparent);
-    color: var(--color-leather-dark);
+    color: var(--color-ink);
+    border-bottom-color: var(--color-ink);
+  }
+
+  /* Bordered variant — used when the call-to-action needs
+     a chip-like presence (e.g. category badges inside a
+     card). Filled active state with ink, no underline. */
+  .pill--bordered {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+  }
+
+  .pill--bordered:hover,
+  .pill--bordered:focus-visible {
+    border-color: var(--color-ink);
+  }
+
+  .pill--bordered.is-active,
+  .pill--bordered[aria-current='true'] {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-inverse);
   }
 }
 
@@ -1418,7 +1937,13 @@ fieldset {
 
 @layer components {
   .page-hero {
+    position: relative;
+    isolation: isolate;
     padding-block: clamp(4.5rem, 9vw, 9rem);
+  }
+
+  .page-hero--compact {
+    padding-block: clamp(3rem, 6vw, 5rem);
   }
 
   .page-hero-inner {
@@ -1438,12 +1963,6 @@ fieldset {
     margin-inline: auto;
   }
 
-  .section-header {
-    display: grid;
-    gap: var(--space-md);
-    max-width: 58rem;
-  }
-
   .section-header-centered {
     margin-inline: auto;
     text-align: center;
@@ -1460,6 +1979,235 @@ fieldset {
       grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 0.45fr);
     }
   }
+
+  /* ----- Split variant — copy + media side by side. */
+  .page-hero--split .page-hero__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 56rem) {
+    .page-hero--split .page-hero__grid {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    }
+
+    .page-hero--split.page-hero--reverse .page-hero__grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
+
+    .page-hero--split.page-hero--reverse .page-hero__media {
+      order: -1;
+    }
+  }
+
+  .page-hero__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card-lg);
+  }
+
+  .page-hero__media img,
+  .page-hero__media video,
+  .page-hero__media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (min-width: 56rem) {
+    .page-hero__media {
+      aspect-ratio: 5 / 6;
+    }
+  }
+
+  /* ----- Media variant — type over an image background.
+     The consumer sets the image via a CSS var. A soft
+     vertical gradient gives contrast without competing. */
+  .page-hero--media {
+    color: var(--color-ink-on-inverse);
+    padding-block: clamp(5rem, 12vw, 9rem);
+  }
+
+  .page-hero--media::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--page-hero-image, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .page-hero--media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-ink) 36%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 70%, transparent) 100%
+    );
+  }
+
+  .page-hero--media.page-hero--tone-light {
+    color: var(--color-ink);
+  }
+
+  .page-hero--media.page-hero--tone-light::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 78%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface) 90%, transparent) 100%
+    );
+  }
+
+  /* ----- Top rail (eyebrow / index / kicker / meta). */
+  .page-hero__top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-hero__index {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-variant-numeric: lining-nums tabular-nums;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-xs);
+  }
+
+  .page-hero--media .page-hero__index {
+    color: var(--color-gold-soft);
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__index {
+    color: var(--color-leather-dark);
+  }
+
+  /* The right-edge meta on a flex rail. Pairs with .meta-label. */
+  .page-hero__top > .meta-label:last-child:not(:first-child) {
+    margin-left: auto;
+  }
+
+  /* ----- Title + description. Reuse the same editorial
+     tokens as the home hero, with a slightly tighter upper
+     bound for the body variant. */
+  .page-hero__title {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(2.65rem, 6.4vw, 5rem);
+    font-weight: 200;
+    letter-spacing: -0.022em;
+    line-height: 0.96;
+    text-wrap: balance;
+    max-width: 22ch;
+    margin: 0;
+  }
+
+  .page-hero--media .page-hero__title,
+  .page-hero--media .page-hero__description,
+  .page-hero--media .page-hero__eyebrow {
+    color: var(--color-ink-on-inverse);
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__title,
+  .page-hero--media.page-hero--tone-light .page-hero__description,
+  .page-hero--media.page-hero--tone-light .page-hero__eyebrow {
+    color: var(--color-ink);
+  }
+
+  .page-hero--media .page-hero__kicker,
+  .page-hero--media .page-hero__meta {
+    color: color-mix(in srgb, var(--color-ink-on-inverse) 70%, transparent);
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__kicker,
+  .page-hero--media.page-hero--tone-light .page-hero__meta {
+    color: var(--color-muted);
+  }
+
+  .page-hero__title em,
+  .page-hero__title i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+  }
+
+  .page-hero--media .page-hero__title em,
+  .page-hero--media .page-hero__title i {
+    color: var(--color-gold-soft);
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__title em,
+  .page-hero--media.page-hero--tone-light .page-hero__title i {
+    color: var(--color-leather-dark);
+  }
+
+  .page-hero__description {
+    color: var(--color-muted);
+    font-size: clamp(0.98rem, 1.15vw, 1.05rem);
+    line-height: 1.74;
+    text-wrap: pretty;
+    max-width: 44ch;
+    margin: 0;
+  }
+
+  /* ----- Body container — type stack. */
+  .page-hero__body {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    max-width: 48rem;
+  }
+
+  .page-hero__body--center {
+    text-align: center;
+    align-items: center;
+    margin-inline: auto;
+  }
+
+  .page-hero__body--center .page-hero__title,
+  .page-hero__body--center .page-hero__description {
+    margin-inline: auto;
+  }
+
+  .page-hero__body--center .page-hero__actions {
+    justify-content: center;
+  }
+
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+
+  /* ----- Caption stamp on the split-variant figure. */
+  .page-hero__caption {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+    padding: 0.45rem 0.7rem;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-control);
+    backdrop-filter: blur(8px);
+    line-height: 1;
+  }
 }
 
 /* =========================================================
@@ -1468,65 +2216,59 @@ fieldset {
 
 @layer components {
   .card {
-    border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-sm);
     background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
   }
 
   .card-soft {
-    border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-sm);
     background: var(--color-surface-soft);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
   }
 
   .card-muted {
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
     background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
   }
 
+  /* Feature card — open, editorial, no SaaS top hairline.
+     Reads as a printed module, not a UI box. */
   .feature-card {
     position: relative;
     display: flex;
-    min-height: 15rem;
+    min-height: 14rem;
     flex-direction: column;
     justify-content: space-between;
     gap: 2rem;
     overflow: hidden;
+    background: var(--color-surface);
     border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-sm);
-    background:
-      linear-gradient(135deg, rgb(255 254 251 / 0.56), transparent 44%),
-      var(--color-surface);
-    padding: clamp(1.25rem, 3vw, 2rem);
-  }
-
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 1rem;
-    left: 1rem;
-    height: 1px;
-    background: color-mix(in srgb, var(--color-leather) 24%, transparent);
-    pointer-events: none;
+    border-radius: var(--radius-card);
+    padding: clamp(1.4rem, 3vw, 2.1rem);
   }
 
   .feature-card-muted {
-    background:
-      linear-gradient(135deg, rgb(255 254 251 / 0.36), transparent 44%),
-      var(--color-surface-soft);
+    background: var(--color-surface-soft);
+  }
+
+  .feature-card-minimal {
+    position: relative;
+    display: flex;
+    min-height: 14rem;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    overflow: hidden;
+    padding: clamp(1.15rem, 2.5vw, 1.8rem) 0;
+    border-top: 1px solid var(--color-border-soft);
+    border-bottom: 1px solid var(--color-border-soft);
+    color: var(--color-ink);
   }
 
   .feature-card-dark {
-    border-color: color-mix(in srgb, var(--color-inverse) 10%, transparent);
-    background:
-      radial-gradient(
-        circle at 18% 0%,
-        rgb(161 132 88 / 0.2),
-        transparent 28rem
-      ),
-      var(--color-surface-inverse);
+    border-color: color-mix(in srgb, var(--color-inverse) 12%, transparent);
+    background: var(--color-surface-inverse);
     color: var(--color-inverse);
   }
 
@@ -1635,6 +2377,195 @@ fieldset {
     line-height: 1.65;
     text-wrap: pretty;
   }
+
+  .featured-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 14rem;
+    height: 100%;
+  }
+
+  .featured-card--has-image {
+    padding: 0;
+  }
+
+  .featured-card__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem 0.85rem;
+    align-items: center;
+    padding-bottom: 0.85rem;
+    margin-bottom: auto;
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .featured-card--align-center .featured-card__top {
+    justify-content: center;
+  }
+
+  .feature-card-dark .featured-card__top {
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--color-inverse) 18%,
+      transparent
+    );
+  }
+
+  .featured-card__index {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .feature-card-dark .featured-card__index {
+    color: var(--color-gold-soft);
+  }
+
+  .featured-card__kicker {
+    padding-left: 0.85rem;
+    border-left: 1px solid var(--color-border-soft);
+    color: var(--color-muted);
+  }
+
+  .feature-card-dark .featured-card__kicker {
+    border-left-color: color-mix(
+      in srgb,
+      var(--color-inverse) 22%,
+      transparent
+    );
+    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
+  }
+
+  .featured-card__eyebrow {
+    margin: 0;
+    color: var(--color-ink-soft);
+  }
+
+  .featured-card__meta {
+    margin-left: auto;
+    color: var(--color-muted);
+  }
+
+  .feature-card-dark .featured-card__meta {
+    color: color-mix(in srgb, var(--color-inverse) 56%, transparent);
+  }
+
+  .featured-card__body {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding-top: 1.4rem;
+  }
+
+  .featured-card--has-image .featured-card__body {
+    padding: 1.4rem 1.4rem 1.5rem;
+  }
+
+  .featured-card__title {
+    color: inherit;
+    text-wrap: balance;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .featured-card__description {
+    max-width: 36ch;
+  }
+
+  .featured-card__media {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border-soft);
+    background: var(--color-surface-muted);
+  }
+
+  .feature-card-dark .featured-card__media {
+    background: color-mix(in srgb, var(--color-inverse) 88%, transparent);
+  }
+
+  .featured-card__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .featured-card__image--fit-cover {
+    object-fit: cover;
+  }
+
+  .featured-card__image--fit-contain {
+    object-fit: contain;
+  }
+
+  .featured-card--linked:hover .featured-card__image,
+  .featured-card--linked:focus-visible .featured-card__image {
+    transform: scale(1.02);
+  }
+
+  .featured-card__caption {
+    position: absolute;
+    left: 0.85rem;
+    bottom: 0.85rem;
+    z-index: 1;
+    padding: 0.32rem 0.55rem;
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-xs);
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+
+  .featured-card__rail {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.3rem;
+    color: currentColor;
+  }
+
+  .featured-card--linked {
+    cursor: pointer;
+  }
+
+  .featured-card--linked:hover,
+  .featured-card--linked:focus-visible {
+    border-color: var(--color-ink);
+  }
+
+  .feature-card-dark.featured-card--linked:hover,
+  .feature-card-dark.featured-card--linked:focus-visible {
+    border-color: var(--color-gold-soft);
+  }
+
+  .featured-card--linked:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (max-width: 40rem) {
+    .featured-card__top {
+      gap: 0.45rem 0.7rem;
+      padding-bottom: 0.7rem;
+    }
+
+    .featured-card__kicker {
+      padding-left: 0.6rem;
+    }
+
+    .featured-card__meta {
+      flex-basis: 100%;
+      margin-left: 0;
+    }
+
+    .featured-card--has-image .featured-card__body {
+      padding: 1.1rem 1.1rem 1.25rem;
+    }
+  }
 }
 
 /* =========================================================
@@ -1669,6 +2600,14 @@ fieldset {
     aspect-ratio: 4 / 5;
   }
 
+  .ratio-portrait-tall {
+    aspect-ratio: 3 / 4;
+  }
+
+  .ratio-tall {
+    aspect-ratio: 2 / 3;
+  }
+
   .ratio-wide {
     aspect-ratio: 16 / 9;
   }
@@ -1677,53 +2616,735 @@ fieldset {
     aspect-ratio: 21 / 10;
   }
 
+  .ratio-hero-tall {
+    aspect-ratio: 21 / 9;
+  }
+
+  /* Image placeholder — premium visual block.
+     Hairline frame, two corner stamps, a centred label,
+     no warm wash. Designed to read as an intentional
+     placeholder, not a broken image. */
   .image-placeholder {
+    position: relative;
+    isolation: isolate;
     display: grid;
     min-height: 18rem;
     place-items: center;
     overflow: hidden;
-    border-radius: var(--radius-sm);
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.58),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-soft),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
     color: var(--color-muted);
+    transition:
+      background-color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft),
+      color var(--duration-base) var(--ease-soft);
+  }
+
+  /* Inset hairline frame — a "printed photo" detail. */
+  .image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius-card) - 2px);
+    pointer-events: none;
+  }
+
+  .image-placeholder--frame-minimal::before {
+    display: none;
+  }
+
+  .image-placeholder__cross {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: color-mix(in srgb, currentColor 28%, transparent);
+    stroke: currentColor;
+    stroke-width: 0.35;
+    pointer-events: none;
+  }
+
+  .image-placeholder__stamp {
+    position: absolute;
+    width: 0.6rem;
+    height: 0.6rem;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .image-placeholder__stamp--tl {
+    top: 0.85rem;
+    left: 0.85rem;
+    border-top: 1px solid var(--color-ink);
+    border-left: 1px solid var(--color-ink);
+    opacity: 0.5;
+  }
+
+  .image-placeholder__stamp--br {
+    right: 0.85rem;
+    bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-ink);
+    border-right: 1px solid var(--color-ink);
+    opacity: 0.5;
+  }
+
+  .image-placeholder__frame {
+    position: absolute;
+    inset: clamp(0.6rem, 1.4vw, 1rem);
+    border: 1px solid var(--color-border-soft);
+    border-radius: calc(var(--radius-card) - 2px);
+    pointer-events: none;
+  }
+
+  .image-placeholder--frame-minimal .image-placeholder__frame {
+    display: none;
+  }
+
+  .image-placeholder__label {
+    position: relative;
+    z-index: 1;
+    color: var(--color-ink-soft);
     font-size: 0.62rem;
     font-weight: 650;
-    letter-spacing: 0.17em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
   }
 
+  .image-placeholder__kicker {
+    position: relative;
+    z-index: 1;
+    color: var(--color-ink-soft);
+  }
+
+  .image-placeholder__caption {
+    position: absolute;
+    left: 0.95rem;
+    bottom: 0.85rem;
+    z-index: 1;
+    color: var(--color-ink-soft);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .image-placeholder__caption-stack {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(0.7rem, 1.5vw, 0.95rem);
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+    max-width: calc(100% - 1.5rem);
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-xs);
+    background: var(--color-surface);
+    line-height: 1;
+    text-align: center;
+  }
+
+  .image-placeholder:not(.image-placeholder--crossed)
+    .image-placeholder__caption-stack {
+    position: static;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: none;
+  }
+
+  .image-placeholder:not(.image-placeholder--crossed)
+    .image-placeholder__caption {
+    position: static;
+  }
+
+  /* Warmer variant — used sparingly, only when a section
+     needs a single, very gentle warm note. */
   .image-placeholder-warm {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.5),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-sand),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-sand);
+  }
+
+  .image-placeholder--light,
+  .image-placeholder--paper {
+    background: var(--color-surface);
+    color: var(--color-muted);
+  }
+
+  .image-placeholder--muted {
+    background: var(--color-surface-muted);
+  }
+
+  .image-placeholder--sand {
+    background: var(--color-surface-sand);
+  }
+
+  .image-placeholder--leather {
+    background: color-mix(
+      in srgb,
+      var(--color-leather) 12%,
+      var(--color-surface-muted)
+    );
+    color: var(--color-ink-soft);
+  }
+
+  .image-placeholder--ink {
+    border-color: color-mix(in srgb, var(--color-inverse) 18%, transparent);
+    background: var(--color-surface-inverse);
+    color: var(--color-inverse);
+  }
+
+  .image-placeholder--ink .image-placeholder__caption-stack {
+    border-color: color-mix(in srgb, var(--color-inverse) 18%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--color-surface-inverse) 74%,
+      transparent
+    );
+  }
+
+  .image-placeholder--ink .image-placeholder__label,
+  .image-placeholder--ink .image-placeholder__kicker {
+    color: var(--color-inverse);
+  }
+
+  .image-placeholder--textured::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--paper-tex);
+    background-size: var(--paper-tex-size);
+    opacity: 0.35;
   }
 }
 
 /* =========================================================
-   BLOG
+   IMAGE-LED GLOBALS
+   The vocabulary for an editorial-retail home: hero media,
+   media frames, full-bleed bands, category grids, product
+   grids, story cards, content blocks, CTA bands.
+   These classes do not assume a specific section. They
+   compose.
    ========================================================= */
 
 @layer components {
-  .blog-grid {
+  /* ----- HERO MEDIA ------------------------------------ */
+
+  .hero-media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
+  }
+
+  .hero-media img,
+  .hero-media video,
+  .hero-media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-media-full {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+  }
+
+  .hero-media-full img,
+  .hero-media-full video,
+  .hero-media-full picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-media-split {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
+    aspect-ratio: 4 / 5;
+  }
+
+  .hero-media-split img,
+  .hero-media-split video,
+  .hero-media-split picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (min-width: 64rem) {
+    .hero-media-split {
+      aspect-ratio: 5 / 6;
+    }
+  }
+
+  /* ----- MEDIA FRAMES ---------------------------------- */
+
+  .media-frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+  }
+
+  .media-frame img,
+  .media-frame video,
+  .media-frame picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .media-frame-soft {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-soft);
+    border-radius: var(--radius-card);
+  }
+
+  .media-frame-soft img,
+  .media-frame-soft video,
+  .media-frame-soft picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .media-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    background: linear-gradient(
+      to top,
+      rgb(0 0 0 / 0.55) 0%,
+      rgb(0 0 0 / 0.15) 38%,
+      transparent 68%
+    );
+    color: #ffffff;
+    pointer-events: none;
+  }
+
+  .media-caption {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.55;
+  }
+
+  /* ----- FULL-BLEED / BAND ---------------------------- */
+
+  .full-bleed-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .full-bleed-media img,
+  .full-bleed-media video,
+  .full-bleed-media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .image-band {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+  }
+
+  .image-band img,
+  .image-band video,
+  .image-band picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ----- VISUAL COMPOSITIONS -------------------------- */
+
+  .visual-split {
     display: grid;
     gap: var(--grid-gap-lg);
+    align-items: stretch;
+  }
+
+  @media (min-width: 64rem) {
+    .visual-split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .visual-stack {
+    display: grid;
+    gap: var(--grid-gap);
+  }
+
+  .content-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  /* ----- CATEGORY GRID + TILE EXTENSIONS --------------- */
+
+  .category-grid {
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 40rem) {
+    .category-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 70rem) {
+    .category-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* Large variant — the editorial "cover" tile in a category
+     strip. Used as the first or featured item. The internal
+     `__media` slot takes an image and pushes the content
+     to the bottom, exactly like a magazine cover. */
+  .category-tile-large {
+    position: relative;
+    display: flex;
+    min-height: clamp(22rem, 38vw, 32rem);
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    overflow: hidden;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card-lg);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .category-tile-large__media {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
+    min-height: 12rem;
+  }
+
+  .category-tile-large__media img,
+  .category-tile-large__media video,
+  .category-tile-large__media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .category-tile-large:hover .category-tile-large__media img,
+  .category-tile-large:focus-visible .category-tile-large__media img {
+    transform: scale(1.03);
+  }
+
+  /* Media area — used inside a category tile when the tile
+     carries a real photo. Pure image plane, no chrome. */
+  .category-tile-media {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
+    min-height: 8rem;
+  }
+
+  .category-tile-media img,
+  .category-tile-media video,
+  .category-tile-media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .category-tile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: clamp(1rem, 2vw, 1.4rem);
+  }
+
+  /* ----- PRODUCT GRID + CARDS ------------------------- */
+
+  .product-grid-editorial {
+    display: grid;
+    gap: var(--grid-gap-lg);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 40rem) {
+    .product-grid-editorial {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .product-grid-editorial {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .product-grid-editorial {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* Minimal product card — no card chrome. Image does the work. */
+  .product-card-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product-card-media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card);
+  }
+
+  .product-card-media img,
+  .product-card-media video,
+  .product-card-media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .product-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .product-card-meta {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+  }
+
+  /* Product feature — large, single, hero-like product. */
+  .product-feature {
+    display: grid;
+    gap: var(--grid-gap-lg);
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 64rem) {
+    .product-feature {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+  }
+
+  /* Open editorial card — no border, no surface. Just type. */
+  .editorial-card-open {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Story card — image + body, two-column on desktop. */
+  .story-card {
+    display: grid;
+    gap: var(--grid-gap);
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 56rem) {
+    .story-card {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      align-items: center;
+    }
+  }
+
+  /* ----- CTA COMPOSITIONS ----------------------------- */
+
+  .cta-band {
+    position: relative;
+    width: 100%;
+    padding-block: clamp(4rem, 8vw, 7rem);
+    background: var(--color-surface-soft);
+    border-top: 1px solid var(--color-border-soft);
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .cta-panel {
+    position: relative;
+    padding: clamp(2rem, 4vw, 3.5rem);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card-lg);
+  }
+
+  .cta-split {
+    display: grid;
+    gap: 0;
+    align-items: stretch;
+    grid-template-columns: 1fr;
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card-lg);
+  }
+
+  @media (min-width: 64rem) {
+    .cta-split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .cta-split__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    min-height: 18rem;
+  }
+
+  .cta-split__media img,
+  .cta-split__media video,
+  .cta-split__media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cta-split__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: clamp(1.75rem, 4vw, 3rem);
+  }
+}
+
+/* =========================================================
+   FINE-META · SHARED INLINE METADATA ROW
+   Common base for every small uppercase metadata strip
+   (author · date · read-time) used by the blog card meta,
+   the article header byline, the long-form article byline
+   and any other inline publication mark. Each consumer
+   composes this with its own list, item, and accent rules.
+   ========================================================= */
+
+@layer components {
+  .fine-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    line-height: 1.25;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .fine-meta li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .fine-meta li + li::before {
+    content: '';
+    display: inline-block;
+    width: 0.85rem;
+    height: 1px;
+    background: var(--color-border-strong);
+    flex: 0 0 auto;
+  }
+
+  .fine-meta a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .fine-meta a:hover,
+  .fine-meta a:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .fine-meta__category,
+  .fine-meta__author {
+    color: var(--color-leather-dark);
+  }
+}
+
+/* =========================================================
+   BLOG · EDITORIAL NOTEBOOK
+   Cards are open, image-led and let the type do the work.
+   The blog reads as a printed quarterly: large serif titles,
+   hairline metadata, no closed boxes, generous air, no fill.
+   Grid variants support a lead-article-first composition
+   and a list view for the rest. The article body is
+   typographically tuned for long-form reading.
+   ========================================================= */
+
+@layer components {
+  /* ----- GRID -------------------------------------------- */
+
+  .blog-grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem) var(--grid-gap-lg);
   }
 
   @media (min-width: 48rem) {
@@ -1738,35 +3359,418 @@ fieldset {
     }
   }
 
-  .blog-card {
+  /* ----- Grid · featured-first ----------------------------
+     First card spans the full width on desktop and grows in
+     image + title. The rest stack as the regular 3-col grid
+     underneath, separated by an editorial hairline. */
+  .blog-grid--featured-first {
+    row-gap: clamp(3rem, 6vw, 5rem);
+  }
+
+  .blog-grid--featured-first > .blog-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 70rem) {
+    .blog-grid--featured-first {
+      grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+      column-gap: clamp(2.5rem, 5vw, 4.5rem);
+      row-gap: clamp(3rem, 6vw, 5rem);
+    }
+
+    .blog-grid--featured-first > .blog-card:first-child {
+      grid-column: 1 / 2;
+      grid-row: 1 / span 2;
+    }
+
+    .blog-grid--featured-first > .blog-card {
+      grid-column: 2 / 3;
+    }
+  }
+
+  /* ----- Grid · list --------------------------------------
+     Single column, hairline separator between rows, used
+     for "all articles" listings after the lead spread.
+     On hover, a 2px ink hairline slides in from the left
+     to mark the row as active, like a printed margin note. */
+  .blog-grid--list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0;
+  }
+
+  .blog-grid--list > .blog-card {
+    position: relative;
+    padding-block: clamp(1.75rem, 3.5vw, 2.5rem);
+    border-top: 1px solid var(--color-border);
+    padding-inline-start: clamp(0rem, 1.5vw, 0.85rem);
+    transition:
+      padding-inline-start var(--duration-base) var(--ease-out),
+      color var(--duration-base) var(--ease-soft);
+  }
+
+  .blog-grid--list > .blog-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    background: var(--color-ink);
+    transition: width var(--duration-slow) var(--ease-out);
+  }
+
+  .blog-grid--list > .blog-card:hover::before,
+  .blog-grid--list > .blog-card:focus-within::before {
+    width: 2px;
+  }
+
+  .blog-grid--list > .blog-card:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .blog-grid--list > .blog-card:last-child {
+    padding-bottom: 0;
+  }
+
+  /* ----- CARD -------------------------------------------- */
+
+  .blog-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.4rem);
     color: inherit;
     text-decoration: none;
   }
 
-  .blog-card-media {
-    min-height: 18rem;
+  /* Open card: no border, no surface, no fill — just air. */
+  .blog-card,
+  .blog-card:hover,
+  .blog-card:focus-within {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
   }
+
+  /* ----- Card · media ------------------------------------ */
+
+  .blog-card-media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+  }
+
+  .blog-card-media img,
+  .blog-card-media picture,
+  .blog-card-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 700ms var(--ease-out);
+  }
+
+  .blog-card-media__placeholder {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+
+  /* A thin ink hairline that grows inward on hover, like
+     a printed plate sliding into position. */
+  .blog-card-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 28%, transparent);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-soft);
+  }
+
+  .blog-card:hover .blog-card-media::after,
+  .blog-card:focus-within .blog-card-media::after {
+    opacity: 1;
+  }
+
+  .blog-card:hover .blog-card-media img,
+  .blog-card:focus-within .blog-card-media img {
+    transform: scale(1.025);
+  }
+
+  /* Magazine-style number stamp on the cover. A small
+     italic numeral in the upper-left corner — like a
+     quarterly page-number mark. */
+  .blog-card-numeral {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 2;
+    padding: 0.32rem 0.55rem;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.74rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    font-variant-numeric: lining-nums tabular-nums;
+    backdrop-filter: blur(6px);
+  }
+
+  .blog-card-numeral--ink {
+    color: var(--color-inverse);
+    background: color-mix(in srgb, var(--color-ink) 70%, transparent);
+    border-color: color-mix(in srgb, var(--color-inverse) 18%, transparent);
+  }
+
+  /* Optional cover category chip — sits in the lower-left
+     of the cover, like a publication mark. */
+  .blog-card-cover-tag {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0.85rem;
+    z-index: 2;
+    padding: 0.45rem 0.7rem;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-xs);
+    font-size: 0.58rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+  }
+
+  /* ----- Card · meta hover -------------------------------
+     When the card is hovered/focused, the meta category
+     softens to ink so the card "warms" toward the title
+     instead of the muted baseline. */
+  .blog-card:hover .blog-card-meta__category,
+  .blog-card:focus-within .blog-card-meta__category {
+    color: var(--color-ink);
+  }
+
+  /* ----- Card · body ------------------------------------- */
+
+  .blog-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  /* Meta strip: small uppercase, em-rule separators.
+     One row on desktop, wraps cleanly on mobile.
+     Composed on the shared `.fine-meta` base. */
+  .blog-card-meta {
+    gap: 0.35rem 0.55rem;
+  }
+
+  .blog-card-meta li + li::before {
+    width: 0.7rem;
+  }
+
+  /* The category wears the leather-dark colour, the rest
+     of the meta stays in muted. */
+  .blog-card-meta .blog-card-meta__category {
+    color: var(--color-leather-dark);
+  }
+
+  /* ----- Card · title ------------------------------------ */
 
   .blog-card-title {
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 3vw, 2.35rem);
-    font-weight: 400;
-    letter-spacing: -0.012em;
-    line-height: 1;
+    font-size: clamp(1.6rem, 2.4vw, 2.05rem);
+    font-weight: 200;
+    letter-spacing: -0.018em;
+    line-height: 1.06;
     text-wrap: balance;
+    margin: 0;
+    max-width: 22ch;
   }
 
-  .article-header {
+  .blog-card-title a {
+    color: inherit;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size var(--duration-slow) var(--ease-out);
+  }
+
+  .blog-card-title a:hover,
+  .blog-card-title a:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Italic accent inside titles — Fraunces italic 200. */
+  .blog-card-title em,
+  .blog-card-title i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-weight: 200;
+  }
+
+  /* ----- Card · excerpt ---------------------------------- */
+
+  .blog-card-excerpt {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    font-weight: 400;
+    line-height: 1.62;
+    text-wrap: pretty;
+    max-width: 38ch;
+    margin: 0;
+  }
+
+  /* ----- Card · link ------------------------------------- */
+
+  .blog-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      gap var(--duration-base) var(--ease-out);
+  }
+
+  .blog-card-link::after {
+    content: '';
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    transform-origin: left center;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      width var(--duration-base) var(--ease-out);
+  }
+
+  .blog-card:hover .blog-card-link,
+  .blog-card:focus-within .blog-card-link {
+    gap: 0.75rem;
+  }
+
+  .blog-card:hover .blog-card-link::after,
+  .blog-card:focus-within .blog-card-link::after {
+    width: 2rem;
+  }
+
+  /* ----- Card · featured ----------------------------------
+     The lead article in a featured-first grid. Image is
+     wider (5/4) and the title grows to display scale. */
+  .blog-card--featured {
+    gap: clamp(1.25rem, 2.6vw, 1.85rem);
+  }
+
+  .blog-card--featured .blog-card-media {
+    aspect-ratio: 5 / 4;
+  }
+
+  .blog-card--featured .blog-card-title {
+    font-size: clamp(1.95rem, 4.2vw, 3.4rem);
+    font-weight: 200;
+    letter-spacing: -0.022em;
+    line-height: 1.02;
+    max-width: 20ch;
+  }
+
+  .blog-card--featured .blog-card-excerpt {
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 46ch;
+  }
+
+  @media (min-width: 70rem) {
+    .blog-card--featured .blog-card-title {
+      font-size: clamp(2.6rem, 4.6vw, 3.8rem);
+    }
+  }
+
+  /* ----- Card · compact -----------------------------------
+     For list / sidebar use. Image is shorter (3/2) and the
+     type scales down a notch. */
+  .blog-card--compact .blog-card-media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .blog-card--compact .blog-card-title {
+    font-size: clamp(1.25rem, 1.7vw, 1.45rem);
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+    max-width: none;
+  }
+
+  .blog-card--compact .blog-card-excerpt {
+    font-size: 0.85rem;
+    line-height: 1.58;
+  }
+
+  /* ----- Card · row ---------------------------------------
+     A horizontal layout used by BlogGrid--list and the
+     article-listing rail: image left, body right. */
+  .blog-card--row {
     display: grid;
-    gap: var(--space-lg);
-    max-width: 66rem;
-    padding-block: clamp(4.5rem, 9vw, 9rem);
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 2vw, 1.4rem);
+    align-items: start;
   }
 
+  .blog-card--row .blog-card-media {
+    aspect-ratio: 5 / 4;
+  }
+
+  @media (min-width: 48rem) {
+    .blog-card--row {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.5rem, 3vw, 2.25rem);
+      align-items: center;
+    }
+
+    .blog-card--row .blog-card-media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .blog-card--row .blog-card-title {
+    max-width: 30ch;
+  }
+
+  /* ----- FOCUS ------------------------------------------- */
+
+  .blog-card :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .blog-card-title a:focus-visible,
+  .blog-card-link:focus-visible {
+    outline-offset: 4px;
+  }
+
+  /* ----- ARTICLE BODY ------------------------------------
+     Long-form reading column. Wide enough to read, narrow
+     enough to keep the line length controlled. */
   .article-body {
     max-width: var(--container-reading);
     margin-inline: auto;
@@ -1774,34 +3778,342 @@ fieldset {
   }
 
   .article-body > * + * {
-    margin-top: 1.25rem;
+    margin-top: 1.35rem;
+  }
+
+  .article-body p {
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: 1.02rem;
+    font-weight: 400;
+    line-height: 1.78;
+    letter-spacing: -0.003em;
+    text-wrap: pretty;
+  }
+
+  .article-body p strong {
+    color: var(--color-ink);
+    font-weight: 650;
+  }
+
+  .article-body p em,
+  .article-body p i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+  }
+
+  .article-body a {
+    color: var(--color-ink);
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      background-size var(--duration-slow) var(--ease-out);
+  }
+
+  .article-body a:hover,
+  .article-body a:focus-visible {
+    background-size: 100% 0;
+    color: var(--color-leather-dark);
+  }
+
+  /* Headings sit on their own rhythm and carry a hairline
+     rail above them, so they feel like chapter marks. */
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    max-width: 30ch;
   }
 
   .article-body h2 {
-    margin-top: 3rem;
-    font-size: clamp(2.15rem, 4vw, 3.3rem);
+    margin-top: 3.5rem;
+    font-size: clamp(2rem, 3.6vw, 2.75rem);
+    line-height: 1.05;
+  }
+
+  .article-body h2::before {
+    content: '';
+    display: block;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-ink);
+    margin-bottom: 1.1rem;
+    opacity: 0.55;
+  }
+
+  .article-body h2 em,
+  .article-body h2 i,
+  .article-body h3 em,
+  .article-body h3 i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-weight: 200;
   }
 
   .article-body h3 {
     margin-top: 2.5rem;
-    font-size: clamp(1.65rem, 3vw, 2.25rem);
+    font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+    line-height: 1.12;
   }
 
-  .article-body p,
-  .article-body li {
+  .article-body h4 {
+    margin-top: 2rem;
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-leather-dark);
+  }
+
+  /* Lists: hairline-bulleted, generous leading. */
+  .article-body ul,
+  .article-body ol {
+    margin: 1.5rem 0 1.5rem 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .article-body ul li,
+  .article-body ol li {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-block: 0.4rem;
     color: var(--color-ink-soft);
     font-size: 1rem;
-    line-height: 1.78;
+    line-height: 1.72;
   }
 
+  .article-body ul li::before {
+    content: '';
+    position: absolute;
+    top: 0.85em;
+    left: 0;
+    width: 0.9rem;
+    height: 1px;
+    background: var(--color-ink);
+    opacity: 0.55;
+  }
+
+  .article-body ol {
+    counter-reset: article-ol;
+  }
+
+  .article-body ol li {
+    counter-increment: article-ol;
+  }
+
+  .article-body ol li::before {
+    content: counter(article-ol, decimal-leading-zero) '.';
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+  }
+
+  /* Blockquote — editorial pull quote. Large italic serif,
+     centred within the reading column, with a hairline
+     accent above. */
   .article-body blockquote {
-    margin: 2.5rem 0;
-    padding-left: 1.25rem;
-    border-left: 1px solid var(--color-leather);
+    position: relative;
+    margin: 3.25rem 0;
+    padding: 1.5rem 0 1.5rem;
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
-    line-height: 1.12;
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(1.55rem, 2.8vw, 2.2rem);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    text-align: left;
+    max-width: 36ch;
+  }
+
+  .article-body blockquote::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-leather-dark);
+  }
+
+  .article-body blockquote p {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+  }
+
+  .article-body blockquote p + p {
+    margin-top: 0.75rem;
+  }
+
+  .article-body blockquote cite {
+    display: block;
+    margin-top: 1.1rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* Pull-quote — a centred, larger variant used as a
+     standalone spread inside the article. */
+  .article-pull-quote {
+    position: relative;
+    max-width: var(--container-narrow);
+    margin: clamp(3rem, 6vw, 4.5rem) auto;
+    padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 3vw, 2.5rem);
+    text-align: center;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(1.75rem, 3.2vw, 2.55rem);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .article-pull-quote::before,
+  .article-pull-quote::after {
+    content: '';
+    display: block;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-ink);
+    margin-inline: auto;
+    opacity: 0.55;
+  }
+
+  .article-pull-quote::before {
+    margin-bottom: 1.5rem;
+  }
+
+  .article-pull-quote::after {
+    margin-top: 1.5rem;
+  }
+
+  .article-pull-quote cite {
+    display: block;
+    margin-top: 1.25rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* Section break — an editorial mark between sections. */
+  .article-section-break {
+    display: block;
+    width: 100%;
+    margin: clamp(2.5rem, 5vw, 4rem) auto;
+    padding: 0;
+    border: 0;
+    text-align: center;
+  }
+
+  .article-section-break::before {
+    content: '§';
+    display: inline-block;
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.4rem;
+    line-height: 1;
+    letter-spacing: 0.4em;
+    padding-left: 0.4em;
+  }
+
+  /* Figure — image with caption inside the article body. */
+  .article-figure {
+    margin: clamp(2rem, 4vw, 3rem) 0;
+  }
+
+  .article-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--color-surface-muted);
+  }
+
+  .article-figure-caption {
+    display: block;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border-soft);
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: 0.04em;
+    text-align: left;
+  }
+
+  .article-figure-caption strong {
+    display: inline-block;
+    color: var(--color-ink-soft);
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.6rem;
+    margin-right: 0.55rem;
+  }
+
+  /* Wide figure — escapes the reading column. */
+  .article-figure--wide {
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  /* Drop cap — optional. Add the class to the first
+     paragraph of an article to give it a magazine
+     drop cap. */
+  .article-body .article-drop-cap::first-letter {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: 4.2em;
+    line-height: 0.85;
+    float: left;
+    margin: 0.05em 0.1em 0 -0.04em;
+    letter-spacing: -0.04em;
+  }
+
+  /* Byline — the row that carries author + date + read
+     time, rendered below the H1 of an article. Composed
+     on the shared `.fine-meta` base; this block only adds
+     the lead (leather-dark) variant. */
+  .article-byline--lead {
+    color: var(--color-leather-dark);
   }
 }
 
@@ -1849,7 +4161,13 @@ fieldset {
 }
 
 /* =========================================================
-   FINAL CTA
+   FINAL CTA · EDITORIAL CLOSE
+   Default = paper panel, calm and editorial.
+   --image    = full-bleed image with overlay, light or dark.
+   --split    = two-column with media on one side.
+   --center   = centered content.
+   Tone defaults to dark on the image variant; --tone-light
+   gives a soft, paper-coloured overlay.
    ========================================================= */
 
 @layer components {
@@ -1857,33 +4175,219 @@ fieldset {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    border-radius: var(--radius-sm);
-    background:
-      radial-gradient(
-        circle at 18% 0%,
-        rgb(161 132 88 / 0.22),
-        transparent 28rem
-      ),
-      var(--color-surface-inverse);
-    color: var(--color-inverse);
-    padding: clamp(2rem, 5vw, 4rem);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding: clamp(2.5rem, 5vw, 4.5rem);
+    border-radius: var(--radius-card-lg);
+    border: 1px solid var(--color-border-soft);
   }
 
-  .final-cta::before {
+  .final-cta--center {
+    text-align: center;
+  }
+
+  .final-cta--center .final-cta__inner {
+    margin-inline: auto;
+  }
+
+  .final-cta__inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    max-width: 48rem;
+  }
+
+  .final-cta--align-end .final-cta__inner {
+    align-items: end;
+  }
+
+  @media (min-width: 64rem) {
+    .final-cta__inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      max-width: none;
+    }
+
+    .final-cta--center .final-cta__inner {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+  }
+
+  .final-cta__body {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.85rem, 1.6vw, 1.25rem);
+    max-width: 36rem;
+  }
+
+  .final-cta--center .final-cta__body {
+    margin-inline: auto;
+  }
+
+  .final-cta__eyebrow {
+    color: var(--color-leather-dark);
+    margin: 0;
+  }
+
+  .final-cta__title {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-weight: 200;
+    letter-spacing: -0.022em;
+    line-height: 1;
+    text-wrap: balance;
+    max-width: 18ch;
+    margin: 0;
+  }
+
+  .final-cta__title em,
+  .final-cta__title i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+  }
+
+  .final-cta__description {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: clamp(0.98rem, 1.1vw, 1.05rem);
+    line-height: 1.74;
+    text-wrap: pretty;
+    max-width: 44ch;
+    margin: 0;
+  }
+
+  .final-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .final-cta--center .final-cta__actions {
+    justify-content: center;
+  }
+
+  @media (min-width: 64rem) {
+    .final-cta--align-end .final-cta__actions {
+      justify-content: flex-end;
+    }
+  }
+
+  /* ----- Image variant. ----------------------------------
+     --final-cta-image: optional CSS var carrying a real
+     image URL (declared inline by the consumer). A single
+     soft gradient overlay sits on top — no grid texture,
+     no inscribed frame, no corner stamp. */
+  .final-cta--image {
+    color: var(--color-ink-on-inverse);
+    border-color: transparent;
+    background: var(--color-surface-inverse);
+    padding: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .final-cta--image::before {
     content: '';
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background:
-      linear-gradient(90deg, rgb(0 0 0 / 0.58), rgb(0 0 0 / 0.18)),
-      var(--cta-image, none);
-    background-position: center;
+    z-index: 0;
+    background-image: var(--final-cta-image, none);
     background-size: cover;
-    opacity: var(--cta-image-opacity, 1);
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
-  .final-cta-content {
-    max-width: 42rem;
+  .final-cta--image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-ink) 50%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 78%, transparent) 100%
+    );
+  }
+
+  .final-cta--image .final-cta__title,
+  .final-cta--image .final-cta__description,
+  .final-cta--image .final-cta__eyebrow {
+    color: inherit;
+  }
+
+  /* Light tone — for an image with a brighter, paper-like wash. */
+  .final-cta--image.final-cta--tone-light {
+    color: var(--color-ink);
+  }
+
+  .final-cta--image.final-cta--tone-light::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 80%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface) 92%, transparent) 100%
+    );
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__title {
+    color: var(--color-ink);
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__description {
+    color: var(--color-muted);
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__eyebrow {
+    color: var(--color-leather-dark);
+  }
+
+  /* ----- Split variant — image on one side, content on the
+     other. Mobile stacks with the image on top. */
+  .final-cta--split {
+    padding: 0;
+    border-color: var(--color-border-soft);
+  }
+
+  .final-cta--split .final-cta__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    min-height: 18rem;
+    aspect-ratio: 4 / 5;
+  }
+
+  .final-cta--split .final-cta__media img,
+  .final-cta--split .final-cta__media picture,
+  .final-cta--split .final-cta__media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .final-cta--split .final-cta__inner {
+    padding: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  @media (min-width: 64rem) {
+    .final-cta--split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      align-items: stretch;
+    }
+
+    .final-cta--split .final-cta__media {
+      aspect-ratio: auto;
+      min-height: 0;
+    }
+
+    .final-cta--split .final-cta__inner {
+      align-content: center;
+      padding: clamp(2.5rem, 5vw, 4rem);
+    }
   }
 }
 
@@ -1941,8 +4445,8 @@ fieldset {
     display: block;
     width: 2.75rem;
     height: 1px;
-    background: var(--color-leather-dark);
-    opacity: 0.48;
+    background: var(--color-ink);
+    opacity: 0.6;
   }
 
   .rule-soft {
@@ -2120,6 +4624,13 @@ fieldset {
     margin: 0;
   }
 
+  .section-header__title em,
+  .section-header__title i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-weight: 200;
+  }
+
   .section-header--center .section-header__title {
     margin-inline: auto;
   }
@@ -2196,16 +4707,10 @@ fieldset {
 
 /* =========================================================
    CATEGORY TILE · FULL-BLEED EDITORIAL CARD
-   Used by FeaturedCategories. Each tile is a full-bleed
-   card with a tonal CSS-only surface (no external images),
-   the index numeral in the corner, the title in the lower-
-   left, and a hairline frame that sharpens on hover. The
-   whole card is a single click target with no decorative
-   underlines or rails.
-
-   Variants give each category a different tonal wash so the
-   strip reads as a curated catalogue spread rather than
-   four identical boxes.
+   Tonal washes are now light and neutral — leather stays
+   as a small accent, never as the surface fill. Sand,
+   paper, clay, ink, plus a new "studio" wash. Each tile
+   reads as a printed catalogue card, not a leather swatch.
    ========================================================= */
 
 @layer components {
@@ -2219,115 +4724,51 @@ fieldset {
     gap: 1rem;
     overflow: hidden;
     padding: clamp(1.1rem, 2.4vw, 1.5rem);
+    background: var(--color-surface-soft);
     border: 1px solid var(--color-border-soft);
     border-radius: var(--radius-card-lg);
     color: var(--color-ink);
     text-decoration: none;
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.6),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-soft),
-        var(--color-surface-muted)
-      );
     transition:
       transform var(--duration-base) var(--ease-out),
-      border-color var(--duration-base) var(--ease-soft),
-      box-shadow var(--duration-base) var(--ease-soft);
+      border-color var(--duration-base) var(--ease-soft);
   }
 
-  /* Tonal variations — each category gets its own wash. */
+  /* Tonal variations — light, neutral, image-friendly. */
   .category-tile--leather {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.42),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-soft),
-        var(--color-leather-soft) 220%
-      );
+    background: linear-gradient(
+      135deg,
+      var(--color-surface-soft) 0%,
+      var(--color-surface-sand) 220%
+    );
   }
 
   .category-tile--sand {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.42),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-sand),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-sand);
   }
 
   .category-tile--paper {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.55),
-        transparent 56%
-      ),
-      linear-gradient(160deg, var(--color-surface), var(--color-surface-soft));
+    background: var(--color-surface);
   }
 
   .category-tile--clay {
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.32),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-clay),
-        var(--color-surface-stone)
-      );
+    background: var(--color-surface-muted);
+  }
+
+  .category-tile--studio {
+    background: linear-gradient(
+      160deg,
+      var(--color-surface),
+      var(--color-surface-soft)
+    );
   }
 
   .category-tile--ink {
-    background:
-      radial-gradient(
-        circle at 18% 0%,
-        rgb(161 132 88 / 0.2),
-        transparent 28rem
-      ),
-      var(--color-surface-inverse);
+    background: var(--color-surface-inverse);
     color: var(--color-inverse);
     border-color: color-mix(in srgb, var(--color-inverse) 8%, transparent);
   }
 
-  /* Decorative grid — very subtle, only on the lighter washes. */
-  .category-tile::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image:
-      linear-gradient(90deg, rgb(23 18 14 / 0.05) 1px, transparent 1px),
-      linear-gradient(rgb(23 18 14 / 0.03) 1px, transparent 1px);
-    background-size: 3rem 3rem;
-    opacity: 0.7;
-    mask-image: radial-gradient(120% 80% at 50% 0%, black 30%, transparent 78%);
-  }
-
-  .category-tile--ink::before {
-    background-image:
-      linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px),
-      linear-gradient(rgb(255 255 255 / 0.025) 1px, transparent 1px);
-    opacity: 0.6;
-  }
-
-  /* Top row — small index on the left, type label on the right. */
   .category-tile__top {
     display: flex;
     align-items: center;
@@ -2346,7 +4787,7 @@ fieldset {
     padding: 0.2rem 0.5rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xs);
-    background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+    background: var(--color-surface);
   }
 
   .category-tile--ink .category-tile__index {
@@ -2367,7 +4808,6 @@ fieldset {
     color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
   }
 
-  /* Title — large, prominent, sits in the lower-left of the card. */
   .category-tile__title {
     color: inherit;
     font-family: var(--font-display);
@@ -2391,8 +4831,6 @@ fieldset {
     color: var(--color-gold-soft);
   }
 
-  /* Decorative corner stamp — small L-shape that echoes
-     the catalogue cover language. */
   .category-tile__corner {
     position: absolute;
     top: 0.75rem;
@@ -2404,13 +4842,10 @@ fieldset {
     pointer-events: none;
   }
 
-  /* Affordance — the entire card is a single target, so
-     the only interactive feedback is the border + lift. */
   .category-tile:hover,
   .category-tile:focus-visible {
-    border-color: var(--color-leather-dark);
+    border-color: var(--color-ink);
     transform: translateY(-2px);
-    box-shadow: var(--atelier-shadow);
   }
 
   .category-tile--ink:hover,
@@ -2468,17 +4903,7 @@ fieldset {
     overflow: hidden;
     aspect-ratio: 4 / 5;
     border-radius: var(--radius-card-lg);
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.55),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-soft),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-muted);
   }
 
   .product-info__media-main img,
@@ -2672,44 +5097,76 @@ fieldset {
   .article-header {
     position: relative;
     max-width: none;
-    padding-block: clamp(3.5rem, 7vw, 6rem);
+    padding-block: clamp(4rem, 8vw, 7rem);
+    border-top: 1px solid var(--color-border-soft);
   }
 
   .article-header__inner {
     display: grid;
-    gap: clamp(2rem, 4vw, 3.25rem);
+    gap: clamp(2rem, 4vw, 3.5rem);
     align-items: center;
   }
 
   @media (min-width: 56rem) {
     .article-header__inner {
-      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
-      gap: clamp(3rem, 5vw, 4.5rem);
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: clamp(3.5rem, 6vw, 5.5rem);
+    }
+
+    .article-header--reverse .article-header__cover {
+      order: -1;
     }
   }
 
   .article-header__body {
     display: flex;
     flex-direction: column;
-    gap: clamp(1.1rem, 2vw, 1.5rem);
-    max-width: 40rem;
+    gap: clamp(1.25rem, 2.2vw, 1.75rem);
+    max-width: 44rem;
   }
 
   .article-header__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
     color: var(--color-leather-dark);
     margin: 0;
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1.25;
+    text-transform: uppercase;
   }
 
+  .article-header__eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    flex: 0 0 auto;
+  }
+
+  /* H1 — display scale. Bigger, lighter, balanced.
+     Min size (2.45rem) lands at ~39px on a 24rem phone
+     so the title never crowds the viewport. */
   .article-header__title {
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: clamp(2.1rem, 4.2vw, 3.3rem);
+    font-size: clamp(2.45rem, 6.4vw, 5rem);
     font-weight: 200;
-    letter-spacing: -0.022em;
-    line-height: 1.04;
+    letter-spacing: -0.025em;
+    line-height: 0.98;
     text-wrap: balance;
     margin: 0;
-    max-width: 22ch;
+    max-width: 18ch;
+  }
+
+  @media (min-width: 56rem) {
+    .article-header__title {
+      max-width: 16ch;
+    }
   }
 
   .article-header__title em,
@@ -2721,13 +5178,28 @@ fieldset {
 
   .article-header__excerpt {
     color: var(--color-muted);
-    font-size: 1rem;
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.15vw, 1.1rem);
     line-height: 1.7;
-    max-width: 38ch;
+    max-width: 44ch;
     margin: 0;
     text-wrap: pretty;
   }
 
+  /* Byline — fine row below the H1 with author + date +
+     read-time, separated by em-rules. Composed on the
+     shared `.fine-meta` base and adds the hairline above
+     that gives the byline a chapter-mark feel. */
+  .article-header__byline {
+    padding: 0.95rem 0 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .article-header__byline__author {
+    color: var(--color-leather-dark);
+  }
+
+  /* Meta — kept as a quieter alternative. */
   .article-header__meta {
     display: flex;
     flex-direction: column;
@@ -2759,10 +5231,16 @@ fieldset {
     margin: 0;
   }
 
+  /* Index — magazine "N° 01" stamp, used as a quiet brand
+     signature below the byline. A small leather-dark mark
+     with a leading hairline, like a press imprint. */
   .article-header__index {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
     color: var(--color-leather-dark);
     font-family: var(--font-display);
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-style: italic;
     font-weight: 300;
     letter-spacing: 0.18em;
@@ -2771,24 +5249,23 @@ fieldset {
     font-variant-numeric: lining-nums tabular-nums;
   }
 
-  /* Cover — image with a hairline frame and corner stamp. */
+  .article-header__index::before {
+    content: '';
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-leather-dark);
+    opacity: 0.6;
+  }
+
+  /* Cover — image with hairline frame and corner stamps. */
   .article-header__cover {
     position: relative;
     isolation: isolate;
     overflow: hidden;
     aspect-ratio: 4 / 5;
     border-radius: var(--radius-card-lg);
-    background:
-      radial-gradient(
-        circle at 50% 0%,
-        rgb(255 254 251 / 0.5),
-        transparent 56%
-      ),
-      linear-gradient(
-        135deg,
-        var(--color-surface-soft),
-        var(--color-surface-muted)
-      );
+    background: var(--color-surface-muted);
     border: 1px solid var(--color-border-soft);
   }
 
@@ -2796,6 +5273,15 @@ fieldset {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 800ms var(--ease-out);
+  }
+
+  /* A subtle zoom on the cover, triggered when the body
+     (or any inner control) is focused or hovered. Reads
+     as a printed page being lifted, not a heavy SaaS lift. */
+  .article-header:hover .article-header__cover img,
+  .article-header:focus-within .article-header__cover img {
+    transform: scale(1.02);
   }
 
   .article-header__cover--placeholder::before {
@@ -2910,6 +5396,1763 @@ fieldset {
 }
 
 /* =========================================================
+   SECTION COMPOSITIONS · HOME HERO, B2B ACCESS,
+   COMPANY INTRO, FEATURED PRODUCTS, ARTICLE COVER.
+   The vocabulary the section components in
+   src/components/sections/ compose from. Visual primitives
+   that hold the editorial layout together.
+   ========================================================= */
+
+@layer components {
+  /* =========================================================
+     HOME HERO · RETAIL ENTRANCE
+     Three composition shapes:
+     - .home-hero--default  = split, media on the right
+     - .home-hero--bleed    = full-bleed image, content over
+     - .home-hero--type     = no image, type only
+     Each can be flipped with --reverse and tinted with
+     --tone-light for a paper-coloured overlay over the image.
+     ========================================================= */
+
+  .home-hero {
+    position: relative;
+    isolation: isolate;
+    background: var(--color-page);
+  }
+
+  .home-hero__inner {
+    position: relative;
+  }
+
+  /* ----- Default split composition. */
+  .home-hero--default .home-hero__grid,
+  .home-hero--split .home-hero__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.75rem);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .home-hero--default .home-hero__grid,
+    .home-hero--split .home-hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .home-hero--reverse .home-hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .home-hero--reverse .home-hero__media {
+      order: -1;
+    }
+  }
+
+  .home-hero__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+  }
+
+  .home-hero__media img,
+  .home-hero__media picture,
+  .home-hero__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (min-width: 64rem) {
+    .home-hero__media {
+      aspect-ratio: 5 / 6;
+    }
+  }
+
+  .home-hero__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    max-width: 38rem;
+  }
+
+  .home-hero--bleed .home-hero__content {
+    color: var(--color-ink-on-inverse);
+  }
+
+  .home-hero--bleed.home-hero--tone-light .home-hero__content {
+    color: var(--color-ink);
+  }
+
+  .home-hero__rail {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem 1rem;
+    color: var(--color-leather-dark);
+  }
+
+  .home-hero--bleed .home-hero__rail {
+    color: var(--color-gold-soft);
+  }
+
+  .home-hero--bleed.home-hero--tone-light .home-hero__rail {
+    color: var(--color-leather-dark);
+  }
+
+  .home-hero__index {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-variant-numeric: lining-nums tabular-nums;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-xs);
+    background: color-mix(in srgb, var(--color-page) 70%, transparent);
+  }
+
+  .home-hero__eyebrow {
+    color: inherit;
+  }
+
+  .home-hero__title {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(2.85rem, 7.2vw, 6rem);
+    font-weight: 200;
+    letter-spacing: -0.024em;
+    line-height: 0.94;
+    text-wrap: balance;
+    max-width: 18ch;
+    margin: 0;
+  }
+
+  .home-hero--bleed .home-hero__title {
+    color: inherit;
+  }
+
+  .home-hero__title em,
+  .home-hero__title i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-weight: 200;
+  }
+
+  .home-hero--bleed .home-hero__title em,
+  .home-hero--bleed .home-hero__title i {
+    color: var(--color-gold-soft);
+  }
+
+  .home-hero--bleed.home-hero--tone-light .home-hero__title em,
+  .home-hero--bleed.home-hero--tone-light .home-hero__title i {
+    color: var(--color-leather-dark);
+  }
+
+  .home-hero__lead {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.2vw, 1.1rem);
+    line-height: 1.72;
+    text-wrap: pretty;
+    max-width: 44ch;
+    margin: 0;
+  }
+
+  .home-hero--bleed .home-hero__lead {
+    color: color-mix(in srgb, var(--color-ink-on-inverse) 82%, transparent);
+  }
+
+  .home-hero--bleed.home-hero--tone-light .home-hero__lead {
+    color: var(--color-muted);
+  }
+
+  .home-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  /* ----- Bleed variant. Full-bleed image with content
+     layered over it. The consumer sets --home-hero-image. */
+  .home-hero--bleed {
+    padding: 0;
+  }
+
+  .home-hero--bleed .home-hero__media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (min-width: 64rem) {
+    .home-hero--bleed .home-hero__media {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  .home-hero--bleed .home-hero__media::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: var(--home-hero-image, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .home-hero--bleed .home-hero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-ink) 22%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 60%, transparent) 100%
+    );
+  }
+
+  .home-hero--bleed.home-hero--tone-light .home-hero__media::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 50%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface) 90%, transparent) 100%
+    );
+  }
+
+  .home-hero--bleed .home-hero__inner {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: flex-end;
+    padding-block: clamp(3rem, 7vw, 6rem);
+  }
+
+  .home-hero--bleed .home-hero__content {
+    max-width: 40rem;
+  }
+
+  /* Top-rail meta — sits at the right edge of the editorial
+     rail when there is more than one item. Pairs with the
+     global .meta-label. */
+  .home-hero__rail .home-hero__meta,
+  .home-hero__rail > .meta-label:last-child:not(:first-child) {
+    margin-left: auto;
+  }
+
+  /* Centred content variant — type-only hero (no image).
+     Mirrors the centred branch handled by `.home-hero--center`
+     in the grid layout, so the rules stay consistent. */
+  .home-hero__content--centered {
+    text-align: center;
+    align-items: center;
+    margin-inline: auto;
+  }
+
+  .home-hero__content--centered .home-hero__title,
+  .home-hero__content--centered .home-hero__lead {
+    margin-inline: auto;
+  }
+
+  /* Caption stamp — a small floating label over a media
+     frame (default/split variants). Pairs with .meta-label. */
+  .home-hero__caption {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+    padding: 0.45rem 0.7rem;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-control);
+    backdrop-filter: blur(8px);
+    line-height: 1;
+  }
+
+  /* =========================================================
+     B2B ACCESS · EDITORIAL COMMERCIAL CLOSE
+     Sober composition. Default = paper panel with a
+     pull-quote and a hairline process list. --split adds
+     a media column. Tones: --tone-dark = ink surface.
+     ========================================================= */
+
+  .b2b-access {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card-lg);
+  }
+
+  .b2b-access--dark {
+    background: var(--color-surface-inverse);
+    color: var(--color-inverse);
+    border-color: color-mix(in srgb, var(--color-inverse) 12%, transparent);
+  }
+
+  .b2b-access--split {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 64rem) {
+    .b2b-access--split {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+  }
+
+  .b2b-access__body {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.1rem, 2.2vw, 1.6rem);
+    padding: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .b2b-access--split .b2b-access__body {
+    justify-content: center;
+  }
+
+  .b2b-access__eyebrow {
+    color: var(--color-leather-dark);
+    margin: 0;
+  }
+
+  .b2b-access--dark .b2b-access__eyebrow {
+    color: var(--color-gold-soft);
+  }
+
+  .b2b-access__title {
+    color: inherit;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.6vw, 2.85rem);
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+    text-wrap: balance;
+    max-width: 22ch;
+    margin: 0;
+  }
+
+  .b2b-access__lead {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    text-wrap: pretty;
+    max-width: 42ch;
+    margin: 0;
+  }
+
+  .b2b-access--dark .b2b-access__lead {
+    color: color-mix(in srgb, var(--color-inverse) 74%, transparent);
+  }
+
+  .b2b-access__quote {
+    position: relative;
+    color: inherit;
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 2.4vw, 2rem);
+    font-weight: 300;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 0;
+    max-width: 32ch;
+    padding-left: 0;
+  }
+
+  .b2b-access__quote::before {
+    content: '\201C';
+    color: var(--color-leather-dark);
+    font-style: italic;
+    margin-right: 0.04em;
+  }
+
+  .b2b-access--dark .b2b-access__quote::before {
+    color: var(--color-gold-soft);
+  }
+
+  .b2b-access__quote-author {
+    display: block;
+    margin-top: 0.85rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+
+  .b2b-access--dark .b2b-access__quote-author {
+    color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
+  }
+
+  .b2b-access__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .b2b-access__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    min-height: 18rem;
+    aspect-ratio: 4 / 5;
+  }
+
+  .b2b-access__media img,
+  .b2b-access__media picture,
+  .b2b-access__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (min-width: 64rem) {
+    .b2b-access__media {
+      aspect-ratio: auto;
+      min-height: 0;
+    }
+  }
+
+  /* Side rail — process list, sitting on the right column. */
+  .b2b-access__rail {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .b2b-access--dark .b2b-access__rail {
+    border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  }
+
+  .b2b-access__step {
+    display: grid;
+    grid-template-columns: minmax(0, 3.5rem) minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--color-border-soft);
+    align-items: baseline;
+  }
+
+  .b2b-access--dark .b2b-access__step {
+    border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  }
+
+  .b2b-access__step:last-child {
+    border-bottom: 0;
+  }
+
+  .b2b-access__step-num {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .b2b-access--dark .b2b-access__step-num {
+    color: var(--color-gold-soft);
+  }
+
+  .b2b-access__step-text {
+    color: var(--color-ink-soft);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .b2b-access--dark .b2b-access__step-text {
+    color: color-mix(in srgb, var(--color-inverse) 84%, transparent);
+  }
+
+  /* =========================================================
+     COMPANY INTRO · EDITORIAL COMPANY BLOCK
+     Two-column composition. --media variant adds an image
+     column. The atelier year panel sits inside the narrative
+     column so the section feels like a magazine spread, not
+     a card.
+     ========================================================= */
+
+  .company-intro {
+    position: relative;
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .company-intro__rail {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.25rem;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .company-intro__rail-index {
+    padding: 0.18rem 0.45rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xs);
+    background: var(--color-surface);
+  }
+
+  .company-intro__rail-dot {
+    display: inline-block;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--color-leather) 18%, transparent);
+  }
+
+  .company-intro__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .company-intro__grid {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: clamp(2.75rem, 5vw, 5rem);
+    }
+
+    .company-intro--reverse .company-intro__grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
+
+    .company-intro--reverse .company-intro__media {
+      order: -1;
+    }
+  }
+
+  .company-intro__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card-lg);
+  }
+
+  .company-intro__media img,
+  .company-intro__media picture,
+  .company-intro__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Atelier year panel — open, hairline-bordered module that
+     carries the 1988 brand mark. No surface fill, no frame
+     ornament — just a thin rule and the number. */
+  .company-intro__atelier {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    min-height: clamp(18rem, 32vw, 24rem);
+    padding: clamp(1.4rem, 2.5vw, 2rem);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card-lg);
+    background: var(--color-surface);
+  }
+
+  .company-intro__atelier-corner {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 36%, transparent);
+    border-right: 1px solid
+      color-mix(in srgb, var(--color-ink) 36%, transparent);
+  }
+
+  .company-intro__atelier-year {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(5.5rem, 14vw, 11rem);
+    font-weight: 200;
+    letter-spacing: -0.05em;
+    line-height: 0.88;
+    text-wrap: balance;
+    margin: 0;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .company-intro__atelier-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .company-intro__body {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.4rem, 2.6vw, 1.85rem);
+  }
+
+  .company-intro__lead {
+    max-width: 38ch;
+  }
+
+  .company-intro__cta {
+    margin-top: 0.25rem;
+  }
+
+  .company-intro__link {
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 63.9375rem) {
+    .company-intro__atelier {
+      min-height: clamp(15rem, 60vw, 20rem);
+    }
+  }
+
+  @media (max-width: 47.9375rem) {
+    .company-intro__rail-location {
+      margin-left: 0;
+    }
+  }
+
+  /* =========================================================
+     FEATURED PRODUCT · EDITORIAL FEATURE SPOT
+     Used by FeaturedProducts to lead with a single
+     hero-like product before the catalogue grid.
+     ========================================================= */
+
+  .featured-product {
+    position: relative;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .featured-product {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+
+    .featured-product--reverse {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+
+    .featured-product--reverse .featured-product__media {
+      order: -1;
+    }
+  }
+
+  .featured-product__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card-lg);
+  }
+
+  .featured-product__media img,
+  .featured-product__media picture,
+  .featured-product__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .featured-product__body {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    max-width: 34rem;
+  }
+
+  .featured-product__eyebrow {
+    color: var(--color-leather-dark);
+    margin: 0;
+  }
+
+  .featured-product__title {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4vw, 3.25rem);
+    font-weight: 200;
+    letter-spacing: -0.022em;
+    line-height: 1;
+    text-wrap: balance;
+    max-width: 18ch;
+    margin: 0;
+  }
+
+  .featured-product__lead {
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.72;
+    text-wrap: pretty;
+    margin: 0;
+    max-width: 38ch;
+  }
+
+  .featured-product__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .featured-product__meta li {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.78rem;
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+  }
+
+  /* =========================================================
+     ARTICLE HEADER · VISUAL COVER
+     --visual enlarges the cover and makes it the protagonist.
+     Cover ratio widens to 5/4 on desktop.
+     ========================================================= */
+
+  .article-header--visual .article-header__cover {
+    aspect-ratio: 4 / 3;
+  }
+
+  @media (min-width: 56rem) {
+    .article-header--visual .article-header__cover {
+      aspect-ratio: 5 / 4;
+    }
+  }
+
+  .article-header--fullbleed {
+    padding: 0;
+  }
+
+  .article-header--fullbleed .article-header__cover {
+    aspect-ratio: 21 / 9;
+    border-radius: 0;
+    border: 0;
+  }
+
+  .article-header--fullbleed .article-header__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .article-header--fullbleed .article-header__body {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  .article-header--fullbleed .article-header__excerpt {
+    margin-inline: auto;
+  }
+}
+
+/* =========================================================
+   PRODUCT CARD · EDITORIAL RETAIL
+   80% image / 20% information. Image is the protagonist.
+   No card chrome, no border, no SaaS box. The card is
+   the photo plus a tight, well-spaced info strip. The
+   20% leather character is reserved for the reference
+   line, the materials callout and the hairline accents.
+   ========================================================= */
+
+@layer components {
+  .product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.95rem;
+    color: inherit;
+    text-decoration: none;
+    isolation: isolate;
+  }
+
+  /* Media — the photo plane. 4/5 portrait, flat surface. */
+  .product-card__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card);
+  }
+
+  .product-card__media > img,
+  .product-card__media > video,
+  .product-card__media > picture,
+  .product-card__media > .image-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The placeholder has a min-height token that would
+     overflow the 4/5 media plane on narrow viewports.
+     Reset it when nested inside a sized media well. */
+  .product-card__media > .image-placeholder,
+  .product-gallery__main > .image-placeholder,
+  .product-info__media-main > .image-placeholder {
+    min-height: 0;
+  }
+
+  .product-card__media > img,
+  .product-card__media > video,
+  .product-card__media > picture {
+    object-fit: cover;
+    display: block;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .product-card:hover .product-card__media > img,
+  .product-card:focus-within .product-card__media > img,
+  .product-card:hover .product-card__media > video,
+  .product-card:focus-within .product-card__media > video {
+    transform: scale(1.035);
+  }
+
+  /* Top rail — sits over the image. Index stamp on the left,
+     quick-view on the right. Both tiny, both optional. */
+  .product-card__media-top {
+    position: absolute;
+    inset: 0.85rem 0.85rem auto 0.85rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .product-card__stamp {
+    color: var(--color-inverse);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    font-variant-numeric: lining-nums tabular-nums;
+    text-shadow: 0 0 1.5rem
+      color-mix(in srgb, var(--color-ink) 50%, transparent);
+  }
+
+  .product-card__quick {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    padding: 0.38rem 0.7rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-pill);
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity var(--duration-base) var(--ease-soft),
+      transform var(--duration-base) var(--ease-out),
+      background-color var(--duration-base) var(--ease-soft);
+    pointer-events: auto;
+  }
+
+  .product-card:hover .product-card__quick,
+  .product-card:focus-within .product-card__quick {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Body — the 20% info strip. Compact, sans-serif, no
+     boxes, no borders. */
+  .product-card__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .product-card__category {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1.25;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .product-card__name {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: clamp(0.92rem, 1.1vw, 1rem);
+    font-weight: 500;
+    letter-spacing: -0.008em;
+    line-height: 1.32;
+    text-wrap: balance;
+    margin: 0;
+    max-width: 24ch;
+  }
+
+  .product-card__name-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .product-card__name-link:hover,
+  .product-card__name-link:focus-visible {
+    color: var(--color-leather-dark);
+  }
+
+  /* Meta row — reference + price hint. One line, tiny. */
+  .product-card__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.55rem;
+    margin: 0;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  .product-card__ref {
+    color: var(--color-muted);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .product-card__meta-sep {
+    color: var(--color-border);
+  }
+
+  .product-card__price-hint {
+    color: var(--color-muted);
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+
+  /* Color swatch row — small dots, never chips. */
+  .product-card__swatches {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+  }
+
+  .product-card__swatch {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather-dark);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
+  .product-card__swatch-more {
+    color: var(--color-muted-light);
+    font-size: 0.66rem;
+    font-variant-numeric: lining-nums tabular-nums;
+    margin-left: 0.2rem;
+  }
+
+  /* Hairline under the body — a quiet horizontal mark that
+     "completes" the card on hover, like a printed caption.
+     On touch devices (no hover) it stays fully visible. */
+  .product-card__hairline {
+    height: 1px;
+    background: var(--color-ink);
+    transform: scaleX(0.18);
+    transform-origin: left center;
+    opacity: 0.6;
+    margin-top: 0.2rem;
+    transition:
+      transform var(--duration-slow) var(--ease-out),
+      opacity var(--duration-base) var(--ease-soft);
+  }
+
+  .product-card:hover .product-card__hairline,
+  .product-card:focus-within .product-card__hairline {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .product-card__hairline {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
+  /* ----- Featured variant -----------------------------
+     Spans 2 columns on desktop. Image on the left, info
+     on the right. The retail "lookbook" composition. */
+  .product-card--featured {
+    grid-column: 1 / -1;
+  }
+
+  .product-card--featured .product-card__media {
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (min-width: 64rem) {
+    .product-card--featured {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      align-items: center;
+    }
+
+    .product-card--featured .product-card__media {
+      aspect-ratio: 4 / 5;
+    }
+
+    .product-card--featured .product-card__body {
+      gap: 0.85rem;
+    }
+
+    .product-card--featured .product-card__name {
+      font-size: clamp(1.55rem, 2.4vw, 1.95rem);
+      font-weight: 400;
+      letter-spacing: -0.018em;
+      line-height: 1.1;
+      max-width: 22ch;
+    }
+  }
+
+  .product-card--featured .product-card__hairline {
+    display: none;
+  }
+
+  /* Focus ring — tokenized, generous offset. */
+  .product-card a:focus-visible,
+  .product-card button:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: 2px;
+  }
+
+  /* The `.click-area` overlay — extends the link target
+     over the entire card so the user can tap anywhere on
+     the image or body to navigate. The `<a>` itself lives
+     in the body (so the name is the focusable element and
+     the screen-reader label is the product name). The
+     link is `position: absolute; inset: 0` so it covers
+     the whole card and doesn't add a gap to the flex
+     column flow. */
+  .product-card .click-area {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: var(--radius-card);
+  }
+
+  .product-card .click-area:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-card__media > img,
+    .product-card__media > video,
+    .product-card__quick,
+    .product-card__hairline {
+      transition-duration: 1ms;
+    }
+
+    .product-card:hover .product-card__media > img,
+    .product-card:focus-within .product-card__media > img {
+      transform: none;
+    }
+  }
+}
+
+/* =========================================================
+   PRODUCT GALLERY · EDITORIAL RETAIL VIEWER
+   Big hero image on the right, vertical thumb rail on the
+   left. Thumbs are small squares with a hairline ring on
+   the active one. No chrome on the main image — just the
+   photo. On mobile, the rail moves below the image and
+   scrolls horizontally with snap-points.
+   ========================================================= */
+
+@layer components {
+  .product-gallery {
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'main'
+      'thumbs';
+  }
+
+  @media (min-width: 56rem) {
+    .product-gallery {
+      grid-template-columns: minmax(0, 4.5rem) minmax(0, 1fr);
+      grid-template-areas:
+        'thumbs main'
+        'thumbs main';
+      gap: var(--space-lg);
+      align-items: start;
+    }
+  }
+
+  .product-gallery__main {
+    grid-area: main;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card-lg);
+  }
+
+  .product-gallery__main > img,
+  .product-gallery__main > picture,
+  .product-gallery__main > video,
+  .product-gallery__main > .image-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-gallery__main > img,
+  .product-gallery__main > picture,
+  .product-gallery__main > video {
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Thumb rail — vertical on desktop, horizontal scroll on
+     mobile. Snap-points give a tactile feel on touch. */
+  .product-gallery__thumbs {
+    grid-area: thumbs;
+    display: flex;
+    flex-direction: row;
+    gap: 0.55rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-block: 0.1rem 0.35rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+    scroll-snap-type: x mandatory;
+  }
+
+  @media (min-width: 56rem) {
+    .product-gallery__thumbs {
+      flex-direction: column;
+      overflow-x: visible;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      max-height: 36rem;
+      padding-block: 0;
+      scroll-snap-type: y proximity;
+    }
+  }
+
+  .product-gallery__thumb {
+    flex: 0 0 auto;
+    width: 4rem;
+    height: 4rem;
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 56rem) {
+    .product-gallery__thumb {
+      scroll-snap-align: start;
+    }
+  }
+
+  .product-gallery__thumb-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 1px solid var(--color-border-soft);
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+      border-color var(--duration-base) var(--ease-soft),
+      opacity var(--duration-base) var(--ease-soft),
+      box-shadow var(--duration-base) var(--ease-soft);
+    opacity: 0.7;
+  }
+
+  .product-gallery__thumb-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .product-gallery__thumb-button:hover,
+  .product-gallery__thumb-button:focus-visible {
+    opacity: 1;
+    border-color: var(--color-ink);
+  }
+
+  .product-gallery__thumb-button[aria-current='true'] {
+    opacity: 1;
+    border-color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+
+  .product-gallery__thumb-button:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* =========================================================
+   PRODUCT INFO · RETAIL FIT DETAILS
+   Extends the existing .product-info layout with a small
+   detail row, an italic materials callout and a cleaner
+   commercial CTA slot. All anchors to the .product-info
+   system in the block above.
+   ========================================================= */
+
+@layer components {
+  .product-info__detail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.85rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .product-info__detail-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .product-info__detail-item + .product-info__detail-item::before {
+    content: '';
+    display: block;
+    width: 0.2rem;
+    height: 0.2rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-border);
+    margin-right: 0.4rem;
+  }
+
+  .product-info__materials {
+    color: var(--color-ink-soft);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.95rem;
+    font-weight: 300;
+    letter-spacing: -0.005em;
+    line-height: 1.45;
+    max-width: 36rem;
+    margin: 0;
+  }
+
+  .product-info__materials::before {
+    content: '';
+    display: inline-block;
+    width: 1.2rem;
+    height: 1px;
+    background: var(--color-leather-dark);
+    vertical-align: middle;
+    margin-right: 0.6rem;
+    opacity: 0.6;
+  }
+}
+
+/* =========================================================
+   PRICE CTA · COMMERCIAL NOTE
+   Clean, inline commercial block used on product pages.
+   No surface panel, no corner stamp, no heavy box. A small
+   "precio bajo solicitud" line, a hairline rule, and two
+   quiet CTAs. Reads as a printed note, not a banner.
+   ========================================================= */
+
+@layer components {
+  .price-cta {
+    display: grid;
+    gap: 0.85rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding-block: 1.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .price-cta__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .price-cta__label {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .price-cta__note {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 42ch;
+  }
+
+  .price-cta__note em {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .price-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* Compact variant — single rail, less vertical padding,
+     used inside dense compositions (related products rail,
+     admin contexts). */
+  .price-cta--compact {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    padding-block: 0.95rem;
+    gap: 0.6rem;
+  }
+
+  .price-cta--compact .price-cta__head {
+    align-items: center;
+  }
+
+  .price-cta--compact .price-cta__note {
+    font-size: 0.78rem;
+  }
+}
+
+/* =========================================================
+   CATEGORY TILE IMAGE · EDITORIAL RETAIL ENTRY
+   Image-led category tile. Image fills the tile, the title
+   sits at the bottom over a hairline + soft bottom rail.
+   A top rail carries a small "Línea 01" / count marker.
+   On hover the image lifts and the title darkens.
+   ========================================================= */
+
+@layer components {
+  .category-tile-grid {
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 40rem) {
+    .category-tile-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .category-tile-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--grid-gap-lg);
+    }
+  }
+
+  .category-tile-image {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0;
+    min-height: clamp(18rem, 30vw, 24rem);
+    overflow: hidden;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-card-lg);
+    color: var(--color-ink);
+    text-decoration: none;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-soft);
+    isolation: isolate;
+  }
+
+  .category-tile-image__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+  }
+
+  .category-tile-image__media img,
+  .category-tile-image__media video,
+  .category-tile-image__media picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .category-tile-image:hover .category-tile-image__media img,
+  .category-tile-image:focus-visible .category-tile-image__media img {
+    transform: scale(1.04);
+  }
+
+  /* Soft bottom rail so the title remains legible over
+     busy photography. Two layered gradients: a soft wash
+     and a bottom darkness. */
+  .category-tile-image__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-ink) 12%, transparent) 0%,
+      transparent 32%,
+      transparent 56%,
+      color-mix(in srgb, var(--color-ink) 60%, transparent) 100%
+    );
+  }
+
+  /* Top rail — a tiny count + index stamp, lives over the
+     image. */
+  .category-tile-image__top {
+    position: absolute;
+    inset: 1.1rem 1.1rem auto 1.1rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    color: var(--color-inverse);
+  }
+
+  .category-tile-image__index {
+    color: var(--color-inverse);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    padding: 0.22rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-inverse) 30%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 30%, transparent);
+    border-radius: var(--radius-xs);
+    backdrop-filter: blur(6px);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .category-tile-image__count {
+    color: var(--color-inverse);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  /* Body — the title and an optional short description.
+     Sits at the bottom of the tile. */
+  .category-tile-image__body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: clamp(1.1rem, 2.4vw, 1.6rem);
+    color: var(--color-inverse);
+  }
+
+  .category-tile-image__eyebrow {
+    color: color-mix(in srgb, var(--color-inverse) 78%, transparent);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1.25;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .category-tile-image__title {
+    color: inherit;
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 2.4vw, 2.05rem);
+    font-weight: 200;
+    letter-spacing: -0.018em;
+    line-height: 1.05;
+    text-wrap: balance;
+    max-width: 14ch;
+    margin: 0;
+  }
+
+  .category-tile-image__title em,
+  .category-tile-image__title i {
+    color: color-mix(in srgb, var(--color-inverse) 90%, var(--color-gold-soft));
+    font-style: italic;
+    font-weight: 200;
+  }
+
+  .category-tile-image__desc {
+    color: color-mix(in srgb, var(--color-inverse) 76%, transparent);
+    font-family: var(--font-sans);
+    font-size: 0.84rem;
+    line-height: 1.55;
+    max-width: 32ch;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .category-tile-image__cta {
+    color: inherit;
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 0.4rem;
+  }
+
+  .category-tile-image__cta::after {
+    content: '';
+    width: 1.4rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0.5);
+    transform-origin: left center;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .category-tile-image:hover .category-tile-image__cta::after,
+  .category-tile-image:focus-visible .category-tile-image__cta::after {
+    transform: scaleX(1);
+  }
+
+  /* ----- Featured variant (magazine cover) -----------
+     The first tile in a category strip. On desktop it
+     spans the full grid width and switches to a side-by-
+     side composition (image left, copy right) so it reads
+     as the magazine cover, not a tall card. On mobile /
+     tablet it falls back to the regular 1-column cell
+     with the title at the bottom. */
+  .category-tile-image--featured {
+    min-height: clamp(20rem, 32vw, 26rem);
+  }
+
+  .category-tile-grid > li:has(.category-tile-image--featured) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 64rem) {
+    .category-tile-image--featured {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      align-items: stretch;
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      min-height: clamp(22rem, 28vw, 28rem);
+      padding: clamp(1.4rem, 2.6vw, 1.9rem);
+    }
+
+    .category-tile-image--featured .category-tile-image__media {
+      position: relative;
+      inset: auto;
+      aspect-ratio: 4 / 3;
+      min-height: 0;
+      height: 100%;
+      border-radius: var(--radius-card-lg);
+    }
+
+    .category-tile-image--featured .category-tile-image__top {
+      position: absolute;
+      inset: 1.1rem 1.1rem auto auto;
+    }
+
+    .category-tile-image--featured .category-tile-image__body {
+      position: relative;
+      inset: auto;
+      z-index: 2;
+      align-self: center;
+      padding: clamp(0.5rem, 1.2vw, 1rem) clamp(0.5rem, 1.5vw, 1.25rem);
+      color: var(--color-ink);
+    }
+
+    .category-tile-image--featured .category-tile-image__overlay {
+      display: none;
+    }
+
+    .category-tile-image--featured .category-tile-image__index {
+      color: var(--color-ink);
+      background: var(--color-surface);
+      border-color: var(--color-border);
+    }
+
+    .category-tile-image--featured .category-tile-image__count {
+      color: var(--color-muted);
+    }
+
+    .category-tile-image--featured .category-tile-image__eyebrow {
+      color: var(--color-leather-dark);
+    }
+
+    .category-tile-image--featured .category-tile-image__title {
+      color: var(--color-ink);
+      font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+      max-width: 18ch;
+    }
+
+    .category-tile-image--featured .category-tile-image__desc {
+      color: var(--color-muted);
+    }
+
+    .category-tile-image--featured .category-tile-image__cta {
+      color: var(--color-ink);
+    }
+  }
+
+  /* ----- Placeholder state ----------------------------
+     Used when no image is provided. The surface stays
+     flat and the title reads as ink-on-paper. */
+  .category-tile-image--placeholder {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border: 1px solid var(--color-border-soft);
+  }
+
+  .category-tile-image--placeholder .category-tile-image__overlay {
+    display: none;
+  }
+
+  .category-tile-image--placeholder .category-tile-image__top {
+    color: var(--color-ink);
+  }
+
+  .category-tile-image--placeholder .category-tile-image__index {
+    color: var(--color-ink);
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  .category-tile-image--placeholder .category-tile-image__count {
+    color: var(--color-muted);
+  }
+
+  .category-tile-image--placeholder .category-tile-image__body {
+    color: var(--color-ink);
+  }
+
+  .category-tile-image--placeholder .category-tile-image__eyebrow {
+    color: var(--color-muted);
+  }
+
+  .category-tile-image--placeholder .category-tile-image__desc {
+    color: var(--color-muted);
+  }
+
+  /* Placeholder + featured — the media frame becomes the
+     "cover" of a magazine, the body reads as ink-on-paper
+     alongside it. The frame sits inside the padding on
+     desktop and the body uses the full tile on mobile. */
+  .category-tile-image--placeholder.category-tile-image--featured
+    .category-tile-image__media {
+    background: var(--color-surface-soft);
+  }
+
+  .category-tile-image--placeholder.category-tile-image--featured
+    .category-tile-image__placeholder-frame {
+    inset: clamp(0.8rem, 2vw, 1.5rem);
+  }
+
+  /* Inner placeholder frame — quiet "missing photo" cue. */
+  .category-tile-image__placeholder-frame {
+    position: absolute;
+    inset: 14%;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius-card-lg) - 6px);
+    pointer-events: none;
+  }
+
+  /* ----- Focus ring + motion ------------------------- */
+  .category-tile-image:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .category-tile-image__media img {
+      transition-duration: 1ms;
+    }
+
+    .category-tile-image:hover .category-tile-image__media img,
+    .category-tile-image:focus-visible .category-tile-image__media img {
+      transform: none;
+    }
+  }
+}
+
+/* =========================================================
    MICRO INTERACTIONS & UTILITIES
    ========================================================= */
 
@@ -2968,11 +7211,26 @@ fieldset {
   .hover-craft:hover,
   .hover-craft:focus-within {
     transform: translateY(-2px);
-    border-color: color-mix(
-      in srgb,
-      var(--color-leather) 36%,
-      var(--color-border)
-    );
+    border-color: var(--color-ink);
+  }
+
+  .hover-line-grow {
+    display: block;
+    width: 1.4rem;
+    height: 1px;
+    background: currentColor;
+    transition: width var(--duration-slow) var(--ease-out);
+  }
+
+  .hover-line-grow:hover,
+  .hover-line-grow:focus-within,
+  a:hover .hover-line-grow,
+  a:focus-visible .hover-line-grow {
+    width: 2.2rem;
+  }
+
+  .transition-media {
+    transition: transform var(--duration-slow) var(--ease-out);
   }
 
   .text-balance {
@@ -2991,8 +7249,135 @@ fieldset {
     overflow: hidden;
   }
 
+  /* ----- TINY LAYOUT SHORTHANDS ---------------------------
+     Used by editorial compositions that need to centre text
+     or to push a meta to the right edge of a flex rail.
+     Kept here so component-scoped styles can stay minimal. */
+
+  .text-center {
+    text-align: center;
+  }
+
+  .justify-center {
+    justify-content: center;
+  }
+
   .full-bleed {
     width: 100vw;
     margin-left: calc(50% - 50vw);
+  }
+
+  /* ----- TEXT TRUNCATION --------------------------------
+     Single-line and two-line clamps, used to keep cards
+     tidy in tight grids. */
+  .truncate-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ----- MEDIA CORNER STAMPS -----------------------------
+     The two-corner "printed photo" detail used by
+     image-placeholders, article covers, product gallery
+     and atelier panels. 7×7 hairline brackets in current
+     ink @ 50%. Override opacity or colour per-component. */
+  .media-stamp {
+    position: absolute;
+    width: 0.7rem;
+    height: 0.7rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .media-stamp--tl {
+    top: 1rem;
+    left: 1rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 50%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--color-ink) 50%, transparent);
+  }
+
+  .media-stamp--br {
+    bottom: 1rem;
+    right: 1rem;
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--color-ink) 50%, transparent);
+    border-right: 1px solid
+      color-mix(in srgb, var(--color-ink) 50%, transparent);
+  }
+
+  .media-stamp--inverse.media-stamp--tl {
+    border-top-color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
+    border-left-color: color-mix(
+      in srgb,
+      var(--color-inverse) 60%,
+      transparent
+    );
+  }
+
+  .media-stamp--inverse.media-stamp--br {
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--color-inverse) 60%,
+      transparent
+    );
+    border-right-color: color-mix(
+      in srgb,
+      var(--color-inverse) 60%,
+      transparent
+    );
+  }
+
+  /* ----- FOCUS RING SHORTHAND ----------------------------
+     Apply to any interactive element that should receive
+     the standard tokenized focus ring. */
+  .focus-ring:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .focus-ring-inset:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+
+  /* ----- CLICK AREA EXTENSION ----------------------------
+     An invisible overlay that turns the entire parent into
+     a single click target — used by cards whose visible
+     content is just image + type. */
+  .click-area::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* ----- RAW RULES -----------------------------------------
+     A 1px ink hairline at default width. Used as a
+     decorative baseline in editorial compositions. */
+  .rule-inline {
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
   }
 }

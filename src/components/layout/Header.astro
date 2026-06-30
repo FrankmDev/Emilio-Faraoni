@@ -1,122 +1,57 @@
 ---
 import Container from '@/components/ui/Container.astro';
+import NavLink from '@/components/layout/NavLink.astro';
+import { company } from '@/data/company';
+import { mainNavigation } from '@/data/navigation';
 import { ROUTES } from '@/lib/routes';
 
-const navItems = [
-  { href: ROUTES.HOME, label: 'Inicio' },
-  { href: ROUTES.CATALOG, label: 'Catálogo' },
-  { href: ROUTES.COMPANY, label: 'Empresa' },
-  { href: ROUTES.CONTACT, label: 'Contacto' },
-];
+/**
+ * Header · sticky editorial rail.
+ *
+ * Three slots: brand (left) · nav (centre, hidden on mobile)
+ * · CTA (right). No boxy chrome, no commercial buttons.
+ *
+ * The CTA is a fine-link "Contactar" pointing at /contacto —
+ * a discreet editorial handshake, never a buy / shop / cart
+ * action. The CTA slot is intentionally restrained; this is
+ * not a retail storefront.
+ */
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === ROUTES.HOME) {
+    return currentPath === ROUTES.HOME;
+  }
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
 ---
 
 <header class="site-header">
-  <Container class="flex items-center justify-between gap-8 py-5">
-    <a href={ROUTES.HOME} class="site-header__brand"> Emilio Faraoni </a>
-
-    <nav
-      class="site-header__nav hidden items-center gap-8 md:flex"
-      aria-label="Navegación principal"
+  <Container wide class="site-header__inner">
+    <a
+      href={ROUTES.HOME}
+      class="site-header__brand"
+      aria-label={`${company.name} · Inicio`}
     >
+      <span>{company.name}</span>
+      <span class="site-header__brand-mark" aria-hidden="true">
+        {company.foundedYear}
+      </span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Navegación principal">
       {
-        navItems.map((item) => (
-          <a
-            href={item.href}
-            aria-current={Astro.url.pathname === item.href ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
+        mainNavigation.map((item) => (
+          <NavLink href={item.href} label={item.label} active={isActive(item.href)} />
         ))
       }
     </nav>
 
-    <a href={ROUTES.WHOLESALE_ACCESS} class="site-header__cta">
-      Acceso mayorista
+    <a href={ROUTES.CONTACT} class="site-header__cta">
+      <span class="site-header__cta-dot" aria-hidden="true"></span>
+      <span>Contactar</span>
       <span class="site-header__cta-arrow" aria-hidden="true">→</span>
     </a>
   </Container>
 </header>
-
-<style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border-hairline);
-  }
-
-  .site-header__brand {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
-    text-decoration: none;
-    line-height: 1;
-  }
-
-  .site-header__nav a {
-    font-family: var(--font-sans);
-    font-size: 0.78rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--color-muted);
-    text-decoration: none;
-    line-height: 1;
-    transition: color 200ms var(--ease-soft, ease);
-  }
-
-  .site-header__nav a:hover,
-  .site-header__nav a[aria-current='page'] {
-    color: var(--color-ink);
-  }
-
-  .site-header__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-sans);
-    font-size: 0.78rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--color-ink);
-    text-decoration: none;
-    line-height: 1;
-    transition: color 200ms var(--ease-soft, ease);
-  }
-
-  .site-header__cta:hover {
-    color: var(--color-brass);
-  }
-
-  .site-header__cta-arrow {
-    display: inline-block;
-    transition: transform 200ms var(--ease-out, ease);
-  }
-
-  .site-header__cta:hover .site-header__cta-arrow {
-    transform: translateX(0.25rem);
-  }
-
-  .site-header__brand:focus-visible,
-  .site-header__nav a:focus-visible,
-  .site-header__cta:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: var(--focus-ring-offset);
-    border-radius: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .site-header__nav a,
-    .site-header__cta,
-    .site-header__cta-arrow {
-      transition-duration: 1ms;
-    }
-    .site-header__cta:hover .site-header__cta-arrow {
-      transform: translateX(0);
-    }
-  }
-</style>

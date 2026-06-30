@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageShell from '@/components/layout/PageShell.astro';
+import { company } from '@/data/company';
+---
+
+<BaseLayout
+  title="Contacto"
+  description={`Póngase en contacto con ${company.name}. Consultas profesionales sobre fabricación, materiales y relaciones comerciales en ${company.location}.`}
+>
+  <PageShell>
+    <section class="page-hero" aria-labelledby="contact-title">
+      <div class="container-wide page-hero-inner">
+        <div class="page-hero-content">
+          <p class="page-hero__eyebrow eyebrow">Contacto</p>
+          <h1 id="contact-title" class="page-hero__title display-serif">
+            Contacto
+          </h1>
+          <p class="page-hero__description copy-lead">
+            Para consultas profesionales, puede contactar con
+            {company.name}.
+          </p>
+        </div>
+      </div>
+    </section>
+  </PageShell>
+</BaseLayout>

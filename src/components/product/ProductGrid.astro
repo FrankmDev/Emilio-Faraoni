@@ -1,14 +1,55 @@
 ---
+/**
+ * ProductGrid · editorial retail product grid.
+ *
+ * A clean 2- to 4-column grid built on the global
+ * `.product-grid-editorial` token. The first card can be
+ * marked as `featured`, which makes it span the full grid
+ * width and switch to the side-by-side composition.
+ *
+ * Gaps stay consistent with the design system. The grid
+ * owns the rhythm; the cards own the visual weight.
+ */
 import type { PublicProduct } from '@/lib/products/getters';
 import ProductCard from './ProductCard.astro';
 
 interface Props {
   products: PublicProduct[];
+  /** When true, the first product is rendered as the
+   *  featured (2-column, side-by-side) card. */
+  featured?: boolean;
+  /** Number of columns on desktop. Defaults to 3. */
+  columns?: 2 | 3 | 4;
+  /** Optional class hook. */
+  class?: string;
 }
 
-const { products } = Astro.props;
+const {
+  products,
+  featured = false,
+  columns = 3,
+  class: className,
+} = Astro.props;
+
+const gridClass = [
+  'product-grid-editorial',
+  columns === 2 && 'product-grid-editorial--cols-2',
+  columns === 4 && 'product-grid-editorial--cols-4',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const [first, ...rest] = products;
 ---
 
-<div class="grid gap-x-grid-gap gap-y-14 md:grid-cols-2 lg:grid-cols-3">
-  {products.map((product) => <ProductCard product={product} />)}
-</div>
+{
+  products.length > 0 && (
+    <div class={gridClass} data-featured={featured ? 'true' : undefined}>
+      {first && <ProductCard product={first} featured={featured} priority />}
+      {rest.map((product) => (
+        <ProductCard product={product} />
+      ))}
+    </div>
+  )
+}

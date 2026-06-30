@@ -1,12 +1,49 @@
 ---
+/**
+ * PageShell · editorial retail page frame.
+ *
+ * Outer chrome of every public page. Composes the sticky
+ * site header, a flexible main slot and the site footer.
+ *
+ * Layout notes:
+ *  - `.site-shell` guarantees a full-viewport minimum
+ *    height and owns the outer page background.
+ *  - `.page-frame` is a tokenised "framed page" — on mobile
+ *    it behaves like a flat surface, on desktop it centres
+ *    the content inside the surround with a hairline +
+ *    soft drop. The current design system already defines
+ *    these tokens, so PageShell does NOT add any layout
+ *    rules of its own.
+ *  - The skip-link jumps to `#main-content`. The id is
+ *    stable so it can be referenced from anywhere.
+ *
+ * Footer variants:
+ *  - `default` — light surface, the editorial baseline.
+ *  - `dark` — inverse surface, used by premium pages that
+ *    call for a final-CTA closing.
+ */
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+
+interface Props {
+  /** Footer presentation — 'default' (light) or 'dark'. */
+  footerVariant?: 'default' | 'dark';
+  /** Optional class for the shell wrapper. */
+  class?: string;
+}
+
+const { footerVariant = 'default', class: className } = Astro.props;
+
+const classes = ['site-shell', className].filter(Boolean).join(' ');
 ---
 
-<div class="flex min-h-screen flex-col">
-  <Header />
-  <main class="flex-1">
-    <slot />
-  </main>
-  <Footer />
+<div class={classes}>
+  <div class="page-frame">
+    <a href="#main-content" class="skip-link">Saltar al contenido</a>
+    <Header />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer variant={footerVariant} />
+  </div>
 </div>

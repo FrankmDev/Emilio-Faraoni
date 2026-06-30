@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageShell from '@/components/layout/PageShell.astro';
+import { company } from '@/data/company';
+---
+
+<BaseLayout
+  title="Quiénes Somos"
+  description={`Conoce la historia de ${company.name}: empresa familiar de marroquinería en ${company.location}, dedicada a la fabricación artesanal de complementos de cuero desde ${company.foundedYear}.`}
+>
+  <PageShell>
+    <section class="page-hero" aria-labelledby="about-title">
+      <div class="container-wide page-hero-inner">
+        <div class="page-hero-content">
+          <p class="page-hero__eyebrow eyebrow">Quiénes Somos</p>
+          <h1 id="about-title" class="page-hero__title display-serif">
+            Quiénes Somos
+          </h1>
+          <p class="page-hero__description copy-lead">
+            Empresa familiar de marroquinería ubicada en {company.location}.
+          </p>
+        </div>
+      </div>
+    </section>
+  </PageShell>
+</BaseLayout>

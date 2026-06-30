@@ -160,125 +160,41 @@ const linkProps = isLink
 
 <style>
   /* =========================================================
-     Badge · modern editorial chip.
-     Generous radius, soft warm surface, hairline border.
-     Zara / Mango / Pull&Bear level of refinement.
+     Badge · thin editorial chip.
+     Built on the global .badge token (pill, hairline border,
+     uppercase label). This layer adds the tone palette,
+     the optional dot, the link affordance and the absolute
+     media-overlay variant.
      ========================================================= */
   .badge {
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    max-width: 100%;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
-    background: var(--color-surface);
-    color: var(--color-ink-soft);
-    font-family: var(--font-sans);
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1;
-    text-decoration: none;
-    white-space: nowrap;
-    padding: 0.5rem 0.9rem;
-    border-radius: var(--radius-pill);
-    font-variant-numeric: lining-nums tabular-nums;
     transition:
-      transform var(--duration-base) var(--ease-out),
-      color var(--duration-base) var(--ease-out),
-      background-color var(--duration-base) var(--ease-out),
-      border-color var(--duration-base) var(--ease-out),
-      box-shadow var(--duration-base) var(--ease-out);
+      color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft);
   }
 
   /* =========================================================
-     Shape.
-     ========================================================= */
-  .badge--pill {
-    border-radius: var(--radius-pill);
-  }
-
-  .badge--rounded {
-    border-radius: 14px;
-  }
-
-  .badge--square {
-    border-radius: 10px;
-  }
-
-  .badge--tag {
-    border-radius: 0;
-    padding-inline: 0.7rem;
-  }
-
-  /* =========================================================
-     Sizes.
-     ========================================================= */
-  .badge--sm {
-    font-size: 0.62rem;
-    padding: 0.38rem 0.7rem;
-    gap: 0.35rem;
-  }
-
-  .badge--md {
-    /* uses .badge defaults */
-  }
-
-  .badge--lg {
-    font-size: 0.78rem;
-    padding: 0.62rem 1.1rem;
-    gap: 0.55rem;
-  }
-
-  /* =========================================================
-     Density.
-     ========================================================= */
-  .badge--density-compact {
-    padding-block: 0.34rem;
-  }
-  .badge--density-loose {
-    padding-block: 0.7rem;
-  }
-
-  /* =========================================================
-     Tones — modern editorial palette.
+     Tones — neutral, ink, outline, soft, inverse.
+     Warm "sand" / "leather" tones are kept as aliases that
+     resolve to soft for back-compat, but never carry the
+     warm shadow they used to.
      ========================================================= */
   .badge--neutral {
-    border-color: color-mix(in srgb, var(--color-ink) 9%, transparent);
     background: var(--color-surface);
+    border-color: var(--color-border);
     color: var(--color-ink-soft);
   }
 
   .badge--ink {
-    border-color: var(--color-ink);
     background: var(--color-ink);
-    color: var(--color-inverse);
-  }
-
-  .badge--leather {
-    border-color: var(--color-leather-dark);
-    background: var(--color-leather-dark);
+    border-color: var(--color-ink);
     color: var(--color-inverse);
   }
 
   .badge--outline {
     background: transparent;
-    border-color: color-mix(in srgb, var(--color-ink) 20%, transparent);
+    border-color: var(--color-border);
     color: var(--color-ink);
-  }
-
-  .badge--accent {
-    background: color-mix(in srgb, var(--color-leather) 12%, var(--color-surface));
-    border-color: color-mix(in srgb, var(--color-leather) 22%, transparent);
-    color: var(--color-leather-dark);
-  }
-
-  .badge--sand {
-    background: color-mix(in srgb, var(--color-leather) 9%, var(--color-surface-soft));
-    border-color: color-mix(in srgb, var(--color-leather) 18%, transparent);
-    color: var(--color-leather-dark);
   }
 
   .badge--soft {
@@ -293,40 +209,21 @@ const linkProps = isLink
     color: var(--color-inverse);
   }
 
-  /* =========================================================
-     Legacy variant aliases (back-compat).
-     ========================================================= */
-  .badge--default {
-    background: var(--color-surface);
-    border-color: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  /* Legacy warm tones — kept as aliases so the Style Museum
+     and any external usage don't break. They resolve to soft. */
+  .badge--sand,
+  .badge--leather,
+  .badge--accent,
+  .badge--default,
+  .badge--solid {
+    background: var(--color-surface-soft);
+    border-color: transparent;
     color: var(--color-ink-soft);
   }
-  .badge--solid {
-    background: var(--color-surface-muted);
-    border-color: transparent;
-    color: var(--color-ink);
-  }
 
   /* =========================================================
-     Optional elements — kicker / meta / count / icons.
+     Optional count — quiet tabular suffix.
      ========================================================= */
-  .badge__kicker,
-  .badge__meta {
-    font-size: 0.6rem;
-    letter-spacing: 0.01em;
-    font-weight: 500;
-    color: currentColor;
-    opacity: 0.7;
-  }
-
-  .badge__label {
-    position: relative;
-    z-index: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .badge__count {
     display: inline-flex;
     align-items: center;
@@ -343,53 +240,30 @@ const linkProps = isLink
   }
 
   .badge--ink .badge__count,
-  .badge--leather .badge__count,
   .badge--inverse .badge__count {
     background: color-mix(in srgb, var(--color-inverse) 18%, transparent);
   }
 
-  .badge__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 0;
-    color: currentColor;
-  }
-  .badge__icon :global(svg) {
-    width: 0.85rem;
-    height: 0.85rem;
-  }
-
-  /* Multi-line badge — kicker above, meta below. */
-  .badge--multi {
-    align-items: flex-start;
-    text-align: left;
-    flex-direction: column;
-    gap: 0.18rem;
-    padding-block: 0.45rem;
-    padding-inline: 0.85rem;
-  }
-  .badge--multi .badge__label {
-    overflow: visible;
-  }
-
   /* =========================================================
-     Position — absolute variant anchors the badge to its
-     containing media block. Soft blur for legibility.
+     Absolute variant — sits over a media block. Soft blur
+     for legibility on top of photography.
      ========================================================= */
   .badge--absolute {
     position: absolute;
     top: 0.85rem;
     left: 0.85rem;
     z-index: 2;
-    backdrop-filter: blur(10px) saturate(1.1);
-    -webkit-backdrop-filter: blur(10px) saturate(1.1);
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
   }
 
   .badge--absolute.badge--neutral,
   .badge--absolute.badge--soft,
+  .badge--absolute.badge--sand,
+  .badge--absolute.badge--leather,
   .badge--absolute.badge--accent,
-  .badge--absolute.badge--sand {
+  .badge--absolute.badge--default,
+  .badge--absolute.badge--solid {
     background: color-mix(in srgb, var(--color-surface) 85%, transparent);
   }
 
@@ -398,8 +272,7 @@ const linkProps = isLink
   }
 
   /* =========================================================
-     Link affordance — modern editorial lift.
-     Soft translateY + color shift + warm shadow.
+     Link affordance — quiet border + color shift. No lift.
      ========================================================= */
   a.badge {
     cursor: pointer;
@@ -407,52 +280,39 @@ const linkProps = isLink
 
   a.badge:hover,
   a.badge:focus-visible {
-    transform: translateY(-1px);
     border-color: var(--color-ink);
     color: var(--color-ink);
-    box-shadow: 0 6px 18px -10px rgb(23 18 14 / 0.22);
   }
 
   a.badge.badge--ink:hover,
   a.badge.badge--ink:focus-visible {
-    border-color: var(--color-leather-dark);
-    background: var(--color-leather-dark);
-    color: var(--color-inverse);
-    box-shadow: 0 6px 18px -10px rgb(118 80 51 / 0.32);
-  }
-
-  a.badge.badge--leather:hover,
-  a.badge.badge--leather:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px -10px rgb(118 80 51 / 0.32);
-  }
-
-  a.badge.badge--inverse:hover,
-  a.badge.badge--inverse:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px -10px rgb(0 0 0 / 0.4);
-  }
-
-  a.badge.badge--accent:hover,
-  a.badge.badge--accent:focus-visible,
-  a.badge.badge--sand:hover,
-  a.badge.badge--sand:focus-visible {
-    background: color-mix(in srgb, var(--color-leather) 18%, var(--color-surface));
-    border-color: var(--color-leather-dark);
-    color: var(--color-leather-dark);
-  }
-
-  a.badge.badge--soft:hover,
-  a.badge.badge--soft:focus-visible {
-    background: var(--color-surface);
-    border-color: color-mix(in srgb, var(--color-ink) 18%, transparent);
+    background: var(--color-surface-muted);
     color: var(--color-ink);
   }
 
   a.badge.badge--outline:hover,
   a.badge.badge--outline:focus-visible {
-    background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+    background: var(--color-surface-soft);
+  }
+
+  a.badge.badge--soft:hover,
+  a.badge.badge--soft:focus-visible,
+  a.badge.badge--sand:hover,
+  a.badge.badge--sand:focus-visible,
+  a.badge.badge--leather:hover,
+  a.badge.badge--leather:focus-visible,
+  a.badge.badge--accent:hover,
+  a.badge.badge--accent:focus-visible {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-ink);
+  }
+
+  a.badge.badge--inverse:hover,
+  a.badge.badge--inverse:focus-visible {
+    background: var(--color-ink);
     border-color: var(--color-ink);
+    color: var(--color-inverse);
   }
 
   a.badge:focus-visible {
@@ -465,38 +325,24 @@ const linkProps = isLink
     opacity: 0.4;
     cursor: not-allowed;
     pointer-events: none;
-    transform: none;
-    box-shadow: none;
   }
 
   /* =========================================================
-     Dot — small filled circle. Scales subtly on link hover.
+     Dot — small filled circle in currentColor.
      ========================================================= */
   .badge--dot::before {
     content: '';
     display: inline-block;
-    width: 0.42rem;
-    height: 0.42rem;
+    width: 0.4rem;
+    height: 0.4rem;
     border-radius: var(--radius-pill);
     background: currentColor;
     flex: 0 0 auto;
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-
-  a.badge--dot:hover::before,
-  a.badge--dot:focus-visible::before {
-    transform: scale(1.3);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .badge,
-    .badge--dot::before {
+    .badge {
       transition-duration: 1ms;
-    }
-
-    a.badge:hover,
-    a.badge:focus-visible {
-      transform: none;
     }
   }
 </style>

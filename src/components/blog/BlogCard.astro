@@ -1,15 +1,44 @@
 ---
+/**
+ * BlogCard · editorial open card for the blog index.
+ * The image is the protagonist; the body is type only — no
+ * closed box, no surface fill. Supports four variants:
+ *   - default : standard grid card, 4/5 portrait cover
+ *   - featured: lead article in a featured-first grid, 5/4
+ *   - compact : smaller thumbnail (3/2) for sidebars/rails
+ *   - row     : horizontal layout for list views (image left)
+ * A magazine-style "N° 01" numeral can be stamped on the
+ * cover, and a category cover-tag can be shown at the bottom
+ * of the cover when no excerpt is desired.
+ *
+ * All visual tokens live in src/styles/global.css under
+ * `.blog-card*`.
+ */
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder.astro';
+
+type Variant = 'default' | 'featured' | 'compact' | 'row';
 
 interface Props {
   title: string;
-  excerpt: string;
+  excerpt?: string;
   href: string;
   category?: string;
   date?: string;
   readingTime?: string;
+  author?: string;
   image?: string;
   imageAlt?: string;
+  imageWidth?: number | string;
+  imageHeight?: number | string;
+  /** Visual variant. Defaults to 'default'. */
+  variant?: Variant;
+  /** Optional numeral to stamp on the cover, e.g. "N° 01". */
+  number?: string;
+  /** Optional tag for the bottom-left of the cover. */
+  coverTag?: string;
+  /** When true, the cover tag is rendered in dark ink for
+   *  stronger contrast (used for lead article). */
+  coverTagDark?: boolean;
   class?: string;
 }
 
@@ -20,173 +49,117 @@ const {
   category,
   date,
   readingTime,
+  author,
   image,
   imageAlt,
+  imageWidth,
+  imageHeight,
+  variant = 'default',
+  number,
+  coverTag,
+  coverTagDark = false,
   class: className,
 } = Astro.props;
 
-const metaItems = [category, date, readingTime].filter(
-  (item): item is string => typeof item === 'string' && item.length > 0,
-);
-
-const classes = [
+const cardClasses = [
   'blog-card',
+  variant !== 'default' && `blog-card--${variant}`,
   className,
 ]
   .filter(Boolean)
   .join(' ');
+
+const isRow = variant === 'row';
+const isFeatured = variant === 'featured';
+const showExcerpt =
+  Boolean(excerpt) && (isFeatured || variant === 'default' || isRow);
+const showCoverTag =
+  !coverTag && category && !showExcerpt ? category : coverTag;
+// When the cover tag is showing the category, the body meta
+// should not repeat it.
+const showCategoryInMeta = Boolean(category) && !showCoverTag;
+const hasBodyMeta =
+  showCategoryInMeta ||
+  Boolean(author) ||
+  Boolean(date) ||
+  Boolean(readingTime);
+
+// Defaults per variant — keeps the placeholder aspect ratio
+// in sync with the real cover ratio.
+const placeholderVariant = isRow
+  ? 'wide'
+  : isFeatured
+    ? 'wide'
+    : variant === 'compact'
+      ? 'wide'
+      : 'portrait';
 ---
 
-<article class={classes}>
-  <a href={href} class="blog-card__link" aria-label={title}>
-    <div class="blog-card__media">
-      {
-        image ? (
-          <img
-            src={image}
-            alt={imageAlt ?? ''}
-            class="blog-card__image"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <ImagePlaceholder
-            variant="wide"
-            tone="muted"
-            label={category ?? title}
-            class="blog-card__placeholder"
-          />
-        )
-      }
-    </div>
-  </a>
-  <div class="blog-card__body">
+<article class={cardClasses}>
+  {
+    number && (
+      <span
+        class:list={[
+          'blog-card-numeral',
+          coverTagDark && 'blog-card-numeral--ink',
+        ]}
+        aria-hidden="true"
+      >
+        {number}
+      </span>
+    )
+  }
+
+  <a href={href} class="blog-card-media focus-ring" aria-label={title}>
     {
-      metaItems.length > 0 && (
-        <div class="blog-card__meta" aria-label="Metadatos">
-          {metaItems.map((item) => (
-            <span class="label-fine">{item}</span>
-          ))}
-        </div>
+      image ? (
+        <img
+          src={image}
+          alt={imageAlt ?? ''}
+          width={imageWidth}
+          height={imageHeight}
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+          class="transition-media"
+        />
+      ) : (
+        <ImagePlaceholder
+          variant={placeholderVariant}
+          tone="muted"
+          crossed={false}
+          frame="minimal"
+          label={category ?? title}
+          class="blog-card-media__placeholder"
+        />
       )
     }
-    <h3 class="heading-card blog-card__title">
-      <a href={href} class="blog-card__title-link">
-        {title}
-      </a>
+
+    {showCoverTag && <span class="blog-card-cover-tag">{showCoverTag}</span>}
+  </a>
+
+  <div class="blog-card-body">
+    {
+      hasBodyMeta && (
+        <ul class="fine-meta blog-card-meta" aria-label="Metadatos">
+          {showCategoryInMeta && (
+            <li class="blog-card-meta__category">{category}</li>
+          )}
+          {author && <li>{author}</li>}
+          {date && <li>{date}</li>}
+          {readingTime && <li>{readingTime}</li>}
+        </ul>
+      )
+    }
+
+    <h3 class="blog-card-title">
+      <a href={href}>{title}</a>
     </h3>
-    <p class="copy-small blog-card__excerpt">{excerpt}</p>
-    <span class="blog-card__rail" aria-hidden="true"></span>
+
+    {showExcerpt && <p class="blog-card-excerpt">{excerpt}</p>}
+
+    <a href={href} class="blog-card-link">
+      <span>Leer artículo</span>
+    </a>
   </div>
 </article>
-
-<style>
-  .blog-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    height: 100%;
-  }
-
-  .blog-card__link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .blog-card__media {
-    position: relative;
-    overflow: hidden;
-    background: var(--color-surface-muted);
-    border: 1px solid var(--color-border-hairline);
-    border-radius: var(--radius-card);
-  }
-
-  .blog-card__image {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--duration-slow) var(--ease-out);
-  }
-
-  .blog-card__placeholder {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    border-radius: var(--radius-card);
-  }
-
-  .blog-card__link:hover .blog-card__image,
-  .blog-card__link:focus-visible .blog-card__image {
-    transform: scale(1.02);
-  }
-
-  .blog-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .blog-card__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    align-items: center;
-    color: var(--color-muted);
-  }
-
-  .blog-card__meta > * + *::before {
-    content: '';
-    display: inline-block;
-    width: 3px;
-    height: 3px;
-    border-radius: 999px;
-    background: currentColor;
-    opacity: 0.4;
-    margin-right: 1rem;
-  }
-
-  .blog-card__title {
-    color: var(--color-ink);
-    margin: 0;
-    text-wrap: balance;
-  }
-
-  .blog-card__title-link {
-    color: inherit;
-    text-decoration: none;
-    transition: color var(--duration-base) var(--ease-soft);
-  }
-
-  .blog-card__title-link:hover,
-  .blog-card__title-link:focus-visible {
-    color: var(--color-leather-dark);
-  }
-
-  .blog-card__excerpt {
-    max-width: 44ch;
-  }
-
-  .blog-card__rail {
-    display: block;
-    width: 1.5rem;
-    height: 1px;
-    background: var(--color-ink);
-    margin-top: 0.4rem;
-    transition: width var(--duration-slow) var(--ease-out);
-  }
-
-  .blog-card__link:hover ~ .blog-card__body .blog-card__rail,
-  .blog-card__title-link:hover ~ .blog-card__rail,
-  .blog-card__title-link:focus-visible ~ .blog-card__rail {
-    width: 3rem;
-  }
-
-  /* Focus ring */
-  .blog-card__link:focus-visible,
-  .blog-card__title-link:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: var(--focus-ring-offset);
-  }
-</style>
