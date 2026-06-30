@@ -1,0 +1,234 @@
+---
+import Container from '@/components/ui/Container.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+  variant?: 'default' | 'compact';
+  /** Optional background image. When provided, the title
+   *  sits over the image with a tinted overlay for contrast. */
+  backgroundImage?: string;
+  /** Required when `backgroundImage` is provided; passed to
+   *  the <img> alt. */
+  imageAlt?: string;
+  /** Tint of the image overlay. Defaults to 'ink'. */
+  overlay?: 'ink' | 'light' | 'leather';
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  align = 'left',
+  variant = 'default',
+  backgroundImage,
+  imageAlt,
+  overlay = 'ink',
+  class: className,
+} = Astro.props;
+
+const hasImage = Boolean(backgroundImage);
+const sectionClass = [
+  'page-hero',
+  `page-hero--${variant}`,
+  `page-hero--align-${align}`,
+  hasImage && 'page-hero--has-bg',
+  hasImage && `page-hero--overlay-${overlay}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<section class={sectionClass}>
+  {
+    hasImage && (
+      <div class="page-hero__background" aria-hidden="true">
+        <img
+          src={backgroundImage}
+          alt={imageAlt ?? ''}
+          class="page-hero__background-image"
+          loading="eager"
+          decoding="async"
+        />
+        <span class="page-hero__overlay" aria-hidden="true" />
+        <span class="page-hero__vignette" aria-hidden="true" />
+      </div>
+    )
+  }
+  <Container>
+    <div class="page-hero__body">
+      {eyebrow && <p class="eyebrow page-hero__eyebrow">{eyebrow}</p>}
+      <h1 class="page-hero__title heading-display">{title}</h1>
+      {
+        description && (
+          <p class="copy-lead page-hero__description">{description}</p>
+        )
+      }
+    </div>
+  </Container>
+</section>
+
+<style>
+  /* =========================================================
+     Page hero — default and image-overlay variants.
+     The image variant uses a smaller, more cinematic title
+     so the composition feels curated rather than crowded.
+     ========================================================= */
+  .page-hero {
+    position: relative;
+    border-top: 1px solid var(--color-border-hairline);
+  }
+
+  .page-hero--default {
+    padding-block: var(--section-y);
+  }
+
+  .page-hero--compact {
+    padding-block: var(--section-y-compact);
+  }
+
+  .page-hero--align-center {
+    text-align: center;
+  }
+
+  .page-hero--align-center .page-hero__body {
+    align-items: center;
+    margin-inline: auto;
+  }
+
+  .page-hero__body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 36rem;
+  }
+
+  .page-hero__eyebrow {
+    color: var(--color-leather-dark);
+  }
+
+  .page-hero__title {
+    color: var(--color-ink);
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+
+  .page-hero--align-center .page-hero__title {
+    margin-inline: auto;
+  }
+
+  .page-hero__description {
+    max-width: 44ch;
+    color: var(--color-muted);
+  }
+
+  .page-hero--align-center .page-hero__description {
+    margin-inline: auto;
+  }
+
+  /* =========================================================
+     Background — image + overlay + vignette. Three layers so
+     the title always has enough contrast.
+     ========================================================= */
+  .page-hero__background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .page-hero__background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.04);
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .page-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-ink) 62%, transparent);
+  }
+
+  .page-hero__vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120% 80% at 50% 30%,
+      transparent 0%,
+      color-mix(in srgb, var(--color-ink) 25%, transparent) 100%
+    );
+  }
+
+  .page-hero--overlay-light .page-hero__overlay {
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  }
+
+  .page-hero--overlay-light .page-hero__vignette {
+    background: radial-gradient(
+      120% 80% at 50% 30%,
+      transparent 0%,
+      color-mix(in srgb, var(--color-surface) 18%, transparent) 100%
+    );
+  }
+
+  .page-hero--overlay-leather .page-hero__overlay {
+    background: color-mix(in srgb, var(--color-leather-dark) 60%, transparent);
+  }
+
+  /* =========================================================
+     Has-bg — image-driven cinematic title. Smaller than the
+     default heading-display, with editorial letter-spacing.
+     ========================================================= */
+  .page-hero--has-bg {
+    color: var(--color-ink-on-inverse);
+    padding-block: clamp(5rem, 12vw, 9rem);
+  }
+
+  .page-hero--has-bg .page-hero__title {
+    color: var(--color-ink-on-inverse);
+    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    line-height: 0.96;
+    letter-spacing: -0.012em;
+    max-width: 18ch;
+  }
+
+  .page-hero--has-bg .page-hero__description {
+    color: color-mix(in srgb, var(--color-ink-on-inverse) 86%, transparent);
+    max-width: 42ch;
+  }
+
+  .page-hero--has-bg .page-hero__eyebrow {
+    color: var(--color-gold-soft);
+  }
+
+  /* Subtle parallax on scroll if the browser supports it. */
+  @media (prefers-reduced-motion: no-preference) {
+    .page-hero--has-bg .page-hero__background-image {
+      animation: page-hero-drift 18s var(--ease-soft) infinite alternate;
+    }
+  }
+
+  @keyframes page-hero-drift {
+    from {
+      transform: scale(1.04) translateY(0);
+    }
+    to {
+      transform: scale(1.08) translateY(-1.2%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-hero__background-image {
+      animation: none;
+    }
+  }
+</style>

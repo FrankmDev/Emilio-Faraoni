@@ -1,0 +1,214 @@
+---
+/**
+ * NavLink · editorial nav with a typeset "margin pin" treatment.
+ * Three signals compose a small catalogue entry:
+ *   1. nav-link__index — italic display monogram in the margin.
+ *   2. nav-link__bar   — a hairline rule that links the index to the label.
+ *   3. ::after         — a leader line that extends past the trailing edge.
+ * On hover/focus, the signals reveal in sequence (index → bar →
+ * leader). On the active state, all three are pinned at full
+ * opacity, with the leader drawn at high contrast in ink.
+ */
+interface Props {
+  href: string;
+  label: string;
+  active?: boolean;
+  /** Optional override of the index shown on hover. */
+  index?: string;
+  class?: string;
+}
+
+const { href, label, active = false, index, class: className } = Astro.props;
+
+const classes = ['nav-link', active && 'nav-link--active', className]
+  .filter(Boolean)
+  .join(' ');
+
+// Static index counter — falls back to the position-based
+// label so existing callers (without an `index` prop) still
+// get a meaningful reveal.
+const revealIndex = index ?? label.charAt(0).toUpperCase();
+---
+
+<a href={href} class={classes} aria-current={active ? 'page' : undefined}>
+  <span class="nav-link__index" aria-hidden="true">{revealIndex}</span>
+  <span class="nav-link__bar" aria-hidden="true"></span>
+  <span class="nav-link__label">{label}</span>
+</a>
+
+<style>
+  /* =========================================================
+     Margin pin — three signals, three durations.
+     The index is a marginalia monogram. The bar is the rule
+     that connects it to the title. The leader extends past
+     the trailing edge of the title, like a typeset leader
+     running into the page margin.
+     ========================================================= */
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.15rem 0.55rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    line-height: 1;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      padding-left var(--duration-base) var(--ease-out);
+  }
+
+  /* =========================================================
+     Index — italic display monogram, set in the margin.
+     No border, no rotation, no box. The font variation
+     `opsz 60` and italic weight 200 give it the editorial
+     marginalia feel — a typeset page numeral that lives in
+     the gutter, not in a chip.
+     ========================================================= */
+  .nav-link__index {
+    display: inline-block;
+    font-family: var(--font-serif);
+    font-size: 0.78rem;
+    font-style: italic;
+    font-weight: 200;
+    font-variation-settings: 'opsz' 60;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    line-height: 1;
+    color: var(--color-brass, currentColor);
+    opacity: 0;
+    transform: translateX(-0.4rem);
+    transition:
+      opacity var(--duration-slow) var(--ease-soft),
+      transform var(--duration-slow) var(--ease-out);
+    transition-delay: 0ms;
+    will-change: opacity, transform;
+  }
+
+  /* =========================================================
+     Bar — hairline rule between the index and the label.
+     Grows from the leading edge on hover, full on active.
+     Acts as the typeset "em rule" that links the marginal
+     numeral to the entry title.
+     ========================================================= */
+  .nav-link__bar {
+    display: inline-block;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    align-self: center;
+    opacity: 0;
+    transform-origin: left center;
+    transition:
+      width var(--duration-base) var(--ease-out),
+      opacity var(--duration-base) var(--ease-soft);
+    transition-delay: 60ms;
+    will-change: width, opacity;
+  }
+
+  /* =========================================================
+     Leader — asymmetric hairline that overshoots the
+     trailing edge of the link. Wipes in from the right,
+     anchored to the right margin, for a typeset-leader feel
+     running into the page edge. Pointer-events disabled
+     so it never steals clicks from adjacent links.
+     ========================================================= */
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: -0.85rem;
+    bottom: 0.22rem;
+    height: 1px;
+    background: currentColor;
+    pointer-events: none;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform var(--duration-slow) var(--ease-out);
+    transition-delay: 120ms;
+    will-change: transform;
+  }
+
+  /* =========================================================
+     Hover & focus — the three signals reveal in sequence.
+     ========================================================= */
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--color-ink);
+    padding-left: 0.5rem;
+  }
+
+  .nav-link:hover .nav-link__index,
+  .nav-link:focus-visible .nav-link__index {
+    opacity: 0.55;
+    transform: translateX(0);
+  }
+
+  .nav-link:hover .nav-link__bar,
+  .nav-link:focus-visible .nav-link__bar {
+    width: 0.7rem;
+    opacity: 0.55;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* =========================================================
+     Active — pinned catalogue entry. All three signals are
+     visible at full opacity, with the leader drawn at high
+     contrast in the link's ink color. No filled pill, no
+     chunky marker — the marginalia reads as typeset, not as
+     UI.
+     ========================================================= */
+  .nav-link--active {
+    color: var(--color-ink);
+    padding-left: 0.55rem;
+  }
+
+  .nav-link--active .nav-link__index {
+    opacity: 0.9;
+    transform: translateX(0);
+  }
+
+  .nav-link--active .nav-link__bar {
+    width: 0.85rem;
+    opacity: 0.7;
+  }
+
+  .nav-link--active::after {
+    transform: scaleX(1);
+    opacity: 0.65;
+  }
+
+  /* =========================================================
+     Focus ring — tokenized, generous offset, hairline thin.
+     ========================================================= */
+  .nav-link:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-link,
+    .nav-link::after,
+    .nav-link__index,
+    .nav-link__bar {
+      transition-duration: 1ms;
+      transition-delay: 0ms;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus-visible,
+    .nav-link--active {
+      padding-left: 0.15rem;
+    }
+  }
+</style>

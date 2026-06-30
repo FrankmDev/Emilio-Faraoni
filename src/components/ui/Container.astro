@@ -1,11 +1,76 @@
 ---
+/**
+ * Container · layout primitive that constrains content width.
+ * Backbone of the editorial grid. Modifier classes live in
+ * `src/styles/global.css` so they can be used without a
+ * scoped wrapper when needed.
+ */
+type ContainerSize = 'default' | 'narrow' | 'wide' | 'reading' | 'full';
+type ContainerDensity = 'compact' | 'default' | 'loose';
+
 interface Props {
   class?: string;
+  as?:
+    | 'div'
+    | 'section'
+    | 'article'
+    | 'header'
+    | 'footer'
+    | 'main'
+    | 'aside'
+    | 'nav'
+    | 'ul'
+    | 'ol'
+    | 'form'
+    | 'address';
+  /** Width preset. 'default' = max, 'narrow' = 56rem,
+   *  'wide' = 88rem, 'reading' = 42rem, 'full' = 100%. */
+  size?: ContainerSize;
+  bleed?: boolean;
+  narrow?: boolean;
+  wide?: boolean;
+  /** Vertical density — affects --container-padding. */
+  density?: ContainerDensity;
+  /** Add a hairline border on the outside of the container. */
+  framed?: boolean;
+  /** Optional id forwarded to the rendered tag (for skip-links). */
+  id?: string;
 }
 
-const { class: className } = Astro.props;
+const {
+  class: className,
+  as,
+  size,
+  bleed = false,
+  narrow = false,
+  wide = false,
+  density = 'default',
+  framed = false,
+  id,
+} = Astro.props as Props;
+
+const Tag = as ?? 'div';
+
+const sizeClass = (() => {
+  if (size === 'narrow' || narrow) return 'container-narrow';
+  if (size === 'wide' || wide) return 'container-wide';
+  if (size === 'reading') return 'container-reading';
+  if (size === 'full') return 'container-full';
+  return '';
+})();
+
+const classes = [
+  'container',
+  sizeClass,
+  bleed && 'container--bleed',
+  density !== 'default' && `container--density-${density}`,
+  framed && 'container--framed',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div class={`mx-auto w-full max-w-[77.5rem] px-4 sm:px-6 lg:px-8 ${className || ''}`}>
+<Tag id={id} class={classes}>
   <slot />
-</div>
+</Tag>

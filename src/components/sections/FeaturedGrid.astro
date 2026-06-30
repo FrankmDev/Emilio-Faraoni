@@ -1,0 +1,31 @@
+---
+/**
+ * FeaturedGrid · responsive cell layout for featured cards.
+ * Now uses the design-system grid tokens (no missing CSS
+ * variables). Adds a `--padded` variant for unified spreads.
+ * Cells keep their own visual weight — the grid only owns
+ * the rhythm and column count.
+ */
+type ColumnCount = 2 | 3 | 4;
+
+interface Props {
+  columns?: ColumnCount;
+  variant?: 'default' | 'compact' | 'padded';
+  class?: string;
+}
+
+const { columns = 3, variant = 'default', class: className } = Astro.props;
+
+const classes = [
+  'featured-grid',
+  `featured-grid--cols-${columns}`,
+  variant !== 'default' && `featured-grid--${variant}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class={classes}>
+  <slot />
+</div>

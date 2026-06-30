@@ -7,12 +7,12 @@ import { getPublicFeaturedProducts } from '@/lib/products/getters';
 const products = getPublicFeaturedProducts();
 ---
 
-<section class="section-y-compact">
+<section class="section-y-compact border-t border-border-hairline">
   <Container class="grid gap-12">
     <SectionHeader
       eyebrow="Productos destacados"
       title="Selección de catálogo"
-      description="Solo referencias de prueba. No se renderizan precios."
+      description="Referencias iniciales para validar presentación de producto, navegación y consulta pública sin exponer tarifas mayoristas."
     />
     <ProductGrid products={products} />
   </Container>

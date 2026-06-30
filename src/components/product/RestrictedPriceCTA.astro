@@ -1,17 +1,32 @@
 ---
 import Button from '@/components/ui/Button.astro';
 import { ROUTES } from '@/lib/routes';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
 
-<section class="border border-border-soft bg-bg p-6 md:p-8">
-  <p class="meta-label">
-    Precio disponible para clientes mayoristas registrados.
+<section
+  class={`surface-accent relative overflow-hidden p-6 md:p-8 ${className || ''}`}
+>
+  <div
+    class="absolute right-6 top-6 hidden h-px w-24 bg-border-strong sm:block"
+    aria-hidden="true"
+  >
+  </div>
+  <p class="meta-label text-ink">Precio restringido</p>
+  <h2 class="heading-card mt-3 max-w-md text-ink">
+    Disponible para clientes mayoristas registrados.
+  </h2>
+  <p class="copy-small mt-3 max-w-lg text-ink-soft">
+    Solicite acceso profesional para consultar tarifas y condiciones
+    comerciales.
   </p>
-  <p class="copy-small mt-2">
-    Solicite acceso profesional para consultar tarifas y condiciones.
-  </p>
-  <div class="mt-6 flex flex-wrap gap-3">
-    <Button href={ROUTES.WHOLESALE_ACCESS}>Solicitar acceso mayorista</Button>
+  <div class="mt-7 flex flex-wrap gap-3">
+    <Button href={ROUTES.WHOLESALE_ACCESS}>Solicitar acceso</Button>
     <Button href={ROUTES.CONTACT} variant="secondary">
       Contactar con ventas
     </Button>

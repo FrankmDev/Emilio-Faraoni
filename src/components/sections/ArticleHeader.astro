@@ -1,0 +1,168 @@
+---
+/**
+ * ArticleHeader · editorial article opener.
+ * Two-column composition: copy on the left (eyebrow, title,
+ * excerpt, meta, index numeral), cover on the right (image
+ * with a hairline frame and corner stamp). When no `image`
+ * is provided the cover falls back to a tonal placeholder
+ * so the layout never collapses.
+ */
+import Container from '@/components/ui/Container.astro';
+
+type BaseProps = {
+  eyebrow?: string;
+  category?: string;
+  title: string;
+  excerpt?: string;
+  date?: string;
+  readingTime?: string;
+  /** Editorial signature, e.g. "N° 01" or "01 / 06". */
+  index?: string;
+  /** Cover caption rendered as a small label in the lower-left. */
+  caption?: string;
+  class?: string;
+};
+
+type CoverProps =
+  | {
+      /** Optional cover image URL. */
+      image: string;
+      /** Cover image alt text. Required when `image` is provided. */
+      imageAlt: string;
+    }
+  | {
+      image?: undefined;
+      imageAlt?: never;
+    };
+
+type Props = BaseProps & CoverProps;
+
+const {
+  eyebrow,
+  category,
+  title,
+  excerpt,
+  date,
+  readingTime,
+  index = 'N° 01',
+  image,
+  imageAlt,
+  caption,
+  class: className,
+} = Astro.props;
+
+const hasMeta = Boolean(category || date || readingTime);
+const sectionClass = ['article-header', className].filter(Boolean).join(' ');
+---
+
+<section class={sectionClass}>
+  <Container class="article-header__inner">
+    <div class="article-header__body">
+      {
+        eyebrow && (
+          <p class="eyebrow article-header__eyebrow">
+            <span class="article-header__eyebrow-mark" aria-hidden="true" />
+            <span>{eyebrow}</span>
+          </p>
+        )
+      }
+
+      <h1 class="article-header__title">
+        <Fragment set:html={title} />
+      </h1>
+
+      {excerpt && <p class="article-header__excerpt copy-lead">{excerpt}</p>}
+
+      {
+        hasMeta && (
+          <dl class="article-header__meta">
+            {category && (
+              <div class="article-header__meta-row">
+                <dt>Sección</dt>
+                <dd>{category}</dd>
+              </div>
+            )}
+            {date && (
+              <div class="article-header__meta-row">
+                <dt>Fecha</dt>
+                <dd>{date}</dd>
+              </div>
+            )}
+            {readingTime && (
+              <div class="article-header__meta-row">
+                <dt>Lectura</dt>
+                <dd>{readingTime}</dd>
+              </div>
+            )}
+          </dl>
+        )
+      }
+
+      <p class="article-header__index" aria-hidden="true">{index}</p>
+    </div>
+
+    <figure
+      class:list={[
+        'article-header__cover',
+        !image && 'article-header__cover--placeholder',
+      ]}
+      aria-hidden={image ? undefined : 'true'}
+    >
+      {
+        image && (
+          <img
+            src={image}
+            alt={imageAlt}
+            loading="eager"
+            decoding="async"
+            class="article-header__cover-image"
+          />
+        )
+      }
+      <span
+        class="article-header__cover-stamp article-header__cover-stamp--tl"
+        aria-hidden="true"></span>
+      <span
+        class="article-header__cover-stamp article-header__cover-stamp--br"
+        aria-hidden="true"></span>
+      {
+        caption && image && (
+          <span class="article-header__cover-caption meta-label">
+            {caption}
+          </span>
+        )
+      }
+    </figure>
+  </Container>
+</section>
+
+<style>
+  /* The .article-header, .article-header__body, .article-header__title,
+     .article-header__cover, .article-header__excerpt, .article-header__meta
+     and .article-header__index rules live in src/styles/global.css so
+     the article header can be used elsewhere without recreating the
+     layout. This scoped block only contains component-specific
+     refinements. */
+
+  .article-header {
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .article-header__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .article-header__eyebrow-mark {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .article-header__cover-image {
+    display: block;
+  }
+</style>

@@ -1,5 +1,5 @@
 ---
-import type { PublicProduct } from '@/lib/products/types';
+import type { PublicProduct } from '@/lib/products/getters';
 import ProductCard from './ProductCard.astro';
 
 interface Props {
@@ -9,6 +9,6 @@ interface Props {
 const { products } = Astro.props;
 ---
 
-<div class="grid gap-x-grid-gap gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+<div class="grid gap-x-grid-gap gap-y-14 md:grid-cols-2 lg:grid-cols-3">
   {products.map((product) => <ProductCard product={product} />)}
 </div>

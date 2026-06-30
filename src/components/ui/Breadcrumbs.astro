@@ -4,30 +4,416 @@ export type BreadcrumbItem = {
   href?: string;
 };
 
+type Separator = 'chevron' | 'slash' | 'dot' | 'rule' | 'diamond';
+
 interface Props {
   items: BreadcrumbItem[];
+  context?: string;
+  /** Maximum visible items on mobile. Intermediate items are
+   *  collapsed to an ellipsis that links to the parent. */
+  maxMobile?: number;
+  /** Separator between items. Defaults to 'slash'. */
+  separator?: Separator;
+  /** Show a leading home icon. */
+  home?: boolean;
+  /** Trailing meta strip (rendered as a meta-label). */
+  meta?: string;
+  /** Visual emphasis. 'bare' (default) is clean inline.
+   *  'pill' wraps the trail in a soft pill surface. */
+  variant?: 'bare' | 'pill';
+  class?: string;
 }
 
-const { items } = Astro.props;
+const {
+  items,
+  context,
+  maxMobile = 3,
+  separator = 'slash',
+  home = false,
+  meta,
+  variant = 'bare',
+  class: className,
+} = Astro.props;
+
+// On mobile, keep first + last + ellipsis when the trail is long.
+const lastIndex = items.length - 1;
+const isLongTrail = items.length > maxMobile;
+const collapseParent =
+  isLongTrail && lastIndex >= 1 ? items[lastIndex - 1] : undefined;
+const firstItem = items[0];
+const lastItem = items[lastIndex];
+
+const visibleItems: Array<{
+  label: string;
+  href?: string;
+  isEllipsis?: boolean;
+}> = isLongTrail
+  ? [firstItem, { label: '…' }, lastItem].filter(
+      (item): item is { label: string; href?: string } => item !== undefined,
+    )
+  : items;
+
+const homeHref = items[0]?.href ?? '/';
+const classes = [
+  'breadcrumb',
+  `breadcrumb--sep-${separator}`,
+  `breadcrumb--${variant}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<nav aria-label="Migas de pan" class="meta-label text-muted">
-  <ol class="flex flex-wrap items-center gap-2.5">
-    {
-      items.map((item, index) => (
-        <li class="flex items-center gap-2.5">
-          {index > 0 && <span aria-hidden="true" class="text-muted-light">/</span>}
-          {item.href ? (
-            <a href={item.href} class="transition-colors hover:text-ink">
-              {item.label}
+<nav aria-label="Migas de pan" class={classes}>
+  <div class="breadcrumb__inner">
+    {context && <span class="breadcrumb__context meta-label">{context}</span>}
+    <ol class="breadcrumb__list">
+      {
+        home && (
+          <li class="breadcrumb__item breadcrumb__item--home">
+            <a href={homeHref} class="breadcrumb__home" aria-label="Inicio">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M2 6.5L7 2l5 4.5" />
+                <path d="M3 6v5.5h8V6" />
+              </svg>
             </a>
-          ) : (
-            <span aria-current="page" class="text-ink">
-              {item.label}
-            </span>
-          )}
-        </li>
-      ))
+          </li>
+        )
+      }
+      {
+        visibleItems.map((item, index) => (
+          <li class="breadcrumb__item">
+            {index > 0 && (
+              <span aria-hidden="true" class="breadcrumb__sep">
+                {separator === 'chevron' && (
+                  <svg
+                    width="6"
+                    height="10"
+                    viewBox="0 0 6 10"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    class="breadcrumb__sep-mark"
+                    aria-hidden="true"
+                  >
+                    <path d="M1 1l4 4-4 4" />
+                  </svg>
+                )}
+                {separator === 'slash' && (
+                  <span class="breadcrumb__sep-mark breadcrumb__sep-mark--slash">
+                    /
+                  </span>
+                )}
+                {separator === 'dot' && (
+                  <span class="breadcrumb__sep-mark breadcrumb__sep-mark--dot" />
+                )}
+                {separator === 'rule' && (
+                  <span class="breadcrumb__sep-mark breadcrumb__sep-mark--rule" />
+                )}
+                {separator === 'diamond' && (
+                  <span class="breadcrumb__sep-mark breadcrumb__sep-mark--diamond" />
+                )}
+              </span>
+            )}
+            {item.label === '…' && collapseParent?.href ? (
+              <a
+                href={collapseParent.href}
+                class="breadcrumb__ellipsis"
+                aria-label={`Saltar a ${collapseParent.label ?? ''}`}
+              >
+                …
+              </a>
+            ) : item.href ? (
+              <a href={item.href} class="breadcrumb__link">
+                {item.label}
+              </a>
+            ) : (
+              <span aria-current="page" class="breadcrumb__current">
+                {item.label}
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+    {
+      meta && (
+        <span class="breadcrumb__meta meta-label" aria-hidden="true">
+          {meta}
+        </span>
+      )
     }
-  </ol>
+  </div>
 </nav>
+
+<style>
+  /* =========================================================
+     Breadcrumb · clean modern path.
+     Less ceremonial, more functional. Larger click targets,
+     softer typography, modern hover (color + soft pill bg).
+     ========================================================= */
+  .breadcrumb {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 450;
+    line-height: 1;
+    background: transparent;
+  }
+
+  .breadcrumb--pill {
+    display: inline-flex;
+  }
+
+  .breadcrumb--pill .breadcrumb__inner {
+    padding: 0.5rem 0.6rem 0.5rem 0.9rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-soft);
+  }
+
+  .breadcrumb--bare .breadcrumb__inner {
+    padding: 0;
+  }
+
+  .breadcrumb__inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+  }
+
+  /* Optional context label — sits to the left of the trail. */
+  .breadcrumb__context {
+    color: var(--color-ink);
+    font-size: 0.7rem;
+    font-weight: 550;
+    padding-right: 0.85rem;
+    margin-right: 0.1rem;
+    border-right: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  .breadcrumb__meta {
+    margin-left: auto;
+    color: var(--color-muted);
+    padding-left: 0.85rem;
+  }
+
+  .breadcrumb__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.4rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .breadcrumb__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .breadcrumb__item:last-child {
+    flex: 0 1 auto;
+  }
+
+  /* =========================================================
+     Home icon — clean monoline, modern circular hover.
+     ========================================================= */
+  .breadcrumb__home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--color-muted);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    text-decoration: none;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft);
+  }
+
+  .breadcrumb__home:hover,
+  .breadcrumb__home:focus-visible {
+    color: var(--color-ink);
+    background: var(--color-surface-soft);
+  }
+
+  .breadcrumb--pill .breadcrumb__home:hover,
+  .breadcrumb--pill .breadcrumb__home:focus-visible {
+    background: var(--color-surface);
+  }
+
+  .breadcrumb__home:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 3px;
+  }
+
+  /* =========================================================
+     Separators — clean and soft.
+     ========================================================= */
+  .breadcrumb__sep {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-muted-light);
+    line-height: 1;
+    user-select: none;
+  }
+
+  .breadcrumb__sep-mark {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .breadcrumb--sep-chevron .breadcrumb__sep-mark {
+    width: 6px;
+    height: 10px;
+  }
+
+  .breadcrumb__sep-mark--slash {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--color-muted-light);
+    transform: translateY(-1px);
+  }
+
+  .breadcrumb__sep-mark--dot {
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .breadcrumb__sep-mark--rule {
+    display: inline-block;
+    width: 0.7rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .breadcrumb__sep-mark--diamond {
+    display: inline-block;
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 1px solid currentColor;
+    transform: rotate(45deg);
+    opacity: 0.55;
+  }
+
+  /* =========================================================
+     Link — modern hover with soft pill background.
+     ========================================================= */
+  .breadcrumb__link {
+    color: var(--color-muted);
+    text-decoration: none;
+    position: relative;
+    padding: 0.42rem 0.7rem;
+    border-radius: var(--radius-pill);
+    max-width: 28ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft);
+  }
+
+  .breadcrumb__link:hover,
+  .breadcrumb__link:focus-visible {
+    color: var(--color-ink);
+    background: var(--color-surface-soft);
+  }
+
+  .breadcrumb--pill .breadcrumb__link:hover,
+  .breadcrumb--pill .breadcrumb__link:focus-visible {
+    background: var(--color-surface);
+  }
+
+  .breadcrumb__link:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 3px;
+  }
+
+  /* =========================================================
+     Ellipsis — collapsed intermediate item.
+     ========================================================= */
+  .breadcrumb__ellipsis {
+    color: var(--color-muted);
+    text-decoration: none;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-soft);
+    line-height: 1;
+    font-size: 0.85rem;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft);
+  }
+
+  .breadcrumb__ellipsis:hover,
+  .breadcrumb__ellipsis:focus-visible {
+    color: var(--color-ink);
+    background: var(--color-surface-muted);
+  }
+
+  .breadcrumb__ellipsis:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 3px;
+  }
+
+  /* =========================================================
+     Current page — clean modern weight emphasis.
+     No italic serif (feels old-world). Just a slightly
+     stronger color and weight, with a pill background in
+     the pill variant.
+     ========================================================= */
+  .breadcrumb__current {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1;
+    padding: 0.42rem 0.7rem;
+    max-width: 32ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .breadcrumb--pill .breadcrumb__current {
+    background: var(--color-surface);
+    border-radius: var(--radius-pill);
+  }
+
+  /* Mobile — keep the trail compact, lean on the ellipsis. */
+  @media (max-width: 640px) {
+    .breadcrumb__link,
+    .breadcrumb__current {
+      font-size: 0.76rem;
+    }
+
+    .breadcrumb__current {
+      max-width: 18ch;
+    }
+  }
+</style>

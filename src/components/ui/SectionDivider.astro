@@ -1,0 +1,280 @@
+---
+/**
+ * SectionDivider · editorial rule between sections.
+ * Three weights, two tones, optional label and decorative
+ * marks, vertical orientation support for sidebar use.
+ */
+type DividerOrientation = 'horizontal' | 'vertical';
+type DividerSpacing = 'compact' | 'default' | 'loose' | 'section';
+type DividerWeight = 'hairline' | 'default' | 'bold';
+type DividerTone = 'muted' | 'ink' | 'soft' | 'leather';
+type DividerAlign = 'center' | 'start' | 'end';
+
+interface Props {
+  orientation?: DividerOrientation;
+  spacing?: DividerSpacing;
+  weight?: DividerWeight;
+  tone?: DividerTone;
+  label?: string;
+  /** Optional decorative marks at the line ends (· · ·). */
+  marks?: boolean;
+  /** Optional leading icon. */
+  icon?: boolean;
+  align?: DividerAlign;
+  /** Optional meta line rendered after the label. */
+  meta?: string;
+  /** Optional kicker line rendered before the label. */
+  kicker?: string;
+  class?: string;
+}
+
+const {
+  orientation = 'horizontal',
+  spacing = 'default',
+  weight = 'default',
+  tone = 'muted',
+  label,
+  marks = false,
+  icon = false,
+  align = 'center',
+  meta,
+  kicker,
+  class: className,
+} = Astro.props;
+
+const classes = [
+  'section-divider',
+  `section-divider--${orientation}`,
+  `section-divider--spacing-${spacing}`,
+  `section-divider--${weight}`,
+  `section-divider--${tone}`,
+  `section-divider--${align}`,
+  marks && 'section-divider--marks',
+  icon && 'section-divider--icon',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class={classes} role={label ? 'separator' : undefined} aria-label={label}>
+  <span class="section-divider__line" aria-hidden="true"></span>
+  {
+    (label || kicker || icon) && (
+      <span class="section-divider__core">
+        {icon && (
+          <span class="section-divider__icon" aria-hidden="true">
+            <slot name="icon" />
+          </span>
+        )}
+        {kicker && (
+          <span class="section-divider__kicker meta-label" aria-hidden="true">
+            {kicker}
+          </span>
+        )}
+        {label && (
+          <span class="section-divider__label meta-label">{label}</span>
+        )}
+        {meta && (
+          <span class="section-divider__meta meta-label" aria-hidden="true">
+            {meta}
+          </span>
+        )}
+      </span>
+    )
+  }
+  <span class="section-divider__line" aria-hidden="true"></span>
+  {
+    marks && (
+      <>
+        <span class="section-divider__mark" aria-hidden="true" />
+        <span class="section-divider__mark" aria-hidden="true" />
+        <span class="section-divider__mark" aria-hidden="true" />
+      </>
+    )
+  }
+</div>
+
+<style>
+  /* =========================================================
+     Section divider — editorial rule with optional label and
+     marks. Spacing, weight and tone are independent dials.
+     Horizontal by default, with a vertical sidebar variant.
+     ========================================================= */
+  .section-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    width: 100%;
+    color: var(--color-muted);
+    min-height: 2rem;
+  }
+
+  /* =========================================================
+     Spacing — uses real section tokens from the design system.
+     ========================================================= */
+  .section-divider--spacing-default {
+    margin-block: var(--space-2xl);
+  }
+  .section-divider--spacing-compact {
+    margin-block: var(--space-xl);
+  }
+  .section-divider--spacing-loose {
+    margin-block: var(--section-y-sm);
+  }
+  .section-divider--spacing-section {
+    margin-block: var(--section-y);
+  }
+
+  /* =========================================================
+     Alignment.
+     ========================================================= */
+  .section-divider--start {
+    justify-content: flex-start;
+  }
+  .section-divider--center {
+    justify-content: center;
+  }
+  .section-divider--end {
+    justify-content: flex-end;
+  }
+
+  /* =========================================================
+     Line — single-pixel rule. Weight controls opacity, not
+     thickness, so the rule stays hairline-quiet.
+     ========================================================= */
+  .section-divider__line {
+    flex: 1 1 auto;
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 0.55rem,
+      currentColor 0.55rem 0.68rem
+    );
+    opacity: 0.38;
+  }
+
+  .section-divider--hairline .section-divider__line {
+    background: var(--color-border-hairline);
+    opacity: 1;
+  }
+
+  .section-divider--bold .section-divider__line {
+    background: var(--color-ink);
+    opacity: 0.85;
+  }
+
+  /* Tone */
+  .section-divider--ink {
+    color: var(--color-ink);
+  }
+  .section-divider--ink .section-divider__line {
+    opacity: 0.5;
+  }
+  .section-divider--soft {
+    color: var(--color-muted-light);
+  }
+  .section-divider--leather {
+    color: var(--color-leather-dark);
+  }
+  .section-divider--leather .section-divider__line {
+    opacity: 0.7;
+  }
+
+  /* =========================================================
+     Core — holds the label and any optional elements.
+     ========================================================= */
+  .section-divider__core {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 0 0 auto;
+  }
+
+  .section-divider__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    color: currentColor;
+  }
+  .section-divider__icon :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .section-divider__kicker,
+  .section-divider__meta {
+    color: var(--color-muted);
+    opacity: 0.7;
+  }
+
+  .section-divider__label {
+    white-space: nowrap;
+    color: var(--color-ink);
+    font-variant-numeric: lining-nums tabular-nums;
+    padding: 0.32rem 0.7rem;
+    border: 1px solid var(--color-border-hairline);
+    background: var(--color-surface);
+    border-radius: var(--radius-control);
+  }
+
+  /* =========================================================
+     Marks — three small squares after the line, an editorial
+     "and so…" cue. Restrained, no glow.
+     ========================================================= */
+  .section-divider__mark {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    background: currentColor;
+    opacity: 0.5;
+    flex: 0 0 auto;
+  }
+
+  .section-divider__mark + .section-divider__mark {
+    margin-left: 0.5rem;
+  }
+
+  /* =========================================================
+     Vertical orientation — for sidebar use.
+     ========================================================= */
+  .section-divider--vertical {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    width: auto;
+    min-height: 6rem;
+    margin-inline: auto;
+    min-width: 2rem;
+  }
+
+  .section-divider--vertical .section-divider__line {
+    width: 1px;
+    height: auto;
+    flex: 1 1 auto;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 0.55rem,
+      currentColor 0.55rem 0.68rem
+    );
+  }
+
+  .section-divider--vertical::before {
+    inset: 0 50% auto auto;
+    transform: translate(50%, 0) rotate(45deg);
+  }
+
+  .section-divider--vertical .section-divider__core {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .section-divider--vertical .section-divider__mark + .section-divider__mark {
+    margin-left: 0;
+    margin-top: 0.45rem;
+  }
+</style>

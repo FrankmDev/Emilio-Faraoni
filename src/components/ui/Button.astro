@@ -1,35 +1,411 @@
 ---
+/**
+ * Button · flagship retail action.
+ * Six variants × three sizes × shape / density / block / icon
+ * modifiers. Editorial B2B control with the same restrained
+ * language shown in the Style Museum: fine border, compact caps,
+ * contained hover, and no decorative motion that competes with
+ * product content. Renders as <a> when `href` is provided.
+ */
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'dark'
+  | 'gold'
+  | 'inverse';
+type ButtonSize = 'sm' | 'md' | 'lg';
+type ButtonShape = 'pill' | 'square' | 'tag';
+type ButtonDensity = 'compact' | 'default' | 'loose';
+
 interface Props {
   href?: string;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  shape?: ButtonShape;
+  density?: ButtonDensity;
+  fullWidth?: boolean;
+  iconAfter?: boolean;
+  iconBefore?: boolean;
+  /** Optional trailing meta label (rendered as a small caps strip). */
+  meta?: string;
+  /** Optional kicker rendered above the main label. */
+  kicker?: string;
+  loading?: boolean;
   class?: string;
+  disabled?: boolean;
+  'aria-label'?: string;
 }
 
 const {
   href,
   type = 'button',
   variant = 'primary',
+  size = 'md',
+  shape = 'pill',
+  density = 'default',
+  fullWidth = false,
+  iconAfter = false,
+  iconBefore = false,
+  meta,
+  kicker,
+  loading = false,
   class: className,
+  disabled = false,
+  'aria-label': ariaLabel,
 } = Astro.props;
 
-const classes = `inline-flex min-h-10 items-center justify-center border px-6 text-[0.8125rem] font-normal tracking-[0.02em] transition-colors duration-300 ${
-  variant === 'primary'
-    ? 'border-ink bg-ink text-bg hover:bg-ink-soft hover:border-ink-soft'
-    : variant === 'secondary'
-    ? 'border-border bg-transparent text-ink hover:border-ink hover:bg-transparent'
-    : 'border-transparent bg-transparent text-muted hover:text-ink'
-} ${className || ''}`;
+const variantClass = (() => {
+  switch (variant) {
+    case 'primary':
+      return 'button-primary';
+    case 'secondary':
+      return 'button-secondary';
+    case 'ghost':
+      return 'button-ghost';
+    case 'gold':
+      return 'button-gold';
+    case 'inverse':
+      return 'button-inverse';
+    case 'dark':
+    default:
+      return 'button-dark';
+  }
+})();
+
+const sizeClass =
+  size === 'sm' ? 'button-sm' : size === 'lg' ? 'button-lg' : '';
+
+const baseClass = [
+  'button',
+  variantClass,
+  sizeClass,
+  `button--${shape}`,
+  `button--density-${density}`,
+  fullWidth && 'button--block',
+  iconAfter && 'button--icon-after',
+  iconBefore && 'button--icon-before',
+  meta && 'button--has-meta',
+  kicker && 'button--has-kicker',
+  loading && 'is-loading',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const isLink = typeof href === 'string';
+const isDisabled = disabled;
 ---
 
 {
-  href ? (
-    <a href={href} class={classes}>
-      <slot />
+  isLink ? (
+    <a
+      href={isDisabled ? undefined : href}
+      class={baseClass}
+      aria-disabled={isDisabled ? 'true' : undefined}
+      aria-busy={loading ? 'true' : undefined}
+      aria-label={ariaLabel}
+    >
+      {iconBefore && (
+        <span class="button__icon button__icon--before" aria-hidden="true">
+          <slot name="icon-before" />
+        </span>
+      )}
+      {kicker && <span class="button__kicker">{kicker}</span>}
+      <span class="button__label">
+        <span class="button__label-dot" aria-hidden="true" />
+        <span class="button__label-text">
+          <slot />
+        </span>
+      </span>
+      {meta && <span class="button__meta">{meta}</span>}
+      {iconAfter && (
+        <span class="button__icon button__icon--after" aria-hidden="true">
+          <svg
+            width="14"
+            height="10"
+            viewBox="0 0 14 10"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.25"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M1 5h12" />
+            <path d="M9 1l4 4-4 4" />
+          </svg>
+        </span>
+      )}
     </a>
   ) : (
-    <button type={type} class={classes}>
-      <slot />
+    <button
+      type={type}
+      class={baseClass}
+      disabled={isDisabled}
+      aria-busy={loading ? 'true' : undefined}
+      aria-label={ariaLabel}
+    >
+      {iconBefore && (
+        <span class="button__icon button__icon--before" aria-hidden="true">
+          <slot name="icon-before" />
+        </span>
+      )}
+      {kicker && <span class="button__kicker">{kicker}</span>}
+      <span class="button__label">
+        <span class="button__label-dot" aria-hidden="true" />
+        <span class="button__label-text">
+          <slot />
+        </span>
+      </span>
+      {meta && <span class="button__meta">{meta}</span>}
+      {iconAfter && (
+        <span class="button__icon button__icon--after" aria-hidden="true">
+          <svg
+            width="14"
+            height="10"
+            viewBox="0 0 14 10"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.25"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M1 5h12" />
+            <path d="M9 1l4 4-4 4" />
+          </svg>
+        </span>
+      )}
     </button>
   )
 }
+
+<style>
+  /* The global .button token owns the visual system. This layer
+     only handles structure, icon motion and component modifiers. */
+  .button {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transform: translateZ(0);
+    /* Explicit properties only — never `all`. */
+    transition:
+      background-color var(--duration-base) var(--ease-soft),
+      color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft),
+      letter-spacing var(--duration-base) var(--ease-soft),
+      padding-inline var(--duration-base) var(--ease-soft),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  /* =========================================================
+     Block modifier — stretches to fill the parent.
+     ========================================================= */
+  .button--block {
+    width: 100%;
+  }
+
+  /* =========================================================
+     Optional kicker / meta strips — small caps lines around the
+     main label. Useful for "01 / Ver detalle" patterns.
+     ========================================================= */
+  .button__kicker,
+  .button__meta {
+    position: relative;
+    z-index: 2;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    font-weight: 500;
+    color: currentColor;
+    opacity: 0.65;
+    text-transform: uppercase;
+    padding: 0 0.4rem;
+  }
+
+  .button__kicker {
+    border-right: 1px solid currentColor;
+  }
+
+  .button__meta {
+    border-left: 1px solid currentColor;
+  }
+
+  /* =========================================================
+     Icon wrappers — aligned, no layout shift on hover.
+     ========================================================= */
+  .button__icon {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    flex: 0 0 auto;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .button__icon :global(svg),
+  .button__icon svg {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .button__icon--after svg {
+    width: 14px;
+    height: 10px;
+  }
+
+  .button__icon--before svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .button--icon-after:hover:not(:disabled):not([aria-disabled='true'])
+    .button__icon--after {
+    transform: translateX(3px);
+  }
+
+  .button--icon-before:hover:not(:disabled):not([aria-disabled='true'])
+    .button__icon--before {
+    transform: translateX(-3px);
+  }
+
+  /* =========================================================
+     Loading state — fades the label and pushes the sheen.
+     ========================================================= */
+  .button.is-loading .button__label-text {
+    opacity: 0.45;
+  }
+  .button.is-loading::before {
+    transform: translateX(36%);
+    opacity: 0.7;
+  }
+
+  /* =========================================================
+     Main label.
+     ========================================================= */
+  .button__label {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  .button__label-dot {
+    display: none;
+  }
+
+  .button__label-text {
+    display: inline-block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* =========================================================
+     Hover detail — two layered effects, no underline.
+
+     ::before  ·  brass → leather wash that scales in from the
+                 left edge. Slower, deliberate. Visible on every
+                 variant because the gradient is semi-transparent
+                 and respects the pill via border-radius: inherit.
+
+     ::after   ·  diagonal sheen (light beam) that crosses the
+                 capsule on a 105° axis. Premium, subtle, and
+                 invisible until the cursor lands. background-size
+                 is larger than the box so the gradient has to
+                 travel, which produces the sweep.
+
+     Together they read as a crafted control, not a flat fill.
+     Text and lift use faster durations so the feedback feels
+     responsive while the visual effects breathe.
+     ========================================================= */
+  .button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-brass) 18%, transparent) 0%,
+      color-mix(in srgb, var(--color-leather) 8%, transparent) 100%
+    );
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition:
+      opacity var(--duration-base) var(--ease-soft),
+      transform var(--duration-slow) var(--ease-out);
+  }
+
+  .button:hover:not(:disabled):not([aria-disabled='true'])::before,
+  .button:focus-visible::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 36%,
+      color-mix(in srgb, var(--color-inverse) 22%, transparent) 50%,
+      transparent 64%,
+      transparent 100%
+    );
+    background-size: 240% 100%;
+    background-position: 100% 0;
+    opacity: 0;
+    transition:
+      opacity var(--duration-base) var(--ease-soft),
+      background-position var(--duration-slow) var(--ease-out);
+  }
+
+  .button:hover:not(:disabled):not([aria-disabled='true'])::after,
+  .button:focus-visible::after {
+    opacity: 1;
+    background-position: 0% 0;
+  }
+
+  .button:hover:not(:disabled):not([aria-disabled='true']) {
+    transform: translateY(-1px);
+  }
+
+  .button:active:not(:disabled):not([aria-disabled='true']) {
+    transform: translateY(0);
+  }
+
+  /* =========================================================
+     Focus ring — tokenized, generous offset.
+     ========================================================= */
+  .button:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button,
+    .button::before,
+    .button::after,
+    .button__icon {
+      transition-duration: 1ms;
+    }
+
+    .button:hover:not(:disabled):not([aria-disabled='true']),
+    .button:active:not(:disabled):not([aria-disabled='true']) {
+      transform: none;
+    }
+  }
+</style>

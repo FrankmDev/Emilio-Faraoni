@@ -1,29 +1,108 @@
 ---
+/**
+ * SectionHeader · editorial section opener.
+ * Single-column composition by default. Wider title than
+ * before, description below, action slot integrated as a
+ * sibling (right of the body on wide viewports).
+ * The previous left-rail treatment has been removed in
+ * favour of a small top eyebrow/index kicker line.
+ *
+ * All visual tokens live in src/styles/global.css under
+ * `.section-header*` so the component itself is structural.
+ */
+type SectionAlign = 'start' | 'center';
+
 interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
+  meta?: string;
+  /** Optional kicker shown before the eyebrow. */
+  kicker?: string;
+  /** Optional number prefix drawn as a serif numeral stamp. */
+  index?: number | string;
+  /** Heading level override. Defaults to h2. */
+  level?: 1 | 2 | 3;
+  align?: SectionAlign;
+  /** Show the top hairline rail with eyebrow / index. Defaults to true. */
+  withRail?: boolean;
+  /** Show the small bottom hairline under the description. */
+  withRule?: boolean;
+  id?: string;
+  class?: string;
 }
 
-const { eyebrow, title, description } = Astro.props;
+const {
+  eyebrow,
+  title,
+  description,
+  meta,
+  kicker,
+  index,
+  level = 2,
+  align = 'start',
+  withRail = true,
+  withRule = false,
+  id,
+  class: className,
+} = Astro.props;
+
+const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3';
+const titleClass =
+  level === 1
+    ? 'section-header__title'
+    : level === 3
+      ? 'heading-card section-header__title'
+      : 'section-header__title';
+
+const hasLeading =
+  Boolean(index) || Boolean(eyebrow) || Boolean(kicker) || Boolean(meta);
+const hasAction = Astro.slots.has('action');
+const showRail = withRail && hasLeading;
 ---
 
-<header class="max-w-3xl">
+<header
+  id={id}
+  class:list={['section-header', `section-header--${align}`, className]}
+>
   {
-    eyebrow && (
-      <p class="eyebrow">
-        {eyebrow}
-      </p>
+    showRail && (
+      <div class="section-header__top">
+        {index !== undefined && (
+          <span class="section-header__index" aria-hidden="true">
+            {String(index).padStart(2, '0')}
+          </span>
+        )}
+        {kicker && (
+          <span class="section-header__kicker meta-label" aria-hidden="true">
+            {kicker}
+          </span>
+        )}
+        {eyebrow && (
+          <span class="eyebrow section-header__eyebrow">{eyebrow}</span>
+        )}
+        {meta && (
+          <span class="section-header__meta meta-label" aria-hidden="true">
+            {meta}
+          </span>
+        )}
+      </div>
     )
   }
-  <h2 class="heading-section mt-4 text-ink">
-    {title}
-  </h2>
-  {
-    description && (
-      <p class="copy-lead mt-5 max-w-2xl">
-        {description}
-      </p>
-    )
-  }
+  <div class="section-header__body">
+    <div class="section-header__body-inner">
+      <HeadingTag class={titleClass}>
+        {title}
+      </HeadingTag>
+      {description && <p class="section-header__description">{description}</p>}
+      {withRule && <span class="section-header__rail" aria-hidden="true" />}
+    </div>
+    {
+      hasAction && (
+        <div class="section-header__action">
+          <slot name="action" />
+        </div>
+      )
+    }
+  </div>
 </header>

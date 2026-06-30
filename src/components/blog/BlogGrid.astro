@@ -1,0 +1,50 @@
+---
+interface Props {
+  variant?: 'grid' | 'list';
+  class?: string;
+}
+
+const {
+  variant = 'grid',
+  class: className,
+} = Astro.props;
+
+const classes = [
+  'blog-grid',
+  `blog-grid--${variant}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class={classes}>
+  <slot />
+</div>
+
+<style>
+  .blog-grid {
+    display: grid;
+    gap: var(--stack-section);
+  }
+
+  .blog-grid--grid {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-grid--list {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 641px) {
+    .blog-grid--grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog-grid--grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

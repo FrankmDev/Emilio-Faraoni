@@ -5,24 +5,46 @@ import { ROUTES } from '@/lib/routes';
 ---
 
 <section class="section-y">
-  <Container class="grid gap-10">
-    <p class="eyebrow">
-      Catálogo mayorista
-    </p>
-    <div class="max-w-4xl">
-      <h1 class="display-serif text-ink">
-        Base técnica para Emilio Faraoni B2B
+  <Container
+    class="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.72fr)] lg:items-end"
+  >
+    <div>
+      <div class="mb-8 flex items-center gap-4">
+        <span class="h-px w-10 bg-border-strong"></span>
+        <p class="eyebrow">Catálogo mayorista</p>
+      </div>
+      <h1 class="display-serif max-w-4xl text-ink">
+        Fabricación mayorista de cinturones y marroquinería
       </h1>
-      <p class="copy-lead mt-8 max-w-2xl">
-        Proyecto Astro preparado para crecer hacia catálogo profesional,
-        acceso mayorista y precios privados.
+      <p class="copy-lead mt-8 max-w-xl">
+        Catálogo profesional para tiendas, distribuidores y compradores
+        especializados. Producto en piel, fabricación nacional y atención
+        comercial directa.
       </p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <Button href={ROUTES.CATALOG}>Ver catálogo</Button>
+        <Button href={ROUTES.WHOLESALE_ACCESS} variant="secondary">
+          Solicitar acceso
+        </Button>
+      </div>
     </div>
-    <div class="flex flex-wrap gap-3">
-      <Button href={ROUTES.CATALOG}>Ver estructura de catálogo</Button>
-      <Button href={ROUTES.WHOLESALE_ACCESS} variant="secondary">
-        Acceso mayorista
-      </Button>
-    </div>
+
+    <aside class="surface-card relative overflow-hidden p-5">
+      <div class="image-ground relative aspect-[4/5] overflow-hidden">
+        <div
+          class="absolute inset-[14%] border border-border-strong bg-surface-accent"
+        >
+        </div>
+        <div class="absolute bottom-[18%] left-[18%] h-px w-[46%] bg-ink"></div>
+        <div
+          class="absolute right-[21%] top-[18%] h-[52%] w-px bg-border-strong"
+        >
+        </div>
+      </div>
+      <div class="mt-5 flex items-center justify-between gap-4">
+        <p class="meta-label text-ink">Desde 1988</p>
+        <p class="copy-small text-right">Elche · Alicante</p>
+      </div>
+    </aside>
   </Container>
 </section>

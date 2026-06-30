@@ -1,27 +1,98 @@
 ---
+/**
+ * FeaturedCategories · full-bleed editorial category strip.
+ * Each category is a full-card editorial tile:
+ * a tonal CSS-only surface (no external images, see the
+ * `.category-tile` variants in global.css), an index stamp
+ * in the top-left, the title in the lower-left and a small
+ * corner mark in the top-right. No description, no bottom
+ * underline. Tonal variation per category keeps the strip
+ * visually rich without being noisy.
+ */
 import Container from '@/components/ui/Container.astro';
 import SectionHeader from '@/components/ui/SectionHeader.astro';
 import { categories } from '@/data/categories';
+
+/* Each category gets a tonal wash. Order is stable and
+   cycles through the available variants. */
+const variants = [
+  'category-tile--leather',
+  'category-tile--sand',
+  'category-tile--paper',
+  'category-tile--clay',
+] as const;
 ---
 
-<section class="section-y-compact">
+<section class="section">
   <Container class="grid gap-12">
     <SectionHeader
       eyebrow="Categorías"
       title="Líneas de producto"
-      description="Datos locales mínimos para validar estructura."
+      description="Una estructura clara para consultar cinturones, bolsos, carteras y complementos de marroquinería sin mostrar tarifas públicas."
     />
-    <div class="grid gap-px bg-border-soft sm:grid-cols-2 lg:grid-cols-4">
+    <ul class="category-tile-list" role="list">
       {
-        categories.map((category) => (
-          <article class="bg-bg p-8">
-            <h3 class="font-serif text-2xl font-light tracking-[-0.01em] text-ink">
-              {category.name}
-            </h3>
-            <p class="copy-small mt-3">{category.description}</p>
-          </article>
+        categories.map((category, index) => (
+          <li class="category-tile-list__cell">
+            <article
+              class:list={['category-tile', variants[index % variants.length]]}
+              aria-labelledby={`category-tile-${category.slug}`}
+            >
+              <span class="category-tile__corner" aria-hidden="true" />
+              <div class="category-tile__top">
+                <span class="category-tile__index" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span class="category-tile__count">Línea</span>
+              </div>
+              <h3
+                id={`category-tile-${category.slug}`}
+                class="category-tile__title"
+              >
+                {category.name}
+              </h3>
+            </article>
+          </li>
         ))
       }
-    </div>
+    </ul>
   </Container>
 </section>
+
+<style>
+  /* The list itself is a clean responsive grid; the visual
+     treatment lives on the .category-tile classes in
+     src/styles/global.css. */
+  .category-tile-list {
+    display: grid;
+    gap: var(--grid-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .category-tile-list {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 40rem) {
+    .category-tile-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 70rem) {
+    .category-tile-list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .category-tile-list__cell {
+    display: flex;
+    min-width: 0;
+  }
+
+  .category-tile-list__cell .category-tile {
+    width: 100%;
+  }
+</style>

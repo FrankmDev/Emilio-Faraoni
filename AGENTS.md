@@ -1,1931 +1,955 @@
-# Emilio Faraoni B2B · Web Catálogo Mayorista
+# AGENTS.md · Emilio Faraoni
 
-## 0. Propósito de este documento
+## 1. Propósito
 
-Este archivo define el contexto completo del proyecto **Emilio Faraoni B2B**.
+Este documento define las reglas de trabajo para cualquier IA, agente o desarrollador que intervenga en la web de **Emilio Faraoni**.
 
-Debe ser leído antes de realizar cualquier tarea de diseño, desarrollo, refactor, creación de componentes, integración de backend o modificación de arquitectura.
+Antes de crear componentes, páginas, estilos, copy o arquitectura, se debe leer este archivo y respetar su dirección.
 
-El objetivo es que cualquier IA/agente/desarrollador entienda:
-
-* qué es el proyecto,
-* qué tipo de web se está construyendo,
-* qué funcionalidades tendrá ahora y más adelante,
-* qué stack se utilizará,
-* qué estilo visual debe respetarse,
-* qué estructura de carpetas se espera,
-* cómo se modelarán los productos,
-* cómo funcionará el acceso mayorista,
-* qué se debe evitar,
-* cómo debe crecer el proyecto por fases.
-
-No se debe implementar nada que contradiga este documento salvo instrucción explícita posterior.
+El objetivo es construir una web **moderna, editorial, elegante, profesional y escalable**, con un toque de **marroquinería, fabricación artesanal y producto de cuero**, evitando cualquier apariencia de plantilla genérica.
 
 ---
 
-# 1. Contexto del negocio
+## 2. Contexto del proyecto
 
-## 1.1 Empresa
+Emilio Faraoni es una empresa familiar de marroquinería ubicada en **Elche, Alicante**.
 
-**Emilio Faraoni** es una empresa/fabricante de cinturones, bolsos y marroquinería ubicada en Elche, Alicante.
+Datos clave:
 
-La empresa tiene trayectoria en fabricación y venta mayorista. El objetivo de la nueva web es modernizar su presencia digital y convertirla en una herramienta comercial B2B clara, rápida, seria y profesional.
+* Empresa familiar.
+* Fundada en 1988.
+* Fabricación artesanal.
+* Producto nacional.
+* Materiales nacionales.
+* Especializada en cinturones, bolsos y complementos de cuero.
+* Enfoque profesional, comercial y B2B.
+* Preparada para evolucionar hacia catálogo/ecommerce.
 
-La web debe presentar a Emilio Faraoni como:
+La web debe transmitir:
 
-* fabricante,
-* proveedor mayorista,
-* empresa con trayectoria,
-* especialista en marroquinería,
-* proveedor para tiendas, distribuidores y compradores profesionales.
+* oficio,
+* calidad,
+* confianza,
+* trayectoria,
+* fabricación nacional,
+* relación profesional,
+* capacidad de escalar digitalmente.
 
-No debe parecer una tienda online B2C genérica.
+Percepción deseada:
 
----
-
-## 1.2 Problema actual
-
-La presencia digital anterior presentaba problemas de:
-
-* imagen abandonada,
-* estructura poco clara,
-* catálogo poco profesional,
-* experiencia de usuario débil,
-* problemas de confianza,
-* arquitectura web desordenada,
-* falta de orientación comercial B2B,
-* necesidad de separar venta mayorista de venta al consumidor final.
-
-La nueva web debe resolver esto con una base limpia, ordenada, rápida y escalable.
+> Fabricante serio de marroquinería con una presencia digital premium, editorial y preparada para crecer.
 
 ---
 
-## 1.3 Diferencia entre Emilio Faraoni y KingBelt
+## 3. Fase actual
 
-Este proyecto es únicamente para **Emilio Faraoni**.
+El proyecto está en una fase de **base estática editorial + preparación de catálogo B2B**.
 
-La estrategia general del negocio separa dos canales:
+Actualmente existe:
 
-### Emilio Faraoni
+* una ruta pública principal en `src/pages/index.astro`,
+* un sistema visual global,
+* componentes de layout, UI, secciones, blog y producto,
+* datos locales mínimos en `src/data/`,
+* helpers de rutas, SEO, productos y seguridad,
+* mock de productos/categorías para validar estructura visual y arquitectura futura.
 
-Canal B2B / mayorista.
+La intención de fase sigue siendo:
 
-* Web corporativa.
-* Catálogo profesional.
-* Precios privados.
-* Registro de empresas.
-* Validación manual.
-* Contacto comercial.
-* Solicitudes de productos.
-* Captación de tiendas/distribuidores.
+* presentar a Emilio Faraoni como fabricante de marroquinería,
+* consolidar la identidad editorial premium,
+* preparar la arquitectura para catálogo/ecommerce,
+* mantener una base estática, rápida y fácil de ampliar.
 
-### KingBelt
+No convertir todavía la web en ecommerce completo.
 
-Canal B2C / ecommerce.
+No crear todavía, salvo instrucción explícita:
 
-* Venta directa al consumidor final.
-* Precios públicos.
-* Ecommerce.
-* Pago online.
-* Promociones.
-* Producto orientado a usuario particular.
-
-No mezclar ambos enfoques en esta web.
-
-Emilio Faraoni debe ser serio, corporativo y mayorista.
-KingBelt será la marca más comercial/B2C en otro proyecto.
-
----
-
-# 2. Objetivo principal de la web
-
-Crear una web catálogo B2B moderna para Emilio Faraoni.
-
-La web debe permitir:
-
-* presentar la empresa,
-* mostrar categorías de productos,
-* mostrar fichas de producto,
-* ocultar precios al público general,
-* permitir a empresas solicitar acceso mayorista,
-* validar manualmente empresas antes de mostrar precios,
-* mostrar precios solo a usuarios mayoristas aprobados,
-* facilitar el contacto comercial.
-
----
-
-# 3. Tipo de proyecto
-
-Este proyecto NO es inicialmente un ecommerce completo.
-
-No habrá en V1:
-
-* pago online,
+* carrito,
 * checkout,
-* gestión avanzada de stock,
-* facturación,
-* transportistas,
-* logística,
-* descuentos complejos,
-* ERP,
-* tarifas por cliente,
-* panel administrativo avanzado.
+* login,
+* registro,
+* auth,
+* Supabase,
+* base de datos,
+* admin,
+* panel mayorista,
+* precios privados visibles,
+* pagos,
+* emails transaccionales,
+* stock real,
+* filtros complejos,
+* búsqueda avanzada,
+* endpoints públicos de producto.
 
-La web será un:
+Los componentes y datos de producto existentes se consideran **scaffold preparatorio**. Se pueden corregir, ordenar, tipar, mejorar visualmente y proteger, pero no ampliar hacia catálogo completo ni ecommerce funcional sin permiso.
 
-**catálogo B2B con acceso privado para precios mayoristas.**
+Páginas objetivo de la fase editorial:
 
----
+* Inicio
+* Empresa / Quiénes Somos
+* Blog
+* Artículos individuales
+* Contacto
 
-# 4. Alcance funcional por fases
-
-## Fase 1 · Catálogo estático inicial
-
-Primera fase del desarrollo.
-
-Objetivo:
-
-Crear una web navegable, profesional y estática usando datos locales.
-
-Incluye:
-
-* Inicio.
-* Catálogo.
-* Categorías.
-* Fichas de producto.
-* Empresa/About.
-* Contacto.
-* Datos mock de productos.
-* Datos mock de categorías.
-* Mensaje de precios restringidos.
-* Diseño responsive.
-* SEO base.
-* Componentes limpios.
-
-No incluye:
-
-* Supabase.
-* Login.
-* Registro.
-* Base de datos.
-* Auth.
-* Panel admin.
-* Emails.
-* Cesta.
-* Backend.
-
-Esta fase sirve para validar:
-
-* estructura,
-* diseño,
-* modelo de producto,
-* navegación,
-* presentación del catálogo,
-* estilo visual.
+Si esas rutas no existen todavía, crearlas solo cuando la tarea lo pida. No asumir que deben añadirse en cualquier cambio.
 
 ---
 
-## Fase 2 · Backend y autenticación mayorista
-
-Se implementará después de que la parte estática esté sólida.
-
-Incluye:
-
-* Supabase.
-* Supabase Auth.
-* Registro mayorista.
-* Login.
-* Logout.
-* Recuperación de contraseña.
-* Perfil de usuario.
-* Empresa asociada al usuario.
-* Estado de solicitud: pending / approved / rejected.
-* Admin mínimo para aprobar/rechazar usuarios.
-* Protección real de precios.
-* Precios visibles solo para mayoristas aprobados.
-
----
-
-## Fase 3 · Catálogo conectado a base de datos
-
-Una vez validado el modelo estático, se migrará a base de datos.
-
-Incluye:
-
-* productos en Supabase/PostgreSQL,
-* categorías,
-* variantes,
-* imágenes,
-* precios mayoristas,
-* carga inicial desde datos estructurados,
-* queries centralizadas.
-
----
-
-## Fase 4 · Solicitudes comerciales
-
-Opcional o posterior.
-
-Puede incluir:
-
-* solicitud de información por producto,
-* envío de consulta comercial por email,
-* posible cesta simple de solicitud,
-* email a la empresa con productos seleccionados,
-* copia al comprador.
-
-No es prioridad en la primera fase.
-
----
-
-# 5. Stack técnico
-
-## 5.1 Stack base
+## 4. Stack
 
 Usar:
 
 * Astro
 * TypeScript
 * Tailwind CSS
+* CSS global en `src/styles/global.css`
 
-Astro será el framework principal del proyecto.
+Priorizar Astro estático.
 
-El objetivo es una web:
+El proyecto actual usa Astro 6 y no tiene React. Mantener componentes `.astro` por defecto.
 
-* rápida,
-* limpia,
-* SEO-friendly,
-* mantenible,
-* modular,
-* con poco JavaScript innecesario,
-* preparada para zonas dinámicas privadas más adelante.
+No añadir dependencias salvo necesidad real.
 
----
+No introducir sin permiso:
 
-## 5.2 Stack futuro
-
-Cuando se implemente backend/auth:
-
-* Supabase Auth
-* Supabase PostgreSQL
-* Supabase Storage
-* Supabase Row Level Security
-* Zod
-* Resend
-* React Email
-* Astro Actions o endpoints server-side
-* Nanostores si hay cesta/interactividad ligera
+* Next.js
+* React innecesario
+* Supabase
+* Prisma
+* Drizzle
+* Redux/Zustand
+* CMS externo
+* Shopify/WooCommerce
+* librerías UI
+* sliders
+* animaciones pesadas
 
 ---
 
-## 5.3 Qué NO introducir sin necesidad
+## 5. Dirección estética
 
-No introducir de inicio:
+La web debe mezclar:
 
-* Next.js,
-* Prisma,
-* Drizzle,
-* Redux,
-* Zustand,
-* CMS externo,
-* Shopify,
-* WooCommerce,
-* librerías UI pesadas,
-* animaciones complejas,
-* dependencias innecesarias.
+* ecommerce editorial limpio tipo Zara, Sfera, Mango, COS o The Row,
+* catálogo premium de producto,
+* fabricante de marroquinería,
+* taller contemporáneo de cuero,
+* empresa familiar modernizada.
 
-Si una funcionalidad se puede resolver con Astro + TypeScript + Tailwind, hacerlo así.
+No copiar literalmente ninguna referencia.
 
----
+Proporción visual deseada:
 
-# 6. Principios técnicos
+* 65% ecommerce editorial premium
+* 20% fabricante / taller / oficio
+* 15% marroquinería / cuero / materialidad
 
-## 6.1 Desarrollo por fases
-
-No construir funcionalidades futuras antes de tiempo.
-
-Primero:
-
-1. datos locales,
-2. catálogo estático,
-3. rutas dinámicas,
-4. UI sólida,
-5. SEO base.
-
-Después:
-
-1. auth,
-2. base de datos,
-3. permisos,
-4. precios privados,
-5. emails,
-6. admin.
-
----
-
-## 6.2 Código limpio
-
-El código debe ser:
-
-* modular,
-* legible,
-* tipado,
-* reutilizable,
-* sin duplicación innecesaria,
-* con nombres claros,
-* sin lógica dispersa.
-
-Cada componente debe tener una función concreta.
-
----
-
-## 6.3 Separación de responsabilidades
-
-No mezclar:
-
-* lógica de datos con UI,
-* estilos globales con lógica de producto,
-* queries con componentes,
-* datos mock con componentes,
-* funciones SEO con layouts,
-* lógica futura de auth en páginas públicas hasta que se implemente.
-
----
-
-## 6.4 Escalabilidad razonable
-
-El proyecto debe ser simple, pero no improvisado.
-
-Debe permitir crecer hacia:
-
-* Supabase,
-* auth,
-* productos reales,
-* precios privados,
-* admin mínimo,
-* solicitudes comerciales.
-
-La arquitectura inicial debe facilitar esa transición.
-
----
-
-# 7. Estructura de carpetas recomendada
-
-Usar una estructura similar:
-
-```txt
-src/
-  components/
-    layout/
-      Header.astro
-      Footer.astro
-      PageShell.astro
-
-    ui/
-      Button.astro
-      Badge.astro
-      SectionHeader.astro
-      Container.astro
-      Breadcrumbs.astro
-
-    product/
-      ProductCard.astro
-      ProductGrid.astro
-      ProductGallery.astro
-      ProductInfo.astro
-      ProductMeta.astro
-      RestrictedPriceCTA.astro
-      RelatedProducts.astro
-
-    sections/
-      Hero.astro
-      FeaturedCategories.astro
-      FeaturedProducts.astro
-      CompanyIntro.astro
-      FinalCTA.astro
-
-  data/
-    products.ts
-    categories.ts
-    company.ts
-    navigation.ts
-
-  layouts/
-    BaseLayout.astro
-
-  pages/
-    index.astro
-    catalogo/
-      index.astro
-      [categoria].astro
-    producto/
-      [slug].astro
-    empresa.astro
-    contacto.astro
-    acceso-mayorista.astro
-
-  lib/
-    products.ts
-    categories.ts
-    seo.ts
-    utils.ts
-
-  styles/
-    global.css
-```
-
-Cuando se implemente backend:
-
-```txt
-src/
-  lib/
-    supabase/
-      client.ts
-      server.ts
-
-    auth/
-      session.ts
-      permissions.ts
-
-    validation/
-      wholesale.ts
-      contact.ts
-
-  server/
-    queries/
-      products.ts
-      users.ts
-      companies.ts
-
-    actions/
-      auth.ts
-      wholesale.ts
-      contact.ts
-```
-
----
-
-# 8. Rutas de la web
-
-## 8.1 Rutas públicas iniciales
-
-```txt
-/
-```
-
-Home / Inicio.
-
-```txt
-/catalogo
-```
-
-Listado general de productos.
-
-```txt
-/catalogo/[categoria]
-```
-
-Listado de productos filtrados por categoría.
-
-```txt
-/producto/[slug]
-```
-
-Ficha individual de producto.
-
-```txt
-/empresa
-```
-
-Página corporativa de la empresa.
-
-```txt
-/contacto
-```
-
-Página de contacto.
-
-```txt
-/acceso-mayorista
-```
-
-Página informativa para solicitar acceso mayorista. En Fase 1 puede ser informativa/CTA. En Fase 2 tendrá formulario real.
-
----
-
-## 8.2 Rutas futuras
-
-```txt
-/login
-/registro
-/cuenta
-/cuenta/pendiente
-/admin
-/admin/mayoristas
-```
-
-No implementarlas en Fase 1 salvo instrucción explícita.
-
----
-
-# 9. Modelo de producto
-
-## 9.1 Tipo Product
-
-El producto debe poder funcionar primero con datos locales y más tarde con base de datos.
-
-Modelo inicial recomendado:
-
-```ts
-export type Product = {
-  id: string;
-  slug: string;
-  name: string;
-  category: string;
-  categorySlug: string;
-  shortDescription: string;
-  description: string;
-  images: string[];
-  colors: string[];
-  sizes: string[];
-  measurements?: string;
-  materials?: string;
-  reference?: string;
-  wholesalePrice?: number;
-  isFeatured?: boolean;
-  isActive: boolean;
-};
-```
-
----
-
-## 9.2 Campos explicados
-
-### id
-
-Identificador interno.
-
-Ejemplo:
-
-```txt
-ef-001
-```
-
-### slug
-
-URL limpia.
-
-Ejemplo:
-
-```txt
-cinturon-piel-clasico
-```
-
-### name
-
-Nombre del producto.
-
-Ejemplo:
-
-```txt
-Cinturón de piel clásico
-```
-
-### category
-
-Nombre visible de categoría.
-
-Ejemplo:
-
-```txt
-Cinturones
-```
-
-### categorySlug
-
-Slug de categoría.
-
-Ejemplo:
-
-```txt
-cinturones
-```
-
-### shortDescription
-
-Texto breve para card.
-
-Ejemplo:
-
-```txt
-Cinturón de piel para uso diario con hebilla metálica y acabado sobrio.
-```
-
-### description
-
-Texto algo más amplio para ficha de producto.
-
-### images
-
-Array de imágenes.
-
-Ejemplo:
-
-```ts
-[
-  "/images/products/cinturon-clasico-01.webp",
-  "/images/products/cinturon-clasico-02.webp"
-]
-```
-
-### colors
-
-Colores disponibles.
-
-Ejemplo:
-
-```ts
-["Negro", "Marrón", "Cuero"]
-```
-
-### sizes
-
-Tallas disponibles.
-
-Ejemplo:
-
-```ts
-["90", "95", "100", "105", "110"]
-```
-
-### measurements
-
-Medidas generales.
-
-Ejemplo:
-
-```txt
-Ancho aproximado: 3,5 cm
-```
-
-### materials
-
-Materiales principales.
-
-Ejemplo:
-
-```txt
-Piel y hebilla metálica
-```
-
-### reference
-
-Referencia comercial.
-
-Ejemplo:
-
-```txt
-EF-001
-```
-
-### wholesalePrice
-
-Precio mayorista.
-
-Importante:
-
-* Puede estar en datos mock.
-* No mostrar a usuarios públicos.
-* En el futuro solo se mostrará a usuarios aprobados.
-
-### isFeatured
-
-Producto destacado para Home.
-
-### isActive
-
-Permite ocultar productos sin borrarlos.
-
----
-
-# 10. Categorías
-
-## 10.1 Categorías iniciales
-
-Crear inicialmente:
-
-* Cinturones
-* Bolsos
-* Carteras
-* Accesorios
-
----
-
-## 10.2 Tipo Category
-
-```ts
-export type Category = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  image?: string;
-  isActive: boolean;
-};
-```
-
----
-
-# 11. Datos mock
-
-En Fase 1 usar datos locales.
-
-Archivos:
-
-```txt
-src/data/products.ts
-src/data/categories.ts
-```
-
-Crear entre 8 y 12 productos mock realistas.
-
-Evitar textos exagerados.
-
-Productos sugeridos:
-
-* Cinturón de piel clásico
-* Cinturón vestir hebilla metálica
-* Cinturón trenzado
-* Cinturón casual piel envejecida
-* Cinturón piel reversible
-* Bolso piel mujer
-* Bolso bandolera piel
-* Cartera piel hombre
-* Monedero piel
-* Accesorio marroquinería
-
-Estos productos son temporales y servirán para diseñar la estructura.
-
----
-
-# 12. Reglas sobre precios
-
-## 12.1 Fase 1
-
-En Fase 1 no hay auth.
-
-Por tanto:
-
-* no mostrar precios,
-* no mostrar tarifas,
-* no mostrar descuentos,
-* no mostrar condiciones internas.
-
-Donde iría el precio, mostrar:
-
-```txt
-Precio disponible para clientes mayoristas registrados.
-```
-
-CTAs recomendados:
-
-```txt
-Solicitar acceso mayorista
-Contactar con ventas
-```
-
----
-
-## 12.2 Fase 2 y posteriores
-
-Los precios solo podrán verlos usuarios mayoristas aprobados.
-
-Estados futuros:
-
-```txt
-public
-pending
-approved
-rejected
-admin
-```
-
-Regla crítica:
-
-> Los precios no deben ocultarse solo visualmente. Si el usuario no está aprobado, los precios no deben enviarse desde servidor/base de datos.
-
-No hacer:
-
-```tsx
-{isLoggedIn && <Price />}
-```
-
-si el precio ya está en el HTML, JSON o payload público.
-
-Hacer:
-
-* query pública sin precios,
-* query privada con precios solo para usuario aprobado,
-* control server-side,
-* RLS en Supabase cuando se implemente.
-
----
-
-# 13. Sistema futuro de acceso mayorista
-
-## 13.1 Flujo previsto
-
-Usuario público:
-
-1. Entra en la web.
-2. Ve catálogo sin precios.
-3. Pulsa "Solicitar acceso mayorista".
-4. Rellena formulario de empresa.
-5. Su cuenta queda pendiente.
-6. La empresa revisa los datos.
-7. Admin aprueba o rechaza.
-8. Si se aprueba, el usuario inicia sesión y ve precios.
-
----
-
-## 13.2 Datos de registro mayorista
-
-Formulario futuro:
-
-* Nombre completo.
-* Email.
-* Teléfono.
-* Contraseña.
-* Nombre de empresa.
-* CIF/NIF.
-* Tipo de negocio.
-* Ciudad.
-* Provincia.
-* País.
-* Web o red social.
-* Mensaje opcional.
-
----
-
-## 13.3 Estados
-
-```ts
-type WholesaleStatus = "pending" | "approved" | "rejected";
-type UserRole = "wholesale" | "admin";
-```
-
----
-
-## 13.4 Pantalla pendiente
-
-Cuando el usuario se registre pero aún no esté aprobado:
-
-```txt
-Tu solicitud ha sido recibida.
-
-Revisaremos los datos de empresa y activaremos el acceso si corresponde. Mientras tanto, puedes seguir navegando por el catálogo público sin precios.
-```
-
----
-
-# 14. Futuro modelo de base de datos
-
-Cuando se migre a Supabase, usar una estructura aproximada:
-
-## profiles
-
-```txt
-id
-user_id
-email
-full_name
-phone
-role
-status
-created_at
-updated_at
-```
-
-## companies
-
-```txt
-id
-profile_id
-company_name
-tax_id
-business_type
-website
-city
-province
-country
-notes
-created_at
-updated_at
-```
-
-## categories
-
-```txt
-id
-name
-slug
-description
-sort_order
-is_active
-created_at
-updated_at
-```
-
-## products
-
-```txt
-id
-category_id
-name
-slug
-sku
-short_description
-description
-measurements
-materials
-is_public
-is_active
-sort_order
-created_at
-updated_at
-```
-
-## product_variants
-
-```txt
-id
-product_id
-sku
-color
-size
-wholesale_price
-min_quantity
-stock_status
-is_active
-created_at
-updated_at
-```
-
-## product_images
-
-```txt
-id
-product_id
-variant_id
-url
-alt
-sort_order
-is_primary
-created_at
-updated_at
-```
-
-## future_b2b_requests
-
-Solo si se añade sistema de solicitud.
-
-```txt
-id
-profile_id
-company_id
-status
-message
-created_at
-updated_at
-```
-
-## future_b2b_request_items
-
-```txt
-id
-request_id
-product_id
-variant_id
-quantity
-unit_price_snapshot
-product_name_snapshot
-variant_snapshot
-```
-
----
-
-# 15. Diseño visual
-
-## 15.1 Dirección de arte
-
-Emilio Faraoni debe sentirse:
+La estética debe ser:
 
 * profesional,
-* sobrio,
-* cálido,
+* fina,
+* elegante,
+* moderna,
 * editorial,
-* B2B,
-* limpio,
-* industrial suave,
-* artesanal sin parecer rústico,
-* premium sin parecer lujo exagerado.
+* minimalista,
+* atractiva,
+* cálida,
+* sobria,
+* escalable,
+* artesanal sin ser rústica,
+* comercial sin ser agresiva.
 
-No debe parecer:
+Debe evitar:
 
-* tienda de moda joven,
-* ecommerce agresivo,
-* web motera,
-* plantilla WooCommerce,
-* web de dropshipping,
-* catálogo barato,
-* landing de marketing genérico.
-
----
-
-## 15.2 Paleta visual orientativa
-
-Usar tonos:
-
-```txt
-blanco cálido
-beige
-marrón cuero
-negro suave
-gris cálido
-dorado apagado
-arena
-marfil
-```
-
-Ejemplo de paleta:
-
-```txt
-Background: #F7F3EC
-Surface: #FFFFFF
-Ink: #17130E
-Muted: #766E63
-Leather: #7A4E2A
-Leather Dark: #3A2416
-Gold Soft: #B8904A
-Border: #E4DDD2
-```
-
-No usar:
-
-* neones,
-* rojo agresivo,
-* negro puro excesivo,
-* colores biker,
-* efectos saturados.
+* plantilla WordPress,
+* WooCommerce genérico,
+* ecommerce barato,
+* web corporativa antigua,
+* landing genérica,
+* estética SaaS,
+* tienda de dropshipping,
+* catálogo PDF pasado a web,
+* marca rústica artesanal,
+* web excesivamente marrón,
+* moda fast fashion sin identidad.
 
 ---
 
-## 15.3 Tipografía
+## 6. Sistema global de estilos
 
-Usar tipografías limpias, profesionales y legibles.
-
-La web debe priorizar:
-
-* legibilidad,
-* jerarquía clara,
-* estilo editorial,
-* profesionalidad.
-
-Tipografías posibles:
-
-* Inter,
-* DM Sans,
-* Manrope,
-* Cormorant Garamond para títulos si se quiere toque editorial,
-* Playfair Display con moderación,
-* Instrument Sans.
-
-No usar tipografías demasiado decorativas.
-
----
-
-## 15.4 Jerarquía tipográfica
-
-Definir escala consistente:
-
-```txt
-Eyebrow: 11-12px uppercase
-H1: 56-80px desktop / 38-48px mobile
-H2: 36-52px desktop / 30-38px mobile
-H3: 24-32px
-Body: 16-18px
-Small/meta: 13-14px
-```
-
-Evitar demasiados tamaños diferentes.
-
----
-
-## 15.5 Espaciado
-
-Usar sistema consistente:
-
-```txt
-Section padding desktop: 96px
-Section padding tablet: 72px
-Section padding mobile: 56px
-Container max-width: 1120px - 1280px
-Grid gap: 24px - 32px
-Card padding: 20px - 28px
-```
-
-No hacer secciones comprimidas.
-
----
-
-## 15.6 Sistema visual global vigente
-
-La base visual actual queda definida en:
+El sistema visual principal está en:
 
 ```txt
 src/styles/global.css
-tailwind.config.mjs
-src/layouts/BaseLayout.astro
 ```
 
-Reglas vigentes:
+Antes de crear componentes, revisar ese archivo.
 
-* Usar primero los tokens CSS globales antes de crear estilos nuevos.
-* Mantener la web mayoritariamente clara: marfil, blanco, gris cálido muy claro.
-* Usar `Cormorant Garamond` como serif editorial para marca, H1, H2, H3 y momentos destacados.
-* Usar `Instrument Sans` como sans principal para navegación, cuerpo, botones, formularios y metadatos.
-* Mantener radio bajo en cards y controles: `5px` (`--radius-card`, `--radius-control`).
-* Usar `surface-card`, `surface-muted`, `product-surface`, `section-y`, `section-y-compact`, `eyebrow`, `meta-label`, `copy-lead`, `copy-small`, `heading-display`, `heading-section` y `heading-card` cuando aplique.
-* No duplicar escalas tipográficas o paddings si ya existe una utilidad global.
-* No añadir gradientes, sombras fuertes, colores saturados ni botones agresivos.
-* Las cards de producto deben mantener superficie plana, gris cálido/blanco, imagen 4/5 y jerarquía silenciosa.
-* Los CTAs deben ser contenidos, sobrios, sin sombra y con hover sutil.
+Regla principal:
 
-Tokens principales actuales:
+> Usar clases globales, tokens CSS y componentes existentes antes que cadenas largas de Tailwind.
+
+Correcto:
+
+```astro
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      ...
+    </div>
+  </div>
+</section>
+```
+
+Incorrecto:
+
+```astro
+<section class="py-24 px-6 bg-[#fbfaf6]">
+  <div class="mx-auto max-w-7xl">
+    ...
+  </div>
+</section>
+```
+
+Tailwind solo debe usarse para ajustes puntuales.
+
+El estado actual mezcla clases globales con utilidades Tailwind en algunos componentes. Al tocar un componente, reducir Tailwind repetitivo y mover patrones reutilizables a `src/styles/global.css` o a props del componente correspondiente.
+
+Priorizar clases globales como:
 
 ```txt
---color-bg: #f4f2ee;
---color-surface: #ffffff;
---color-surface-muted: #eeeeea;
---color-ink: #151515;
---color-muted: #6f6b64;
---color-border: #dedbd4;
---color-leather: #7a4f2c;
---color-leather-dark: #3a2518;
---color-gold-soft: #a98b5f;
---radius-card: 5px;
---container-max: 77.5rem;
+container
+container-wide
+container-narrow
+container-reading
+section
+section-y
+section-lg
+section-md
+section-sm
+split
+grid
+grid-2
+grid-3
+stack-sm
+stack-md
+stack-lg
+surface
+surface-soft
+surface-muted
+panel
+panel-soft
+atelier-surface
+leather-wash
+display-serif
+heading-section
+heading-card
+copy-lead
+copy-body
+copy-small
+eyebrow
+meta-label
+button
+button-primary
+button-secondary
+button-dark
+button-ghost
+button-gold
+button-inverse
+badge
+pill
+nav-link
+breadcrumb
+breadcrumbs
+page-hero
+section-header
+feature-card
+blog-grid
+blog-card
+article-header
+contact-grid
+final-cta
+image-placeholder
+image-ground
+section-divider
+divider
+hover-image
+hover-craft
+surface-card
+surface-accent
+```
+
+No duplicar estilos ya existentes en `src/styles/global.css`.
+
+---
+
+## 7. Reglas visuales para componentes
+
+Cada componente debe parecer diseñado a medida.
+
+Debe tener:
+
+* proporción,
+* aire,
+* jerarquía,
+* detalle sutil,
+* buen responsive,
+* coherencia con `src/styles/global.css`,
+* ausencia de ruido decorativo.
+
+Minimalista no significa vacío.
+
+Se pueden usar detalles como:
+
+* líneas finas,
+* numeración discreta,
+* serif editorial,
+* fondos cálidos,
+* contraste de superficies,
+* acentos cuero/brass,
+* placeholders amplios,
+* bloques oscuros puntuales.
+
+No usar:
+
+* sombras fuertes,
+* iconos grandes,
+* gradientes llamativos,
+* pespuntes decorativos,
+* texturas fuertes de cuero,
+* marrón dominante,
+* botones enormes,
+* cards SaaS,
+* efectos complejos.
+
+---
+
+## 8. Componentes actuales
+
+Organización recomendada:
+
+```txt
+src/components/
+  layout/
+    Header.astro
+    Footer.astro
+    PageShell.astro
+    NavLink.astro
+
+  ui/
+    Badge.astro
+    Breadcrumbs.astro
+    Button.astro
+    Container.astro
+    SectionHeader.astro
+    FeaturedCard.astro
+    CategoryPillList.astro
+    ContactInfoCard.astro
+    ImagePlaceholder.astro
+    SectionDivider.astro
+
+  sections/
+    HomeHero.astro
+    PageHero.astro
+    CompanyIntro.astro
+    FeaturedCategories.astro
+    FeaturedProducts.astro
+    B2BAccessBlock.astro
+    FeaturedGrid.astro
+    FinalCTA.astro
+    ArticleHeader.astro
+
+  blog/
+    BlogCard.astro
+    BlogGrid.astro
+
+  product/
+    ProductCard.astro
+    ProductGrid.astro
+    ProductGallery.astro
+    ProductInfo.astro
+    RelatedProducts.astro
+    RestrictedPriceCTA.astro
+```
+
+La carpeta `product/` ya existe. Tratarla como base preparatoria B2B, no como ecommerce terminado.
+
+No crear nuevas carpetas de ecommerce/backend salvo instrucción explícita:
+
+```txt
+src/lib/supabase/
+src/lib/auth/
+src/lib/validation/
+src/server/actions/
+src/server/queries/
 ```
 
 ---
 
-# 16. Copywriting
+## 9. Criterios por componente
 
-## 16.1 Tono
+### NavLink
+
+Pequeño, uppercase, fino, con hover sutil y estado activo discreto.
+
+Usar:
+
+```txt
+nav-link
+```
+
+Debe aceptar:
+
+* `href`
+* `label`
+* `active`
+* `aria-current` si aplica
+
+---
+
+### PageHero
+
+Hero principal para páginas internas.
+
+Debe usar:
+
+```txt
+page-hero
+page-hero-inner
+page-hero-content
+page-hero-centered
+display-serif
+copy-lead
+eyebrow
+```
+
+Debe ser amplio, editorial y claro.
+
+---
+
+### FeaturedCard
+
+Para diferenciales como:
+
+* Empresa familiar
+* Desde 1988
+* Fabricación artesanal
+* Producto nacional
+* Materiales nacionales
+* Alta calidad
+
+Debe usar:
+
+```txt
+feature-card
+heading-card
+copy-small
+eyebrow
+editorial-numeral
+hover-craft
+```
+
+Sin iconos grandes ni aspecto de plantilla.
+
+---
+
+### FeaturedGrid
+
+Grid para agrupar cards.
+
+Debe recibir `slot`.
+
+Usar:
+
+```txt
+grid-2
+grid-3
+grid-wide
+```
+
+---
+
+### FinalCTA
+
+Cierre editorial de página.
+
+Debe ser elegante, no publicitario.
+
+Usar:
+
+```txt
+final-cta
+final-cta-content
+button
+button-inverse
+```
+
+---
+
+### BlogCard
+
+Debe parecer una card de revista, no un blog WordPress.
+
+Usar:
+
+```txt
+blog-card
+blog-card-media
+blog-card-title
+meta-label
+copy-small
+fine-link
+image-placeholder
+hover-image
+```
+
+---
+
+### BlogGrid
+
+Debe recibir `slot` y usar:
+
+```txt
+blog-grid
+```
+
+---
+
+### ArticleHeader
+
+Cabecera editorial de artículo.
+
+Usar:
+
+```txt
+article-header
+display-soft
+copy-lead
+breadcrumb
+meta-label
+```
+
+---
+
+### CategoryPillList
+
+Categorías finas, pequeñas y editoriales.
+
+Usar:
+
+```txt
+pill-list
+pill
+```
+
+---
+
+### ContactInfoCard
+
+Datos de contacto sobrios.
+
+Usar:
+
+```txt
+contact-card
+meta-label
+copy-body
+copy-small
+```
+
+No usar iconos grandes.
+
+---
+
+### ImagePlaceholder
+
+Debe parecer intencional, no provisional.
+
+Usar:
+
+```txt
+image-placeholder
+image-placeholder-warm
+ratio-square
+ratio-portrait
+ratio-wide
+ratio-hero
+```
+
+No usar imágenes externas aleatorias.
+
+---
+
+### SectionDivider
+
+Separador muy sutil.
+
+Usar:
+
+```txt
+section-divider
+section-divider-label
+divider
+divider-soft
+divider-editorial
+```
+
+---
+
+### Componentes de producto
+
+Los componentes en `src/components/product/` deben tratarse como presentación editorial B2B preparatoria.
+
+Pueden mostrar:
+
+* nombre de producto,
+* categoría,
+* referencia,
+* descripción sobria,
+* colores,
+* tallas,
+* materiales confirmados,
+* imágenes locales o placeholders intencionales,
+* mensajes tipo “precio privado” sin importe.
+
+No deben mostrar:
+
+* `wholesalePrice`,
+* precios públicos,
+* descuentos,
+* stock real,
+* botón de compra,
+* carrito,
+* checkout,
+* login simulado,
+* promesas de disponibilidad no confirmadas.
+
+Usar siempre los getters públicos de `src/lib/products/getters.ts` cuando un producto se renderice en UI pública. No importar `products` directamente en componentes o páginas públicas si eso puede exponer campos privados.
+
+---
+
+### B2BAccessBlock / RestrictedPriceCTA
+
+Estos bloques deben explicar acceso comercial de forma elegante y contenida.
+
+Deben comunicar:
+
+* relación profesional,
+* consulta comercial,
+* precios no públicos,
+* atención directa,
+* preparación para acceso mayorista futuro.
+
+No deben fingir que ya existe auth, registro funcional, panel privado o aprobación automática.
+
+---
+
+## 10. Reglas de código
+
+* Usar TypeScript en props.
+* No usar `any`.
+* No crear componentes gigantes.
+* No mezclar página completa, datos y UI en un solo componente.
+* No hardcodear datos de página dentro de componentes reutilizables.
+* Los datos deben ir en `src/data/`.
+* Las rutas centralizadas deben vivir en `src/lib/routes.ts`.
+* La lógica de producto debe vivir en `src/lib/products/`.
+* Los datos privados mock, como `wholesalePrice`, no deben renderizarse en UI pública.
+* No añadir JavaScript si Astro estático basta.
+* No usar React salvo necesidad real.
+* No añadir dependencias sin permiso.
+
+Ejemplo de props:
+
+```ts
+type Props = {
+  title: string;
+  description?: string;
+  variant?: 'default' | 'muted' | 'inverse';
+};
+```
+
+---
+
+## 11. Copywriting
 
 El tono debe ser:
 
 * profesional,
 * sobrio,
 * claro,
+* editorial,
 * comercial B2B,
-* directo,
-* sin promesas exageradas,
-* sin lenguaje publicitario barato.
+* elegante,
+* directo.
+
+Evitar:
+
+* “la mejor calidad”
+* “calidad insuperable”
+* “producto único”
+* “diseño exclusivo”
+* “artesanía perfecta”
+* “pasión por el cuero”
+* “tradición y modernidad”
+* “la elección perfecta”
+* “excelencia hecha producto”
+
+Preferir:
+
+* empresa familiar,
+* desde 1988,
+* fabricación artesanal,
+* producto nacional,
+* materiales nacionales,
+* marroquinería,
+* complementos de cuero,
+* cinturones,
+* bolsos,
+* acabados,
+* selección de materiales,
+* oficio,
+* continuidad,
+* relación profesional,
+* Elche, Alicante.
+
+No inventar datos ni claims no confirmados.
 
 ---
 
-## 16.2 Evitar
+## 12. Páginas editoriales
 
-Evitar frases tipo:
+### Inicio
 
-* "la mejor calidad del mercado",
-* "producto único",
-* "diseño brutal",
-* "calidad insuperable",
-* "durabilidad extrema",
-* "artesanía pura",
-* "garantía absoluta",
-* "la elección perfecta".
+Debe servir como presentación editorial y comercial.
 
----
+Puede incluir:
 
-## 16.3 Preferir
+* hero fuerte,
+* introducción corporativa,
+* diferenciales,
+* bloque visual de oficio,
+* últimos artículos,
+* CTA final.
 
-Preferir lenguaje basado en:
-
-* fabricación,
-* catálogo,
-* producto,
-* materiales,
-* trayectoria,
-* venta mayorista,
-* compradores profesionales,
-* disponibilidad,
-* contacto comercial,
-* confianza,
-* claridad.
+Puede enlazar a una base de catálogo B2B si ya existe y la tarea lo pide, pero no debe comportarse como tienda ni priorizar venta directa.
 
 ---
 
-## 16.4 Frases útiles
+### Empresa / Quiénes Somos
 
-Posibles frases:
+Debe enfatizar:
 
-```txt
-Fabricación y distribución mayorista de cinturones y marroquinería.
-```
+* empresa familiar,
+* fundada en 1988,
+* fabricación artesanal,
+* producto nacional,
+* materiales nacionales,
+* calidad,
+* Elche, Alicante,
+* oficio,
+* continuidad,
+* profesionalidad.
 
-```txt
-Catálogo profesional para tiendas, distribuidores y compradores especializados.
-```
+Estructura recomendada:
 
-```txt
-Precios disponibles únicamente para clientes mayoristas registrados.
-```
-
-```txt
-Solicite acceso profesional para consultar tarifas y condiciones.
-```
-
-```txt
-Una web orientada a facilitar el contacto comercial y la consulta de producto.
-```
-
----
-
-# 17. Páginas detalladas
-
-## 17.1 Inicio
-
-La home debe servir como entrada corporativa y comercial.
-
-Debe incluir:
-
-1. Hero corporativo.
-2. Categorías principales.
-3. Productos destacados.
-4. Bloque de empresa/trayectoria.
-5. Bloque B2B/mayorista.
-6. CTA final.
+* hero editorial,
+* introducción,
+* historia,
+* cards de diferenciales,
+* bloque de oficio,
+* bloque de materiales nacionales,
+* CTA final.
 
 ---
 
-### Hero
+### Catálogo preparatorio
 
-Debe comunicar rápido:
+Si se trabaja sobre `/catalogo` o componentes de producto, debe sentirse como catálogo editorial B2B, no como ecommerce retail.
 
-* quién es Emilio Faraoni,
-* qué fabrica,
-* a quién se dirige,
-* qué puede hacer el comprador.
+Debe enfatizar:
 
-Ejemplo:
+* producto protagonista,
+* consulta profesional,
+* precios no públicos,
+* categorías claras,
+* fichas sobrias,
+* materiales y referencias confirmadas,
+* ausencia de compra directa.
 
-```txt
-Fabricación mayorista de cinturones y marroquinería
-```
+No añadir todavía:
 
-Subtexto:
-
-```txt
-Catálogo profesional para tiendas, distribuidores y compradores especializados. Producto en piel, fabricación nacional y atención comercial directa.
-```
-
-CTAs:
-
-```txt
-Ver catálogo
-Solicitar acceso mayorista
-```
+* carrito,
+* checkout,
+* filtros avanzados,
+* reviews,
+* wishlist,
+* promociones,
+* urgencia comercial,
+* badges de descuento.
 
 ---
 
-### Categorías principales
+### Blog
 
-Mostrar:
+Debe sentirse como sección editorial, no plantilla.
 
-* Cinturones
-* Bolsos
-* Carteras
-* Accesorios
+Categorías posibles:
 
----
-
-### Productos destacados
-
-Mostrar 4-6 productos con `isFeatured`.
+* Empresa
+* Marroquinería
+* Fabricación
+* Materiales
+* Sector
 
 ---
 
-### Empresa/trayectoria
+### Contacto
 
-Bloque breve:
-
-```txt
-Desde 1976, Emilio Faraoni trabaja en el desarrollo y distribución de artículos de marroquinería para clientes profesionales.
-```
-
----
-
-### Bloque B2B
-
-Explicar:
-
-```txt
-Los precios del catálogo están disponibles únicamente para clientes mayoristas registrados y aprobados por la empresa.
-```
-
----
-
-## 17.2 Catálogo
-
-Debe incluir:
-
-* título claro,
-* descripción breve,
-* links de categoría,
-* grid de productos,
-* mensaje de precios privados.
-
-Ejemplo:
-
-```txt
-Catálogo profesional
-```
-
-```txt
-Explore nuestra selección de cinturones, bolsos y artículos de marroquinería. Las tarifas están disponibles exclusivamente para clientes profesionales registrados.
-```
-
----
-
-## 17.3 Categoría
-
-Cada categoría debe tener:
-
-* título,
-* descripción,
-* listado filtrado,
-* enlace al catálogo general,
-* mensaje de precios privados.
-
----
-
-## 17.4 Producto
-
-Cada producto debe incluir:
-
-* breadcrumb,
-* galería,
-* nombre,
-* referencia,
-* descripción,
-* colores disponibles,
-* tallas disponibles,
-* medidas,
-* materiales,
-* precio restringido,
-* CTA mayorista,
-* CTA contacto,
-* productos relacionados.
-
----
-
-### Bloque de precio restringido
-
-Mientras no haya login:
-
-```txt
-Precio disponible para clientes mayoristas registrados.
-
-Solicite acceso profesional para consultar tarifas y condiciones.
-```
-
-Botones:
-
-```txt
-Solicitar acceso mayorista
-Contactar con ventas
-```
-
----
-
-## 17.5 Empresa
-
-Debe incluir:
-
-* historia breve,
-* trayectoria desde 1976,
-* fabricación,
-* especialización,
-* ubicación,
-* enfoque mayorista,
-* valor para tiendas y distribuidores.
-
-No hacer una página excesivamente larga.
-
----
-
-## 17.6 Contacto
+Debe ser claro y comercial.
 
 Debe incluir:
 
 * datos de contacto,
 * formulario visual,
-* bloque para compradores mayoristas,
-* CTA a acceso mayorista.
+* ubicación,
+* mensaje para consultas profesionales,
+* CTA final.
 
-El formulario puede no ser funcional en Fase 1.
-
----
-
-## 17.7 Acceso mayorista
-
-En Fase 1 puede ser una página informativa.
-
-Debe explicar:
-
-* quién puede solicitar acceso,
-* por qué los precios no son públicos,
-* qué datos se pedirán,
-* cómo se valida la empresa,
-* qué verá el comprador aprobado.
-
-En Fase 2 tendrá formulario real.
+El formulario puede no ser funcional en esta fase.
 
 ---
 
-# 18. Componentes
-
-## 18.1 Layout
-
-### Header
-
-Debe incluir:
-
-* logo/nombre Emilio Faraoni,
-* navegación principal,
-* CTA a catálogo,
-* CTA o link a acceso mayorista.
-
-Navegación:
-
-```txt
-Inicio
-Catálogo
-Empresa
-Contacto
-```
-
-Opcional:
-
-```txt
-Acceso mayorista
-```
-
----
-
-### Footer
-
-Debe incluir:
-
-* nombre de empresa,
-* descripción corta,
-* navegación,
-* contacto,
-* legal,
-* copyright.
-
-No usar información falsa.
-Si los datos no están confirmados, usar placeholders claros y editables.
-
----
-
-## 18.2 Producto
-
-### ProductCard
-
-Debe mostrar:
-
-* imagen,
-* categoría,
-* nombre,
-* descripción corta,
-* colores,
-* CTA "Ver producto",
-* aviso de precio privado.
-
-No debe mostrar precio en fase pública.
-
----
-
-### ProductGrid
-
-Recibe array de productos.
-
-Debe ser responsive:
-
-* 3 columnas desktop,
-* 2 tablet,
-* 1 mobile.
-
----
-
-### ProductGallery
-
-Debe mostrar:
-
-* imagen principal,
-* thumbnails si hay más de una,
-* alt descriptivo.
-
-Puede ser estática en Fase 1.
-
----
-
-### RestrictedPriceCTA
-
-Componente reutilizable.
-
-Contenido:
-
-```txt
-Precio disponible para clientes mayoristas registrados.
-```
-
-Botones:
-
-```txt
-Solicitar acceso mayorista
-Contactar con ventas
-```
-
-Este componente se usará en cards o ficha de producto.
-
----
-
-# 19. SEO
-
-## 19.1 SEO base
+## 13. SEO
 
 Cada página debe tener:
 
 * title,
 * description,
-* canonical si procede,
-* Open Graph básico,
-* HTML semántico,
-* headings correctos,
+* un solo H1,
+* headings ordenados,
+* URLs limpias,
 * alt en imágenes,
-* URLs limpias.
+* estructura semántica,
+* Open Graph básico si existe sistema SEO.
 
----
-
-## 19.2 Titles sugeridos
-
-Home:
+Titles sugeridos:
 
 ```txt
-Emilio Faraoni · Fabricante de cinturones y marroquinería en Elche
-```
-
-Catálogo:
-
-```txt
-Catálogo mayorista de cinturones y marroquinería · Emilio Faraoni
-```
-
-Producto:
-
-```txt
-[Nombre del producto] · Catálogo mayorista Emilio Faraoni
-```
-
-Empresa:
-
-```txt
+Inicio · Emilio Faraoni
 Empresa · Emilio Faraoni
+Blog · Emilio Faraoni
+Contacto · Emilio Faraoni
 ```
 
-Contacto:
+Si se publica catálogo preparatorio:
 
 ```txt
-Contacto comercial · Emilio Faraoni
+Catálogo · Emilio Faraoni
 ```
 
 ---
 
-## 19.3 Descripciones sugeridas
+## 14. Accesibilidad
 
-Home:
+Obligatorio:
 
-```txt
-Fabricación y distribución mayorista de cinturones, bolsos y artículos de marroquinería para tiendas y compradores profesionales.
-```
-
-Catálogo:
-
-```txt
-Consulte el catálogo profesional de Emilio Faraoni. Precios disponibles exclusivamente para clientes mayoristas registrados.
-```
-
----
-
-## 19.4 Schema futuro
-
-Más adelante añadir:
-
-* Organization,
-* LocalBusiness,
-* Product,
-* BreadcrumbList,
-* WebSite.
-
-No es imprescindible en la primera tarea, pero la arquitectura debe permitirlo.
-
----
-
-# 20. Imágenes
-
-## 20.1 Fase 1
-
-Usar imágenes placeholder locales o URLs temporales.
-
-Rutas recomendadas:
-
-```txt
-/public/images/products/
-/public/images/categories/
-/public/images/company/
-```
-
-Usar `.webp` cuando sea posible.
-
----
-
-## 20.2 Alt text
-
-Cada imagen debe tener alt descriptivo.
-
-Ejemplo:
-
-```txt
-Cinturón de piel clásico Emilio Faraoni en color negro
-```
-
-No usar alt genérico tipo:
-
-```txt
-imagen producto
-```
-
----
-
-# 21. Accesibilidad
-
-Cuidar:
-
-* contraste,
-* navegación por teclado,
-* botones con texto claro,
-* links descriptivos,
-* estructura de headings,
+* enlaces como `<a>`,
+* botones como `<button>` solo para acciones,
+* alt descriptivos,
 * labels en formularios,
 * focus visible,
-* alt en imágenes.
-
-No sacrificar accesibilidad por estética.
+* contraste suficiente,
+* navegación por teclado,
+* `aria-current` para navegación activa,
+* headings semánticos,
+* no usar divs clicables.
 
 ---
 
-# 22. Rendimiento
-
-La web debe ser rápida.
+## 15. Rendimiento
 
 Reglas:
 
-* no cargar JS innecesario,
+* evitar JS innecesario,
+* evitar sliders,
+* evitar librerías de animación,
 * optimizar imágenes,
-* usar componentes Astro por defecto,
-* usar React solo si hace falta interactividad,
-* evitar sliders pesados,
-* evitar librerías de animación pesadas,
-* evitar fondos enormes sin optimizar.
+* usar Astro estático,
+* no cargar dependencias UI,
+* no usar imágenes externas aleatorias,
+* evitar efectos pesados.
 
 ---
 
-# 23. Futuro sistema de emails
+## 16. Futuro catálogo/ecommerce
 
-Cuando se implemente:
+El repositorio ya contiene una base local de catálogo:
 
-Usar Resend.
+* `src/data/products.ts`
+* `src/data/categories.ts`
+* `src/components/product/`
+* `src/lib/products/`
+* rutas centralizadas en `src/lib/routes.ts`
 
-Emails mínimos:
+Esa base no equivale a ecommerce completo.
 
-* nueva solicitud mayorista recibida,
-* solicitud aprobada,
-* solicitud rechazada,
-* nueva consulta comercial,
-* copia al comprador si aplica.
+Más adelante se podrá añadir:
 
-No implementar en Fase 1.
+* catálogo completo,
+* categorías reales,
+* subcategorías,
+* fichas de producto definitivas,
+* precios privados protegidos,
+* acceso mayorista real,
+* Supabase,
+* auth,
+* panel mínimo,
+* solicitudes comerciales.
 
----
+No implementarlo ahora salvo instrucción explícita.
 
-# 24. Futuro panel admin
+Cuando llegue esa fase, mantener la misma dirección:
 
-Admin mínimo futuro:
-
-```txt
-/admin/mayoristas
-```
-
-Funciones:
-
-* ver solicitudes,
-* ver empresa,
-* ver CIF,
-* ver email,
-* ver teléfono,
-* aprobar,
-* rechazar.
-
-No construir panel grande salvo instrucción explícita.
+* catálogo editorial,
+* producto protagonista,
+* B2B profesional,
+* precios ocultos para público,
+* arquitectura escalable.
 
 ---
 
-# 25. Decisiones importantes
+## 17. Checklist antes de terminar
 
-## 25.1 Products primero
+Antes de finalizar cualquier tarea, comprobar:
 
-El primer paso real es definir productos, categorías y fichas.
-
-La web gira alrededor del catálogo.
-
-Por tanto, antes de auth/backend:
-
-1. crear modelo de producto,
-2. crear datos mock,
-3. crear catálogo,
-4. crear páginas dinámicas,
-5. validar diseño.
-
----
-
-## 25.2 Auth después
-
-No implementar login al principio.
-
-Primero debe existir una web catálogo pública sólida.
-
-Después se añade la capa mayorista.
+* ¿Respeta el estilo editorial ecommerce + marroquinería?
+* ¿Parece diseñado a medida?
+* ¿Evita estética WordPress?
+* ¿Usa `src/styles/global.css` correctamente?
+* ¿Evita Tailwind innecesario?
+* ¿Es reutilizable?
+* ¿Está tipado?
+* ¿No usa `any`?
+* ¿No añade dependencias?
+* ¿No crea funcionalidades futuras sin permiso?
+* ¿No expone precios privados ni datos B2B sensibles?
+* ¿Es responsive?
+* ¿Es accesible?
+* ¿Compila sin errores?
+* ¿El copy es sobrio?
+* ¿No inventa datos?
+* ¿Mantiene escalabilidad futura?
 
 ---
 
-## 25.3 No construir ecommerce
+## 18. Principio final
 
-No añadir:
+La web debe parecer la evolución digital de una empresa familiar fabricante de marroquinería.
 
-* carrito de compra,
-* checkout,
-* pago,
-* pedidos automáticos,
-* stock avanzado.
+No debe parecer una tienda barata, una plantilla de WordPress ni un ecommerce de moda sin identidad.
 
-Si se añade solicitud comercial, será posterior y simple.
+Cada componente debe reforzar:
 
----
-
-# 26. Reglas para IA/agentes
-
-## 26.1 Antes de editar
-
-Antes de editar código:
-
-1. Leer este `init.md`.
-2. Entender la fase actual.
-3. No implementar más de lo pedido.
-4. Mantener arquitectura limpia.
-5. Respetar estilo B2B.
-6. Evitar funcionalidades no solicitadas.
-
----
-
-## 26.2 Al crear código
-
-El código debe:
-
-* estar tipado,
-* usar nombres claros,
-* evitar duplicación,
-* ser modular,
-* usar componentes reutilizables,
-* no mezclar lógica y presentación innecesariamente,
-* mantener diseño consistente.
-
----
-
-## 26.3 Al crear copy
-
-El copy debe:
-
-* sonar profesional,
-* evitar exageración,
-* hablar de fabricación, catálogo, producto y mayorista,
-* no sonar a marketing barato,
-* no usar claims no verificables.
-
----
-
-## 26.4 Al crear componentes
-
-Cada componente debe tener un objetivo.
-
-No crear componentes demasiado grandes.
-
-Separar:
-
-* layout,
-* UI,
-* producto,
-* secciones,
-* lógica.
-
----
-
-## 26.5 Al añadir dependencias
-
-No añadir ninguna dependencia sin justificar.
-
-Preferir:
-
-* Astro,
-* TypeScript,
-* Tailwind,
-* utilidades propias.
-
----
-
-# 27. Criterios de aceptación de la Fase 1
-
-La Fase 1 se considera correcta si:
-
-* existe una home profesional,
-* existe catálogo funcional,
-* existen categorías dinámicas,
-* existen productos dinámicos,
-* las fichas de producto son claras,
-* los precios no se muestran públicamente,
-* hay mensaje de acceso mayorista,
-* existe página empresa,
-* existe página contacto,
-* el diseño es coherente,
-* el código es modular,
-* los datos están centralizados,
-* el SEO base está implementado,
-* la web es responsive,
-* no hay funcionalidades innecesarias.
-
----
-
-# 28. Prioridades del proyecto
-
-Orden de prioridad:
-
-1. Claridad comercial.
-2. Catálogo bien estructurado.
-3. Diseño profesional B2B.
-4. Código limpio.
-5. SEO base.
-6. Rendimiento.
-7. Preparación para auth futura.
-8. Escalabilidad.
-
-No priorizar animaciones o efectos por encima de claridad.
-
----
-
-# 29. Resumen ejecutivo
-
-La web de Emilio Faraoni debe ser una plataforma catálogo B2B.
-
-Primero se construirá una base estática con Astro, TypeScript y Tailwind.
-
-Después se añadirá Supabase Auth para permitir registro/login de empresas y precios privados.
-
-El producto y la categoría son el centro del proyecto.
-
-El diseño debe ser sobrio, serio y profesional.
-
-No se debe construir un ecommerce ni un sistema complejo de pedidos en esta primera etapa.
-
-La regla más importante del proyecto futuro:
-
-> Los precios mayoristas solo podrán verlos usuarios aprobados por la empresa.
-
-La regla más importante de la fase actual:
-
-> Crear primero un catálogo estático limpio, profesional y bien estructurado.
-
-Ese es el contexto completo de lo que será la web
+> Fabricación, oficio, producto nacional y presencia digital premium, editorial y escalable.

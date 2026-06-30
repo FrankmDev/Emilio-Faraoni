@@ -1,0 +1,382 @@
+---
+/**
+ * ImagePlaceholder · editorial replacement for missing media.
+ * CSS-only. Renders as a presentational <div> by default, or as
+ * an img-role element when `label` is provided.
+ */
+type Variant = 'wide' | 'portrait' | 'square' | 'hero' | 'tall';
+type Tone = 'light' | 'muted' | 'sand' | 'paper' | 'ink' | 'leather';
+type Frame = 'default' | 'minimal' | 'editorial';
+
+interface Props {
+  label?: string;
+  variant?: Variant;
+  tone?: Tone;
+  /** Renders an X crosshatch in the centre, the editorial cue
+   *  for a missing image. Off by default for a calmer look. */
+  crossed?: boolean;
+  /** Optional kicker line shown above the label. */
+  kicker?: string;
+  /** Optional caption shown at the bottom of the placeholder. */
+  caption?: string;
+  /** Visual frame. 'default' shows the inset rectangle;
+   *  'minimal' shows just the crosshatch; 'editorial' adds
+   *  corner stamps. */
+  frame?: Frame;
+  /** Render a paper texture overlay. */
+  textured?: boolean;
+  class?: string;
+}
+
+const {
+  label,
+  variant = 'wide',
+  tone = 'muted',
+  crossed = true,
+  kicker,
+  caption,
+  frame = 'default',
+  textured = false,
+  class: className,
+} = Astro.props;
+
+const ratioMap: Record<Variant, string> = {
+  wide: '16 / 9',
+  portrait: '3 / 4',
+  square: '1 / 1',
+  hero: '21 / 9',
+  tall: '2 / 3',
+};
+
+const wrapperClass = [
+  'image-placeholder',
+  `image-placeholder--${tone}`,
+  crossed && 'image-placeholder--crossed',
+  `image-placeholder--frame-${frame}`,
+  textured && 'image-placeholder--textured',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const styleAttr = `aspect-ratio: ${ratioMap[variant]};`;
+---
+
+<div
+  class={wrapperClass}
+  style={styleAttr}
+  role={label ? 'img' : 'presentation'}
+  aria-label={label}
+>
+  {
+    frame === 'editorial' && (
+      <>
+        <span
+          class="image-placeholder__stamp image-placeholder__stamp--tl"
+          aria-hidden="true"
+        />
+        <span
+          class="image-placeholder__stamp image-placeholder__stamp--br"
+          aria-hidden="true"
+        />
+      </>
+    )
+  }
+  <span class="image-placeholder__frame" aria-hidden="true"></span>
+  {
+    crossed && (
+      <svg
+        class="image-placeholder__cross"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <line
+          x1="0"
+          y1="0"
+          x2="100"
+          y2="100"
+          vector-effect="non-scaling-stroke"
+        />
+        <line
+          x1="100"
+          y1="0"
+          x2="0"
+          y2="100"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
+    )
+  }
+  {
+    (kicker || label) && (
+      <div class="image-placeholder__caption-stack">
+        {kicker && (
+          <span class="image-placeholder__kicker meta-label" aria-hidden="true">
+            {kicker}
+          </span>
+        )}
+        {label && (
+          <span class="image-placeholder__label label-fine">{label}</span>
+        )}
+      </div>
+    )
+  }
+  {
+    caption && (
+      <span class="image-placeholder__caption meta-label" aria-hidden="true">
+        {caption}
+      </span>
+    )
+  }
+</div>
+
+<style>
+  /* =========================================================
+     Image placeholder — quiet editorial replacement. Flat
+     surfaces, hairline frame, optional crosshatch. No gradients,
+     no shadows, no noise textures (texture is opt-in).
+     ========================================================= */
+  .image-placeholder {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-border-hairline);
+    background:
+      linear-gradient(rgb(255 255 255 / 0.42), rgb(255 255 255 / 0)),
+      var(--color-surface-muted);
+    color: var(--color-muted);
+    transition:
+      background-color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft),
+      color var(--duration-base) var(--ease-soft),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(20 20 20 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(20 20 20 / 0.024) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+    opacity: 0.42;
+    pointer-events: none;
+  }
+
+  .image-placeholder::after {
+    content: '';
+    position: absolute;
+    inset: auto 1rem 1rem auto;
+    width: 2.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.24;
+    transform-origin: right center;
+    transition:
+      opacity var(--duration-base) var(--ease-soft),
+      transform var(--duration-slow) var(--ease-out);
+  }
+
+  .image-placeholder:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  .image-placeholder:hover::after {
+    opacity: 0.55;
+    transform: scaleX(1.35);
+  }
+
+  /* =========================================================
+     Tones — paper-tinted, retail grey, sand (product), and
+     dark variants for use over colour blocks.
+     ========================================================= */
+  .image-placeholder--light {
+    background: var(--color-surface);
+  }
+
+  .image-placeholder--muted {
+    background: var(--color-surface-muted);
+  }
+
+  .image-placeholder--sand {
+    background: var(--color-product-image-ground, var(--color-surface-muted));
+    border-color: var(--color-border);
+  }
+
+  .image-placeholder--paper {
+    background:
+      linear-gradient(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0)),
+      var(--color-surface-elevated);
+    border-color: var(--color-border-hairline);
+  }
+
+  .image-placeholder--ink {
+    background: var(--color-surface-inverse);
+    border-color: var(--color-surface-inverse);
+    color: var(--color-ink-on-inverse);
+  }
+  .image-placeholder--ink::before {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+  }
+
+  .image-placeholder--leather {
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.04), transparent 40%),
+      var(--color-leather-dark);
+    border-color: var(--color-leather-dark);
+    color: var(--color-ink-on-inverse);
+  }
+  .image-placeholder--leather::before {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.02) 1px, transparent 1px);
+  }
+
+  /* Textured — opt-in paper grain via SVG noise. */
+  .image-placeholder--textured::before {
+    background-image: var(--paper-tex);
+    background-size: 11rem 11rem;
+    background-repeat: repeat;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+  }
+
+  /* =========================================================
+     Frame variants — three flavours of editorial framing.
+     ========================================================= */
+  .image-placeholder__frame {
+    position: absolute;
+    inset: 8%;
+    border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    border-radius: var(--radius-card);
+    pointer-events: none;
+    transition: border-color var(--duration-base) var(--ease-soft);
+  }
+
+  .image-placeholder:hover .image-placeholder__frame {
+    border-color: color-mix(in srgb, currentColor 36%, transparent);
+  }
+
+  /* Minimal — no inset frame, just the crosshatch on muted. */
+  .image-placeholder--frame-minimal .image-placeholder__frame {
+    display: none;
+  }
+
+  /* Editorial — adds corner stamps at the top-left and
+     bottom-right. The frame stays as an inset rectangle. */
+  .image-placeholder__stamp {
+    position: absolute;
+    width: 0.85rem;
+    height: 0.85rem;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .image-placeholder__stamp--tl {
+    top: 0.6rem;
+    left: 0.6rem;
+    border-top: 1px solid currentColor;
+    border-left: 1px solid currentColor;
+    opacity: 0.5;
+  }
+
+  .image-placeholder__stamp--br {
+    bottom: 0.6rem;
+    right: 0.6rem;
+    border-bottom: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    opacity: 0.5;
+  }
+
+  /* =========================================================
+     Crosshatch — drawn as inline SVG so the stroke scales
+     with the container. hairline-thin, currentColor.
+     ========================================================= */
+  .image-placeholder__cross {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: color-mix(in srgb, currentColor 30%, transparent);
+    stroke: currentColor;
+    stroke-width: 0.35;
+    pointer-events: none;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .image-placeholder:hover .image-placeholder__cross {
+    color: color-mix(in srgb, currentColor 50%, transparent);
+  }
+
+  /* =========================================================
+     Caption stack — kicker above label, both centred in a
+     floating tag. Used when both are present.
+     ========================================================= */
+  .image-placeholder__caption-stack {
+    position: absolute;
+    left: 50%;
+    bottom: 0.85rem;
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.32rem;
+    padding: 0.55rem 0.85rem;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-border-hairline);
+    border-radius: var(--radius-control);
+    backdrop-filter: blur(8px);
+    line-height: 1;
+  }
+
+  .image-placeholder__kicker {
+    color: var(--color-ink-soft);
+  }
+
+  .image-placeholder__label {
+    color: var(--color-ink);
+  }
+
+  /* Bottom caption — single line, sits at the very bottom. */
+  .image-placeholder__caption {
+    position: absolute;
+    left: 0.85rem;
+    bottom: 0.85rem;
+    color: var(--color-muted);
+  }
+
+  /* No-cross variant — centres the label, no diagonal lines. */
+  .image-placeholder:not(.image-placeholder--crossed)
+    .image-placeholder__caption-stack {
+    position: static;
+    transform: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    backdrop-filter: none;
+  }
+
+  .image-placeholder:not(.image-placeholder--crossed)
+    .image-placeholder__caption {
+    position: static;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .image-placeholder,
+    .image-placeholder::after,
+    .image-placeholder__frame,
+    .image-placeholder__cross {
+      transition-duration: 1ms;
+    }
+  }
+</style>

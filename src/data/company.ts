@@ -6,7 +6,7 @@ export const company = {
   city: 'Elche',
   province: 'Alicante',
   country: 'España',
-  foundedYear: 1976,
+  foundedYear: 1988,
   description:
     'Fabricante y proveedor mayorista de cinturones, bolsos y artículos de marroquinería para tiendas, distribuidores y compradores profesionales.',
   contactEmail: CONTACT_EMAIL,

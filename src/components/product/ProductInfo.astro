@@ -1,7 +1,15 @@
 ---
-import type { PublicProduct } from '@/lib/products/types';
-import Button from '@/components/ui/Button.astro';
-import { ROUTES } from '@/lib/routes';
+/**
+ * ProductInfo · editorial product B2B page block.
+ * Two-column composition: media on the left, body on the
+ * right. Soft surface, generous radius, no top/bottom hard
+ * rules, no chip underlines. Definition list uses hairline
+ * internal separators only — the surrounding box has no
+ * border so it reads as a continuous catalogue spread.
+ */
+import type { PublicProduct } from '@/lib/products/getters';
+import Container from '@/components/ui/Container.astro';
+import RestrictedPriceCTA from './RestrictedPriceCTA.astro';
 
 interface Props {
   product: PublicProduct;
@@ -9,74 +17,112 @@ interface Props {
 
 const { product } = Astro.props;
 const primaryImage = product.images[0];
+const galleryImages = product.images.slice(0, 4);
+
+type Spec = { term: string; detail?: string; chips?: string[] };
+const specs: Spec[] = [
+  ...(product.colors.length > 0
+    ? [{ term: 'Colores', chips: product.colors }]
+    : []),
+  ...(product.sizes.length > 0
+    ? [{ term: 'Tallas', chips: product.sizes }]
+    : []),
+  ...(product.measurements
+    ? [{ term: 'Medidas', detail: product.measurements }]
+    : []),
+  ...(product.materials
+    ? [{ term: 'Materiales', detail: product.materials }]
+    : []),
+];
 ---
 
-<section class="section-y">
-  <div class="grid gap-12">
-    <div>
+<section class="section">
+  <Container class="product-info">
+    <div class="product-info__media">
       {
         primaryImage ? (
-          <img
-            src={primaryImage}
-            alt={`${product.name} Emilio Faraoni`}
-            class="aspect-[4/5] w-full border border-border-soft object-cover"
-          />
+          <figure class="product-info__media-main">
+            <img
+              src={primaryImage}
+              alt={`${product.name} Emilio Faraoni`}
+              loading="eager"
+              decoding="async"
+            />
+          </figure>
         ) : (
           <div
-            class="aspect-[4/5] border border-border-soft bg-surface-muted"
+            class="product-info__media-main product-info__media-main--placeholder"
             aria-label={product.name}
           />
         )
       }
+      {
+        galleryImages.length > 1 && (
+          <div class="product-info__media-thumbs">
+            {galleryImages.map((src, i) => (
+              <div class="product-info__media-thumb">
+                <img
+                  src={src}
+                  alt={`${product.name} detalle ${i + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+        )
+      }
     </div>
-    <div class="grid gap-3">
-      <h1 class="font-serif text-3xl font-light tracking-[-0.02em] text-ink md:text-4xl">
-        {product.name}
-      </h1>
-      <p class="meta-label">
-        Ref. {product.reference}
-      </p>
-      <p class="copy-lead mt-4 max-w-2xl">
-        {product.description}
-      </p>
-      <div class="mt-8 grid gap-3 border-y border-border-soft py-5 text-sm">
-        <div class="grid gap-1 sm:grid-cols-[8rem_1fr]">
-          <dt class="meta-label">Colores</dt>
-          <dd class="text-muted">{product.colors.join(', ')}</dd>
-        </div>
-        <div class="grid gap-1 sm:grid-cols-[8rem_1fr]">
-          <dt class="meta-label">Tallas</dt>
-          <dd class="text-muted">{product.sizes.join(', ')}</dd>
-        </div>
-        {
-          product.measurements && (
-            <div class="grid gap-1 sm:grid-cols-[8rem_1fr]">
-              <dt class="meta-label">Medidas</dt>
-              <dd class="text-muted">{product.measurements}</dd>
-            </div>
-          )
-        }
-        {
-          product.materials && (
-            <div class="grid gap-1 sm:grid-cols-[8rem_1fr]">
-              <dt class="meta-label">Materiales</dt>
-              <dd class="text-muted">{product.materials}</dd>
-            </div>
-          )
-        }
-      </div>
-      <p class="meta-label mt-6 text-ink">
-        Precio disponible para clientes mayoristas registrados.
-      </p>
-      <p class="copy-small mt-2">
-        Solicite acceso profesional para consultar tarifas y condiciones.
-      </p>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <Button href={ROUTES.WHOLESALE_ACCESS}>Solicitar acceso mayorista</Button>
-        <Button href={ROUTES.CONTACT} variant="secondary">
-          Contactar con ventas
-        </Button>
-      </div>
+
+    <div class="product-info__body">
+      <p class="eyebrow product-info__eyebrow">{product.category}</p>
+
+      <h1 class="product-info__title">{product.name}</h1>
+
+      {
+        product.reference && (
+          <p class="product-info__ref">Ref. {product.reference}</p>
+        )
+      }
+
+      <p class="product-info__lead">{product.description}</p>
+
+      {
+        specs.length > 0 && (
+          <dl class="product-info__spec">
+            {specs.map((spec) => (
+              <div class="product-info__spec-row">
+                <dt class="product-info__spec-term">{spec.term}</dt>
+                <dd class="product-info__spec-detail">
+                  {spec.chips ? (
+                    <ul class="product-info__chip-group" role="list">
+                      {spec.chips.map((chip) => (
+                        <li>
+                          <span class="product-info__chip">{chip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    spec.detail
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+
+      <RestrictedPriceCTA class="product-info__cta" />
     </div>
-  </div>
+  </Container>
 </section>
+
+<style>
+  /* All visual tokens for .product-info live in
+     src/styles/global.css. This block only contains
+     component-level adjustments that depend on context. */
+
+  .product-info__cta {
+    margin-top: 0.6rem;
+  }
+</style>

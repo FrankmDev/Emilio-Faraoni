@@ -7,21 +7,40 @@ interface Props {
 
 const { product } = Astro.props;
 const primaryImage = product.images[0];
+const galleryImages = product.images.slice(0, 4);
 ---
 
-<div class="grid gap-3">
+<div class="grid gap-4">
   {
     primaryImage ? (
-      <img
-        src={primaryImage}
-        alt={`${product.name} Emilio Faraoni`}
-        class="aspect-[4/5] w-full rounded-card border border-border-soft bg-surface-muted object-cover"
-      />
+      <figure class="editorial-frame overflow-hidden">
+        <img
+          src={primaryImage}
+          alt={`${product.name} Emilio Faraoni`}
+          class="aspect-[4/5] w-full bg-surface-muted object-cover"
+        />
+      </figure>
     ) : (
       <div
-        class="product-surface aspect-[4/5] border border-border-soft"
+        class="image-ground relative aspect-[4/5] overflow-hidden border border-border-hairline"
         aria-label={product.name}
-      />
+      >
+        <div class="absolute inset-[14%] border border-border-strong bg-surface-accent" />
+      </div>
+    )
+  }
+  {
+    galleryImages.length > 1 && (
+      <div class="grid grid-cols-4 gap-3">
+        {galleryImages.map((image, index) => (
+          <img
+            src={image}
+            alt={`${product.name} detalle ${index + 1}`}
+            class="aspect-square border border-border-hairline bg-surface-muted object-cover"
+            loading="lazy"
+          />
+        ))}
+      </div>
     )
   }
 </div>

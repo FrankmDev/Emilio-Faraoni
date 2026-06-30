@@ -59,4 +59,3 @@ src/lib/validation/
 src/server/actions/
 src/server/queries/
 ```
-# Emilio-Faraoni
