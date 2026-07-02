@@ -1,0 +1,40 @@
+---
+import RegisterCorner from '@/components/ui/RegisterCorner.astro';
+import type { ContactFaq } from '@/data/contact';
+
+type Props = ContactFaq;
+
+const { index, category, question, answer } = Astro.props;
+---
+
+<details class="faq__item" name="contact-faq">
+  <summary class="faq__summary">
+    <div class="faq__lead">
+      <div class="faq__meta">
+        <span class="faq__category">{category}</span>
+        <span class="faq__index" aria-hidden="true">{index}</span>
+      </div>
+      <span class="faq__question">{question}</span>
+    </div>
+    <span class="faq__toggle" aria-hidden="true">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 5.5l3 3 3-3" />
+      </svg>
+    </span>
+  </summary>
+  <RegisterCorner class="faq__corner" size={8} />
+  <div class="faq__answer">
+    <div class="faq__answer-inner">
+      <p>{answer}</p>
+    </div>
+  </div>
+</details>

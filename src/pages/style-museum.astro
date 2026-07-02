@@ -622,19 +622,28 @@ const globalFamilies = [
                 </header>
                 <div class="museum-preview museum-preview--grid-2">
                   <ContactInfoCard
-                    index="01"
+                    icon="email"
                     label="Email comercial"
                     value="ventas@emiliofaraoni.com"
                     href="mailto:ventas@emiliofaraoni.com"
-                    description="Atención directa para clientes mayoristas."
-                    variant="frame"
                   />
                   <ContactInfoCard
-                    index="02"
+                    icon="location"
                     label="Ubicación"
                     value="Elche, Alicante"
-                    description="Fabricación y showroom con visita concertada."
-                    variant="frame"
+                  />
+                </div>
+                <div class="museum-preview museum-preview--grid-2">
+                  <ContactInfoCard
+                    icon="phone"
+                    label="Teléfono"
+                    value="+34 965 000 000"
+                    href="tel:+34965000000"
+                  />
+                  <ContactInfoCard
+                    icon="hours"
+                    label="Tiempo de respuesta"
+                    value="24–48 h"
                   />
                 </div>
               </article>
@@ -1385,6 +1394,13 @@ const globalFamilies = [
                       {family.id === 'global-media' && (
                         <div class="museum-media-demo">
                           <div class="image-placeholder ratio-wide">
+                            <img
+                              src="/horizontal.jpg"
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              class="image-placeholder__image"
+                            />
                             <span class="meta-label">image-placeholder</span>
                           </div>
                           <div class="divider-editorial" />

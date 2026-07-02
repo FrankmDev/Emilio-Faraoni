@@ -9,9 +9,8 @@
  * full grid width on desktop, acting as the visual hero.
  *
  * When a category has no image, the tile falls back to
- * the global `.category-tile-image--placeholder` look
- * (flat surface, ink-on-paper, hairline frame) so the
- * grid never feels broken.
+ * the temporary local workshop imagery so the grid can be
+ * reviewed with real media proportions.
  */
 import Container from '@/components/ui/Container.astro';
 import SectionHeader from '@/components/ui/SectionHeader.astro';
@@ -46,6 +45,8 @@ for (const product of allProducts) {
         categories.map((category: Category, index: number) => {
           const href = `${ROUTES.CATALOG}/${category.slug}`;
           const isFeatured = index === 0;
+          const fallbackImage = isFeatured ? '/horizontal.jpg' : '/vertical.jpg';
+          const image = category.image ?? fallbackImage;
           const count = productCountByCategory.get(category.slug) ?? 0;
           return (
             <li
@@ -55,25 +56,13 @@ for (const product of allProducts) {
                 class:list={[
                   'category-tile-image',
                   isFeatured && 'category-tile-image--featured',
-                  !category.image && 'category-tile-image--placeholder',
                 ]}
                 href={href}
                 aria-label={`Ver la línea ${category.name}`}
               >
-                {category.image ? (
-                  <div class="category-tile-image__media" aria-hidden="true">
-                    <img
-                      src={category.image}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                ) : (
-                  <div class="category-tile-image__media" aria-hidden="true">
-                    <span class="category-tile-image__placeholder-frame" />
-                  </div>
-                )}
+                <div class="category-tile-image__media" aria-hidden="true">
+                  <img src={image} alt="" loading="lazy" decoding="async" />
+                </div>
                 <span class="category-tile-image__overlay" aria-hidden="true" />
                 <div class="category-tile-image__top">
                   <span class="category-tile-image__index">

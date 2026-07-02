@@ -1,0 +1,89 @@
+---
+import Button from '@/components/ui/Button.astro';
+import type { ContactTopic } from '@/data/contact';
+
+interface Props {
+  topics: readonly ContactTopic[];
+}
+
+const { topics } = Astro.props;
+---
+
+<form
+  class="contact-form"
+  action="#"
+  method="post"
+  novalidate
+  aria-label="Formulario de contacto"
+>
+  <div class="form-grid form-grid-2">
+    <div class="form-field">
+      <label for="contact-name">Nombre *</label>
+      <input
+        id="contact-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        required
+        placeholder="Nombre y apellidos"
+      />
+    </div>
+    <div class="form-field">
+      <label for="contact-company">Empresa</label>
+      <input
+        id="contact-company"
+        name="company"
+        type="text"
+        autocomplete="organization"
+        placeholder="Nombre de la empresa"
+      />
+    </div>
+    <div class="form-field">
+      <label for="contact-email">Correo electrónico *</label>
+      <input
+        id="contact-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+        placeholder="correo@ejemplo.com"
+      />
+    </div>
+    <div class="form-field">
+      <label for="contact-phone">Teléfono</label>
+      <input
+        id="contact-phone"
+        name="phone"
+        type="tel"
+        autocomplete="tel"
+        placeholder="+34 000 000 000"
+      />
+    </div>
+  </div>
+
+  <div class="contact-form__stack">
+    <div class="form-field">
+      <label for="contact-topic">Asunto</label>
+      <select id="contact-topic" name="topic">
+        {topics.map((topic) => <option value={topic.value}>{topic.label}</option>)}
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label for="contact-message">Mensaje *</label>
+      <textarea
+        id="contact-message"
+        name="message"
+        rows="4"
+        required
+        placeholder="Cuéntenos brevemente el motivo de su consulta, el alcance y los plazos."
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="form-foot">
+    <Button type="submit" variant="dark" size="lg" iconAfter>
+      Enviar mensaje
+    </Button>
+  </div>
+</form>

@@ -1,0 +1,20 @@
+---
+import ContactIcon from '@/components/ui/ContactIcon.astro';
+import type { ContactChannel as ContactChannelData } from '@/data/contact';
+
+type Props = ContactChannelData;
+
+const { icon, label, value } = Astro.props;
+---
+
+<div class="contact-channel">
+  <span class="contact-channel__icon" aria-hidden="true">
+    <span class="contact-channel__icon-frame">
+      <ContactIcon icon={icon} />
+    </span>
+  </span>
+  <div class="contact-channel__body">
+    <span class="contact-channel__label">{label}</span>
+    <span class="contact-channel__value">{value}</span>
+  </div>
+</div>

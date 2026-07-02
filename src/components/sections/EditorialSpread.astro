@@ -1,0 +1,53 @@
+---
+interface Props {
+  headingId: string;
+  hiddenTitle: string;
+  image: string;
+  imageFocus?: string;
+  leftStamp: string;
+  rightStamp: string;
+  caption: string;
+  quote: string;
+  cite: string;
+}
+
+const {
+  headingId,
+  hiddenTitle,
+  image,
+  imageFocus = 'center',
+  leftStamp,
+  rightStamp,
+  caption,
+  quote,
+  cite,
+} = Astro.props;
+
+const style = `--editorial-image: url('${image}'); --editorial-image-focus: ${imageFocus};`;
+---
+
+<section class="editorial-spread" style={style} aria-labelledby={headingId}>
+  <span class="editorial-spread__media" aria-hidden="true"></span>
+  <span class="editorial-spread__stamp" aria-hidden="true">
+    {leftStamp}
+  </span>
+  <span
+    class="editorial-spread__stamp editorial-spread__stamp--right"
+    aria-hidden="true"
+  >
+    {rightStamp}
+  </span>
+
+  <div class="editorial-spread__inner">
+    <h2 id={headingId} class="visually-hidden">
+      {hiddenTitle}
+    </h2>
+    <p class="editorial-spread__caption" aria-hidden="true">
+      {caption}
+    </p>
+    <blockquote class="editorial-pullquote">
+      {quote}
+      <cite>{cite}</cite>
+    </blockquote>
+  </div>
+</section>

@@ -1,0 +1,29 @@
+---
+import FaqItem from '@/components/ui/FaqItem.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
+import type { ContactFaq } from '@/data/contact';
+
+interface Props {
+  faqs: readonly ContactFaq[];
+}
+
+const { faqs } = Astro.props;
+---
+
+<section class="section section-lg faq" aria-labelledby="faq-heading">
+  <div class="container-narrow">
+    <SectionHeader
+      index="03"
+      eyebrow="Preguntas frecuentes"
+      title="Resolver dudas antes de escribir"
+      description="Las preguntas que más nos hacen antes del primer contacto. Si la suya no aparece, escríbanos."
+      id="faq-heading"
+      level={2}
+      align="start"
+    />
+
+    <div class="faq__list">
+      {faqs.map((faq) => <FaqItem {...faq} />)}
+    </div>
+  </div>
+</section>

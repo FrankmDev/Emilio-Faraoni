@@ -3,13 +3,23 @@
  * FinalCTA · editorial close of a page.
  *
  * Three composition shapes (set via `variant`):
- * - default : paper panel, calm and editorial.
+ * - default : paper panel with atelier strips, decorative numeral
+ *             and corner brackets. Calm, editorial, premium.
  * - image   : full-bleed image with overlay, dark or light tone.
- * - split   : image on one side, content on the other.
+ * - split   : image on one side, content panel on the other.
  *
  * Tones:
  * - light  : default for paper variants; lighter overlay for image.
  * - dark   : default for image variants; ink-coloured overlay.
+ *
+ * Decorative anatomy of the default variant:
+ *   ┌─ top atelier strip (index · location / leather dot · tag) ─┐
+ *   │   corner brackets at the four edges (subtle L hairlines)  │
+ *   │   giant faded editorial numeral as background watermark   │
+ *   │   body (eyebrow, display title, description)              │
+ *   │   hairline rule                                            │
+ *   │   action group (primary, optional secondary)              │
+ *   └─ bottom signature strip (EF · rule · note · year) ────────┘
  *
  * CTAs are compact and refined. No banner-ad feel. Composition
  * tokens live in src/styles/global.css under `.final-cta*` so
@@ -38,6 +48,13 @@ interface Props {
   imageAlt?: string;
   /** Optional CSS object-position keyword. */
   imageFocus?: string;
+  /** Section index stamp shown in the top atelier strip and as a
+   *  faint background numeral. e.g. "IV", "04", "Nº 04". */
+  index?: string;
+  /** Atelier tag in the top-right strip, e.g. "Atención comercial". */
+  tag?: string;
+  /** Footer signature line, e.g. "Fabricación artesanal · Elche". */
+  note?: string;
   class?: string;
 }
 
@@ -55,6 +72,9 @@ const {
   image,
   imageAlt,
   imageFocus,
+  index = 'IV',
+  tag = 'Atención comercial',
+  note = 'Fabricación artesanal · Elche',
   class: className,
 } = Astro.props;
 
@@ -113,23 +133,58 @@ const secondaryVariant = isImageLight
     )
   }
 
+  <span class="final-cta__numeral" aria-hidden="true">{index}</span>
+
+  <div class="final-cta__frame" aria-hidden="true">
+    <span class="final-cta__corner final-cta__corner--tl"></span>
+    <span class="final-cta__corner final-cta__corner--tr"></span>
+    <span class="final-cta__corner final-cta__corner--bl"></span>
+    <span class="final-cta__corner final-cta__corner--br"></span>
+  </div>
+
+  <header class="final-cta__strip">
+    <span class="final-cta__strip-left">
+      <span class="final-cta__strip-index">Nº&nbsp;{index}</span>
+      <span class="final-cta__strip-sep" aria-hidden="true"></span>
+      <span class="final-cta__strip-location">Elche · Alicante</span>
+    </span>
+    <span class="final-cta__strip-right">
+      <span class="final-cta__strip-dot" aria-hidden="true"></span>
+      <span class="final-cta__strip-tag">{tag}</span>
+    </span>
+  </header>
+
   <Container class="final-cta__inner">
     <div class="final-cta__body">
       {eyebrow && <p class="final-cta__eyebrow">{eyebrow}</p>}
       <h2 class="final-cta__title" set:html={title} />
       {description && <p class="final-cta__description">{description}</p>}
     </div>
-    <div class="final-cta__actions">
-      <Button href={primaryHref} variant={primaryVariant}>
-        {primaryLabel}
-      </Button>
-      {
-        hasSecondary && (
-          <Button href={secondaryHref!} variant={secondaryVariant}>
-            {secondaryLabel!}
-          </Button>
-        )
-      }
+    <div class="final-cta__aside">
+      <hr class="final-cta__rule" aria-hidden="true" />
+      <div class="final-cta__actions">
+        <Button href={primaryHref} variant={primaryVariant}>
+          {primaryLabel}
+        </Button>
+        {
+          hasSecondary && (
+            <Button href={secondaryHref!} variant={secondaryVariant}>
+              {secondaryLabel!}
+            </Button>
+          )
+        }
+      </div>
     </div>
   </Container>
+
+  <footer class="final-cta__signature">
+    <span class="final-cta__signature-mark">EF</span>
+    <span class="final-cta__signature-rule" aria-hidden="true"></span>
+    <span class="final-cta__signature-note">{note}</span>
+    <span
+      class="final-cta__signature-rule final-cta__signature-rule--end"
+      aria-hidden="true"
+    ></span>
+    <span class="final-cta__signature-year">1988</span>
+  </footer>
 </section>

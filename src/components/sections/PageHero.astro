@@ -3,18 +3,26 @@
  * PageHero · editorial opener for internal pages.
  *
  * Five composition shapes (set via `variant`):
- * - default : type-only, left aligned, hairline top.
- * - centered: type-only, centred.
- * - compact : type-only, tighter vertical rhythm.
- * - split   : type on one side, image on the other.
- * - media   : type layered over a full-bleed image.
+ * - default  : type-only, left aligned, atelier frame.
+ * - centered : type-only, centred, atelier frame.
+ * - compact  : type-only, tighter vertical rhythm.
+ * - split    : type on one side, image on the other.
+ * - media    : type layered over a full-bleed image.
  *
- * When `image` is provided, the consumer should also set
- * `imageAlt` (required). Optional `tone` controls the
- * overlay opacity (light = paper-coloured wash, dark =
- * ink-coloured wash — default dark).
+ * The hero follows the same editorial language as FinalCTA:
+ *   - top atelier strip  (index · location / dot · tag)
+ *   - corner brackets    (hairline L with leather studs)
+ *   - background numeral (giant faded editorial watermark)
+ *   - hairline rule      (with leather dot above the actions)
+ *   - bottom signature   (EF · rule · note · year)
  *
- * All visual tokens live in src/styles/global.css under
+ * For the `media` variant the hero spans 100% of the viewport
+ * and renders the image as a full-bleed background; the atelier
+ * framing rides on top in the inverse palette, the corner
+ * brackets hide so the photograph keeps the frame, and the
+ * existing frame marks + side rail + provenance are preserved.
+ *
+ * All visual tokens live in `src/styles/global.css` under
  * `.page-hero*` so this file stays structural.
  */
 import Container from '@/components/ui/Container.astro';
@@ -41,15 +49,18 @@ interface Props {
   meta?: string;
   title: string;
   description?: string;
-  /** Optional image URL. Required for split and media variants. */
   image?: string;
   imageAlt?: string;
-  /** Optional CSS object-position keyword. */
   imageFocus?: string;
-  /** Optional caption rendered on the media (split variant). */
   caption?: string;
+  sideRail?: string;
+  provenance?: string;
   primaryCta?: CtaSpec;
   secondaryCta?: CtaSpec;
+  /** Atelier tag in the top-right strip, e.g. "Empresa · 1988". */
+  tag?: string;
+  /** Footer signature line, e.g. "Fabricación artesanal · Elche". */
+  note?: string;
   class?: string;
 }
 
@@ -68,12 +79,15 @@ const {
   imageAlt,
   imageFocus,
   caption,
+  sideRail,
+  provenance,
   primaryCta,
   secondaryCta,
+  tag = 'Empresa · 1988',
+  note = 'Fabricación artesanal · Elche',
   class: className,
 } = Astro.props;
 
-const hasImage = Boolean(image);
 const isMedia = variant === 'media';
 const isSplit = variant === 'split';
 
@@ -88,8 +102,6 @@ const sectionClass = [
   .filter(Boolean)
   .join(' ');
 
-const bleedStyle =
-  isMedia && image ? `--page-hero-image: url('${image}');` : undefined;
 const mediaStyle = imageFocus ? `object-position: ${imageFocus};` : undefined;
 
 const titleClass = ['page-hero__title', align === 'center' && 'text-center']
@@ -107,31 +119,107 @@ const bodyClass = [
   .filter(Boolean)
   .join(' ');
 
-const showTopRail = Boolean(eyebrow || kicker || index || meta);
-const showActions = Boolean(primaryCta || secondaryCta);
-
 const actionsClass = [
   'page-hero__actions',
   align === 'center' && 'justify-center',
 ]
   .filter(Boolean)
   .join(' ');
+
+const showTopRail = Boolean(eyebrow || kicker || index || meta);
+const showActions = Boolean(primaryCta || secondaryCta);
+/* The corner brackets hide on the media variant — the
+   photograph is the frame. The atelier strip and signature
+   stay (in the inverse palette) so the hero keeps its
+   editorial register even over a photo. */
+const showCorners = !isMedia;
+const showStrip = true;
+const showSignature = true;
+const showSideRail = isMedia && Boolean(sideRail);
+const showProvenance = isMedia && Boolean(provenance);
+
+/* Media variant automatically inverts the buttons so they
+   read against the dark photo. */
+const defaultPrimaryVariant = isMedia ? 'inverse' : 'primary';
+const defaultSecondaryVariant = isMedia ? 'inverse' : 'secondary';
+
+/* The numeral stamp is the `index` prop when present, falling
+   back to a Roman "I" so the watermark always renders. */
+const numeralText = index ?? 'I';
+
+/* Accessibility: when an image is provided to the `media`
+   variant and a meaningful alt is supplied, mark the section
+   as a labelled image. Otherwise the image is decorative and
+   the text content is what gets announced. */
+const ariaRole = isMedia && imageAlt ? 'img' : undefined;
+const ariaLabel = isMedia && imageAlt ? imageAlt : undefined;
 ---
 
-<section class={sectionClass} style={bleedStyle}>
+<section class={sectionClass} role={ariaRole} aria-label={ariaLabel}>
+  {
+    isMedia && image && (
+      <img
+        src={image}
+        alt=""
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        class="page-hero__media-bg"
+        style={mediaStyle}
+        aria-hidden="true"
+      />
+    )
+  }
+
+  <span class="page-hero__numeral" aria-hidden="true">{numeralText}</span>
+
+  {
+    showCorners && (
+      <div class="page-hero__frame" aria-hidden="true">
+        <span class="page-hero__corner page-hero__corner--tl"></span>
+        <span class="page-hero__corner page-hero__corner--tr"></span>
+        <span class="page-hero__corner page-hero__corner--bl"></span>
+        <span class="page-hero__corner page-hero__corner--br"></span>
+      </div>
+    )
+  }
+
+  {
+    showStrip && (
+      <header class="page-hero__strip">
+        <span class="page-hero__strip-left">
+          {index && (
+            <>
+              <span class="page-hero__strip-index">Nº&nbsp;{index}</span>
+              <span class="page-hero__strip-sep" aria-hidden="true" />
+            </>
+          )}
+          <span class="page-hero__strip-location">Elche · Alicante</span>
+        </span>
+        <span class="page-hero__strip-right">
+          <span class="page-hero__strip-dot" aria-hidden="true" />
+          <span class="page-hero__strip-tag">{tag}</span>
+        </span>
+      </header>
+    )
+  }
+
+  {
+    showSideRail && (
+      <span class="page-hero__side-rail" aria-hidden="true">
+        {sideRail}
+      </span>
+    )
+  }
+
   <Container>
-    <div class="page-hero__inner-wrap">
+    <div class="page-hero-inner">
       {
         isSplit ? (
           <div class="page-hero__grid">
             <div class={bodyClass}>
               {showTopRail && (
                 <div class={railClass}>
-                  {index && (
-                    <span class="page-hero__index" aria-hidden="true">
-                      {index}
-                    </span>
-                  )}
                   {eyebrow && (
                     <p class="eyebrow page-hero__eyebrow">{eyebrow}</p>
                   )}
@@ -142,28 +230,29 @@ const actionsClass = [
                 </div>
               )}
               <h1 class={titleClass} set:html={title} />
-              {description && (
-                <p class="page-hero__description">{description}</p>
-              )}
+              {description && <p class="page-hero__description">{description}</p>}
               {showActions && (
-                <div class={actionsClass}>
-                  {primaryCta && (
-                    <Button
-                      href={primaryCta.href}
-                      variant={primaryCta.variant ?? 'primary'}
-                    >
-                      {primaryCta.label}
-                    </Button>
-                  )}
-                  {secondaryCta && (
-                    <Button
-                      href={secondaryCta.href}
-                      variant={secondaryCta.variant ?? 'secondary'}
-                    >
-                      {secondaryCta.label}
-                    </Button>
-                  )}
-                </div>
+                <>
+                  <hr class="page-hero__rule" aria-hidden="true" />
+                  <div class={actionsClass}>
+                    {primaryCta && (
+                      <Button
+                        href={primaryCta.href}
+                        variant={primaryCta.variant ?? defaultPrimaryVariant}
+                      >
+                        {primaryCta.label}
+                      </Button>
+                    )}
+                    {secondaryCta && (
+                      <Button
+                        href={secondaryCta.href}
+                        variant={secondaryCta.variant ?? defaultSecondaryVariant}
+                      >
+                        {secondaryCta.label}
+                      </Button>
+                    )}
+                  </div>
+                </>
               )}
             </div>
 
@@ -188,41 +277,66 @@ const actionsClass = [
           <div class={bodyClass}>
             {showTopRail && (
               <div class={railClass}>
-                {index && (
-                  <span class="page-hero__index" aria-hidden="true">
-                    {index}
-                  </span>
+                {eyebrow && (
+                  <p class="eyebrow page-hero__eyebrow">{eyebrow}</p>
                 )}
-                {eyebrow && <p class="eyebrow page-hero__eyebrow">{eyebrow}</p>}
-                {kicker && <p class="meta-label page-hero__kicker">{kicker}</p>}
+                {kicker && (
+                  <p class="meta-label page-hero__kicker">{kicker}</p>
+                )}
                 {meta && <p class="meta-label page-hero__meta">{meta}</p>}
               </div>
             )}
             <h1 class={titleClass} set:html={title} />
             {description && <p class="page-hero__description">{description}</p>}
             {showActions && (
-              <div class={actionsClass}>
-                {primaryCta && (
-                  <Button
-                    href={primaryCta.href}
-                    variant={primaryCta.variant ?? 'primary'}
-                  >
-                    {primaryCta.label}
-                  </Button>
-                )}
-                {secondaryCta && (
-                  <Button
-                    href={secondaryCta.href}
-                    variant={secondaryCta.variant ?? 'secondary'}
-                  >
-                    {secondaryCta.label}
-                  </Button>
-                )}
-              </div>
+              <>
+                <hr class="page-hero__rule" aria-hidden="true" />
+                <div class={actionsClass}>
+                  {primaryCta && (
+                    <Button
+                      href={primaryCta.href}
+                      variant={primaryCta.variant ?? defaultPrimaryVariant}
+                    >
+                      {primaryCta.label}
+                    </Button>
+                  )}
+                  {secondaryCta && (
+                    <Button
+                      href={secondaryCta.href}
+                      variant={secondaryCta.variant ?? defaultSecondaryVariant}
+                    >
+                      {secondaryCta.label}
+                    </Button>
+                  )}
+                </div>
+              </>
             )}
+          </div>
+        )
+      }
+
+      {
+        showProvenance && (
+          <div class="page-hero__provenance">
+            <p class="page-hero__provenance-text meta-label">{provenance}</p>
           </div>
         )
       }
     </div>
   </Container>
+
+  {
+    showSignature && (
+      <footer class="page-hero__signature">
+        <span class="page-hero__signature-mark">EF</span>
+        <span class="page-hero__signature-rule" aria-hidden="true" />
+        <span class="page-hero__signature-note">{note}</span>
+        <span
+          class="page-hero__signature-rule page-hero__signature-rule--end"
+          aria-hidden="true"
+        />
+        <span class="page-hero__signature-year">1988</span>
+      </footer>
+    )
+  }
 </section>

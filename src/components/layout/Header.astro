@@ -1,22 +1,29 @@
 ---
-import Container from '@/components/ui/Container.astro';
 import NavLink from '@/components/layout/NavLink.astro';
+import Button from '@/components/ui/Button.astro';
 import { company } from '@/data/company';
 import { mainNavigation } from '@/data/navigation';
 import { ROUTES } from '@/lib/routes';
 
 /**
- * Header · sticky editorial rail.
+ * Header · floating pill.
  *
- * Three slots: brand (left) · nav (centre, hidden on mobile)
- * · CTA (right). No boxy chrome, no commercial buttons.
+ * A self-contained, modern pill that sits above every page.
+ * Sticks to the top of the viewport with a small floating
+ * margin, then compresses on scroll. No full-width plate,
+ * no corner brackets, no atelier strip, no signature — just
+ * brand · nav · CTA, wrapped in a single stadium capsule.
  *
- * The CTA is a fine-link "Contactar" pointing at /contacto —
- * a discreet editorial handshake, never a buy / shop / cart
- * action. The CTA slot is intentionally restrained; this is
- * not a retail storefront.
+ * Composition (left → right):
+ *   · brand wordmark  (Emilio Faraoni · 1988)
+ *   · · center nav    (Inicio · Quiénes Somos · Blog · Contacto)
+ *   · CTA pill button (Contactar →, dark, sm)
+ *
+ * State:
+ *   The inline <script> toggles `data-scrolled` on the
+ *   root element once the user scrolls past 8px. The CSS
+ *   in `src/styles/global.css` owns the visual transition.
  */
-
 const currentPath = Astro.url.pathname;
 
 function isActive(href: string): boolean {
@@ -25,33 +32,97 @@ function isActive(href: string): boolean {
   }
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
+
+const year = company.foundedYear;
 ---
 
-<header class="site-header">
-  <Container wide class="site-header__inner">
+<header
+  class="site-header"
+  data-site-header
+  aria-label="Cabecera principal"
+>
+  <div class="site-header__inner">
     <a
       href={ROUTES.HOME}
       class="site-header__brand"
       aria-label={`${company.name} · Inicio`}
     >
-      <span>{company.name}</span>
-      <span class="site-header__brand-mark" aria-hidden="true">
-        {company.foundedYear}
-      </span>
+      <span class="site-header__brand-name">{company.name}</span>
+      <span class="site-header__brand-rule" aria-hidden="true"></span>
+      <span class="site-header__brand-mark">{year}</span>
     </a>
 
     <nav class="site-header__nav" aria-label="Navegación principal">
       {
         mainNavigation.map((item) => (
-          <NavLink href={item.href} label={item.label} active={isActive(item.href)} />
+          <NavLink
+            href={item.href}
+            label={item.label}
+            active={isActive(item.href)}
+          />
         ))
       }
     </nav>
 
-    <a href={ROUTES.CONTACT} class="site-header__cta">
-      <span class="site-header__cta-dot" aria-hidden="true"></span>
-      <span>Contactar</span>
-      <span class="site-header__cta-arrow" aria-hidden="true">→</span>
-    </a>
-  </Container>
+    <div class="site-header__cta">
+      <Button
+        href={ROUTES.CONTACT}
+        variant="dark"
+        size="sm"
+        shape="pill"
+        iconAfter
+      >
+        Contactar
+      </Button>
+    </div>
+  </div>
 </header>
+
+<script>
+  /*
+   * Site header scroll behaviour.
+   *
+   * - Toggles `data-scrolled` once the user moves past 8px.
+   * - Throttled with rAF so the script never blocks paint.
+   * - No-ops gracefully if the script runs twice.
+   * - Reduced-motion users still get the compressed state;
+   *   the CSS `prefers-reduced-motion` block handles the
+   *   transition speed.
+   */
+  type HeaderEl = HTMLElement & { _bound?: boolean };
+
+  const init = () => {
+    const header = document.querySelector<HeaderEl>('[data-site-header]');
+    if (!header || header._bound) return;
+    header._bound = true;
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const y = window.scrollY;
+      if (y > 8) {
+        if (header.dataset['scrolled'] !== 'true') {
+          header.dataset['scrolled'] = 'true';
+        }
+      } else if (header.dataset['scrolled'] === 'true') {
+        delete header.dataset['scrolled'];
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>

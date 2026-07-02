@@ -163,7 +163,7 @@
   --radius-pill: 999px;
 
   /* Aliases used by the UI primitives. */
-  --radius-control: var(--radius-xs);
+  --radius-control: var(--radius-sm);
   --radius-card: var(--radius-sm);
   --radius-card-lg: var(--radius-md);
 
@@ -174,14 +174,8 @@
   /* =========================================================
      SHADOWS
      Almost gone. We rely on hairlines, surface contrast and
-     image weight, not on elevation. The only persistent
-     shadow is the page-frame shadow on viewports ≥ 64rem,
-     and even that is a hairline + a soft drop.
+     image weight, not on elevation.
      ========================================================= */
-  --shadow-page:
-    0 0 0 1px color-mix(in srgb, var(--color-ink) 5%, transparent),
-    0 24px 80px -56px rgb(20 18 16 / 0.45);
-
   --shadow-soft: 0 1px 0 color-mix(in srgb, var(--color-ink) 5%, transparent);
 
   /* Atelier shadow — used sparingly, only when a single
@@ -246,7 +240,7 @@
 
 html {
   min-height: 100%;
-  background: var(--color-bg);
+  background: var(--color-page);
   color: var(--color-ink);
   scroll-behavior: smooth;
   overflow-x: hidden;
@@ -259,7 +253,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background: var(--color-bg);
+  background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 15px;
@@ -489,11 +483,11 @@ textarea,
 select {
   width: 100%;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-ink);
-  padding: 0.9rem 0.95rem;
-  font-size: 0.92rem;
+  padding: 0.95rem 1rem;
+  font-size: 0.95rem;
   line-height: 1.45;
   transition:
     border-color var(--duration-fast) var(--ease-soft),
@@ -558,20 +552,11 @@ fieldset {
 @layer components {
   .site-shell {
     min-height: 100vh;
-    background: var(--color-bg);
+    background: var(--color-page);
   }
 
   .page-frame {
     background: var(--color-page);
-  }
-
-  @media (min-width: 64rem) {
-    .page-frame {
-      max-width: var(--container-wide);
-      margin: 2.5rem auto;
-      background: var(--color-page);
-      box-shadow: var(--shadow-page);
-    }
   }
 
   .container {
@@ -807,52 +792,155 @@ fieldset {
   }
 
   /* =========================================================
-     SITE HEADER · STICKY EDITORIAL RAIL
-     Slim, hairline-bordered, retail-precise. Three slots:
-     brand (left) · nav (center, hidden on mobile) · CTA
-     (right). No boxy chrome, no buttons, no icons. The
-     brand is a serif wordmark; the CTA is a fine uppercase
-     link with a hairline arrow. The 20% atelier character
-     comes from a small leather dot before the CTA and a
-     tracked uppercase label — never from backgrounds.
+     SITE HEADER · INTEGRATED FLOATING PILL
+     A self-contained, modern pill that overlays every page.
+     Fixed-positioned at the top of the viewport with a small
+     floating margin, then compresses on scroll. The pill sits
+     OVER the page-hero's top padding, making the header feel
+     like an integrated part of the hero composition rather
+     than a separate bar above it.
+
+     Composition (left → right):
+       · brand wordmark  (company name · 1988)
+       · center nav      (4 items, uppercase, hairline reveal)
+       · CTA pill button (Contactar →, dark, sm)
+
+     The pill is encapsulated by:
+       · rounded stadium shape (radius-pill)
+       · semi-transparent surface with backdrop blur
+       · 1px hairline border that firms up on scroll
+       · soft shadow that deepens on scroll
+
+     State:
+       · data-scrolled="true" → scrolled / compressed state
+       · CSS owns the visual transition
+       · the inline <script> in Header.astro only flips the
+         data attribute (rAF-throttled)
+
+     Integration:
+       · The pill is `position: fixed` so it overlays the page
+         instead of pushing it down.
+       · The first section's top padding is reduced to keep
+         its content right below the pill (gap ≈ 0.5–1rem).
+       · The PageHero component (used by /contacto) moves its
+         padding to the inner element via a :has() rule, so
+         the override targets `.page-hero-inner` in that case.
      ========================================================= */
 
   .site-header {
-    position: sticky;
-    top: 0;
+    --header-pill-y: 0.6rem;
+    --header-pill-x: 1rem;
+    --header-floating-top: 0.85rem;
+    --header-pill-y-scrolled: 0.38rem;
+    --header-pill-x-scrolled: 0.55rem;
+    --header-floating-top-scrolled: 0.7rem;
+
+    position: fixed;
+    top: var(--header-floating-top);
+    left: 0;
+    right: 0;
     z-index: 40;
-    background: var(--color-page);
-    border-bottom: 1px solid var(--color-border-soft);
+    display: flex;
+    align-items: center;
+    width: calc(100% - 2rem);
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    isolation: isolate;
+    background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-border-soft) 60%, transparent);
+    border-radius: var(--radius-pill);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 3%, transparent),
+      0 4px 18px -10px color-mix(in srgb, var(--color-ink) 12%, transparent);
+    backdrop-filter: saturate(160%) blur(18px);
+    -webkit-backdrop-filter: saturate(160%) blur(18px);
+    transition:
+      top 400ms var(--ease-out),
+      max-width 500ms var(--ease-soft),
+      border-color 360ms var(--ease-soft),
+      box-shadow 360ms var(--ease-soft),
+      background-color 400ms var(--ease-soft);
+  }
+
+  @media (min-width: 48rem) {
+    .site-header {
+      --header-pill-x: 1.25rem;
+      --header-floating-top: 1.05rem;
+      --header-floating-top-scrolled: 0.8rem;
+      width: calc(100% - 3rem);
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .site-header {
+      --header-floating-top: 1.25rem;
+    }
   }
 
   .site-header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    min-height: 4rem;
-    padding-block: 0.7rem;
+    gap: 0.75rem;
+    width: 100%;
+    padding: var(--header-pill-y) var(--header-pill-x);
+    transition:
+      padding 460ms var(--ease-out),
+      gap 400ms var(--ease-soft);
   }
 
   @media (min-width: 48rem) {
     .site-header__inner {
-      gap: 2rem;
+      gap: 1.75rem;
     }
   }
 
+  .site-header[data-scrolled='true'] .site-header__inner {
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .site-header[data-scrolled='true'] .site-header__inner {
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .site-header__inner {
+      gap: 0.5rem;
+    }
+  }
+
+  .site-header[data-scrolled='true'] {
+    --header-pill-y: var(--header-pill-y-scrolled);
+    --header-pill-x: var(--header-pill-x-scrolled);
+    --header-floating-top: var(--header-floating-top-scrolled);
+
+    max-width: 55rem;
+
+    border-color: color-mix(in srgb, var(--color-border) 55%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 4%, transparent),
+      0 10px 28px -14px color-mix(in srgb, var(--color-ink) 16%, transparent);
+  }
+
+  /* ----- Brand ------------------------------------------- */
   .site-header__brand {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.45rem;
+    gap: 0.5rem;
     color: var(--color-ink);
     text-decoration: none;
-    font-family: var(--font-serif);
-    font-size: 1.05rem;
-    font-weight: 400;
+    font-family: var(--font-display);
+    font-size: clamp(1.08rem, 1.55vw, 1.24rem);
+    font-weight: 300;
     letter-spacing: -0.022em;
     line-height: 1;
     white-space: nowrap;
-    transition: color var(--duration-base) var(--ease-soft);
+    flex: 0 0 auto;
+    transition: gap 400ms var(--ease-soft);
   }
 
   .site-header__brand:hover,
@@ -860,19 +948,74 @@ fieldset {
     color: var(--color-ink);
   }
 
-  .site-header__brand-mark {
-    color: var(--color-leather-dark);
-    font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
+  .site-header[data-scrolled='true'] .site-header__brand {
+    gap: 0.35rem;
   }
 
+  /* A hairline vertical rule between the wordmark and the
+     founding-year mark — keeps them paired without an icon. */
+  .site-header__brand-rule {
+    display: inline-block;
+    width: 1px;
+    height: 0.7em;
+    background: var(--color-border-strong);
+    flex: 0 0 auto;
+    transform: translateY(0.05em);
+    opacity: 0.7;
+    transition:
+      opacity 320ms var(--ease-soft) 60ms,
+      background-color 400ms var(--ease-soft),
+      width 380ms var(--ease-out),
+      margin 380ms var(--ease-out);
+  }
+
+  .site-header[data-scrolled='true'] .site-header__brand-rule {
+    width: 0;
+    margin: 0;
+    opacity: 0;
+  }
+
+  .site-header__brand-mark {
+    display: inline-block;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+    transition:
+      width 380ms var(--ease-out),
+      padding 380ms var(--ease-out),
+      margin 380ms var(--ease-out),
+      opacity 320ms var(--ease-soft) 60ms;
+  }
+
+  .site-header[data-scrolled='true'] .site-header__brand-mark {
+    width: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  @media (max-width: 30rem) {
+    .site-header__brand-rule,
+    .site-header__brand-mark {
+      display: none;
+    }
+  }
+
+  /* ----- Nav --------------------------------------------- */
   .site-header__nav {
     display: none;
     align-items: center;
-    gap: clamp(1.1rem, 1.6vw, 1.8rem);
+    gap: clamp(0.9rem, 1.4vw, 1.5rem);
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
+    transition: gap 400ms var(--ease-soft);
   }
 
   @media (min-width: 48rem) {
@@ -881,87 +1024,75 @@ fieldset {
     }
   }
 
-  /* Tighter inner gap on the smallest phones so brand + CTA
-     fit on a single rail without wrapping. */
-  @media (max-width: 30rem) {
-    .site-header__inner {
-      gap: 1rem;
-    }
+  .site-header[data-scrolled='true'] .site-header__nav {
+    gap: clamp(0.55rem, 0.9vw, 1.1rem);
   }
 
-  /* The italic 1988 stamp is the 20% atelier touch. Hide on
-     extra-small phones where every pixel matters. */
-  @media (max-width: 26rem) {
-    .site-header__brand-mark {
-      display: none;
-    }
-  }
-
-  /* The leather dot is an atelier detail. On extra-small
-     phones the dot + its gap consume more space than they
-     are worth, so the CTA collapses to text + arrow only. */
-  @media (max-width: 24rem) {
-    .site-header__cta-dot {
-      display: none;
-    }
-  }
-
-  .site-header__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    color: var(--color-ink);
-    text-decoration: none;
-    font-family: var(--font-sans);
+  /* Tighter nav-link inside the pill. The global class
+     already owns the underline reveal — we only override
+     sizing/colour to match the pill's density. */
+  .site-header__nav .nav-link {
     font-size: 0.62rem;
-    font-weight: 650;
-    letter-spacing: 0.14em;
-    line-height: 1;
-    text-transform: uppercase;
-    white-space: nowrap;
-    transition: color var(--duration-base) var(--ease-soft);
+    letter-spacing: 0.16em;
+    color: var(--color-ink-soft);
   }
 
-  .site-header__cta:hover,
-  .site-header__cta:focus-visible {
-    color: var(--color-leather-dark);
+  .site-header__nav .nav-link::after {
+    bottom: -0.32rem;
+    height: 1px;
+    background: var(--color-ink);
   }
 
-  .site-header__cta-dot {
-    width: 0.3rem;
-    height: 0.3rem;
-    border-radius: var(--radius-pill);
-    background: var(--color-leather);
+  .site-header__nav .nav-link:hover,
+  .site-header__nav .nav-link:focus-visible,
+  .site-header__nav .nav-link[aria-current='page'],
+  .site-header__nav .nav-link.is-active {
+    color: var(--color-ink);
+  }
+
+  /* ----- CTA --------------------------------------------- */
+  .site-header__cta {
     flex: 0 0 auto;
-    transition: background-color var(--duration-base) var(--ease-soft);
-  }
-
-  .site-header__cta:hover .site-header__cta-dot {
-    background: var(--color-leather-dark);
-  }
-
-  .site-header__cta-arrow {
-    display: inline-block;
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-
-  .site-header__cta:hover .site-header__cta-arrow,
-  .site-header__cta:focus-visible .site-header__cta-arrow {
-    transform: translateX(0.2rem);
   }
 
   /* =========================================================
-     SITE FOOTER · EDITORIAL SPREAD
-     Three-column composition: brand + tagline + address,
-     navigation, contact. A hairline-separated legal bar
-     sits below. Light by default; a dark variant is
-     available for premium pages.
+     HEADER ↔ HERO INTEGRATION
+     The header is `position: fixed`, so it overlays the page
+     instead of pushing it down. To keep the hero content
+     right below the pill (gap ≈ 0.5–1rem), we reduce the
+     first section's top padding.
+
+     The default page-hero owns its own `padding-block`, so
+     we override `padding-top` directly. The PageHero
+     component (used by /contacto) moves its padding to the
+     inner via a :has() rule, so we override the inner in
+     that case. The media and split variants keep their
+     own padding logic (excluded below).
+     ========================================================= */
+  .site-header
+    + main
+    .page-hero:not(.page-hero--media):not(.page-hero--split):not(
+      :has(> .page-hero__strip)
+    ) {
+    padding-top: clamp(4.5rem, 5.5vw, 5rem);
+  }
+
+  .site-header + main .page-hero:has(> .page-hero__strip) .page-hero-inner {
+    padding-top: clamp(4.5rem, 5.5vw, 5rem);
+  }
+
+  /* =========================================================
+     SITE FOOTER · MANIFESTO COLOPHON
+     Editorial brand statement band, three numbered indicator
+     columns (navigation, contact, credentials), and a compact
+     bottom imprint bar. Sequential fade-up reveals.
      ========================================================= */
 
   .site-footer {
+    position: relative;
     background: var(--color-page);
-    border-top: 1px solid var(--color-border-soft);
     color: var(--color-ink);
+    border-top: 1px solid var(--color-border-soft);
   }
 
   .site-footer-dark {
@@ -970,100 +1101,148 @@ fieldset {
     border-top: 0;
   }
 
-  .site-footer__inner {
-    display: grid;
-    gap: clamp(2rem, 4vw, 3.5rem);
-    padding-block: clamp(3rem, 5vw, 4.5rem);
+  /* ----- Reveal ----------------------------------------- */
+  .site-footer [data-reveal] {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition:
+      opacity 660ms var(--ease-out),
+      transform 660ms var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
   }
 
-  @media (min-width: 64rem) {
-    .site-footer__inner {
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
-      gap: clamp(2.5rem, 5vw, 4.5rem);
+  .site-footer [data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ----- Manifesto band --------------------------------- */
+  .site-footer__manifesto {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-top: clamp(3rem, 6vw, 5rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .site-footer-dark .site-footer__manifesto {
+    border-bottom-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  }
+
+  .site-footer__wordmark {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 350;
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    letter-spacing: -0.028em;
+    line-height: 1.05;
+    margin-bottom: 0.7rem;
+    transition: color var(--duration-base) var(--ease-soft);
+  }
+
+  .site-footer__wordmark:hover {
+    color: var(--color-leather-dark);
+  }
+
+  .site-footer-dark .site-footer__wordmark:hover {
+    color: var(--color-brass);
+  }
+
+  .site-footer__rule {
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    background: var(--color-border-strong);
+    margin-bottom: 0.85rem;
+  }
+
+  .site-footer__statement {
+    color: var(--color-ink-soft);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(0.82rem, 1vw, 0.92rem);
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 48ch;
+  }
+
+  .site-footer-dark .site-footer__statement {
+    color: color-mix(in srgb, var(--color-inverse) 78%, transparent);
+  }
+
+  /* ----- Columns layout -------------------------------- */
+  .site-footer__columns {
+    display: grid;
+    gap: clamp(2rem, 4vw, 2.5rem);
+    padding-top: clamp(2.5rem, 4vw, 3.5rem);
+    padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  @media (min-width: 36rem) {
+    .site-footer__columns {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .site-footer__brand {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 28rem;
+  @media (min-width: 64rem) {
+    .site-footer__columns {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
-  .site-footer__brand-name {
-    color: inherit;
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
-    font-weight: 400;
-    letter-spacing: -0.022em;
+  /* ----- Column ---------------------------------------- */
+  .site-footer__column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .site-footer__column-index {
+    display: block;
+    color: var(--color-border-strong);
+    font-family: var(--font-sans);
+    font-weight: 650;
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
     line-height: 1;
-    text-decoration: none;
-    background-image: linear-gradient(currentColor, currentColor);
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    background-size: 0 1px;
-    padding-bottom: 1px;
-    transition: background-size var(--duration-base) var(--ease-soft);
+    margin-bottom: -0.15rem;
+    font-variant-numeric: lining-nums tabular-nums;
   }
 
-  .site-footer__brand-name:hover,
-  .site-footer__brand-name:focus-visible {
-    background-size: 100% 1px;
-  }
-
-  .site-footer-dark .site-footer__brand-name {
-    color: var(--color-inverse);
-  }
-
-  .site-footer__tagline {
+  .site-footer__heading {
     color: var(--color-muted);
     font-family: var(--font-sans);
-    font-size: 0.86rem;
-    line-height: 1.6;
-    margin: 0;
-    max-width: 32ch;
-  }
-
-  .site-footer-dark .site-footer__tagline {
-    color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
-  }
-
-  .site-footer__address {
-    color: var(--color-muted);
-    font-family: var(--font-sans);
-    font-size: 0.78rem;
-    line-height: 1.6;
-    font-style: normal;
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
     margin: 0;
   }
 
-  .site-footer-dark .site-footer__address {
-    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
-  }
-
-  .site-footer__col {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  /* Column labels in the footer ride the global `.meta-label`
-     primitive. The dark variant only needs a colour override
-     so the design system stays the single source of truth. */
-  .site-footer-dark .meta-label {
+  .site-footer-dark .site-footer__heading {
     color: color-mix(in srgb, var(--color-inverse) 56%, transparent);
   }
 
+  /* ----- Link list ------------------------------------- */
   .site-footer__list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.5rem;
   }
 
-  .site-footer__list a {
+  .site-footer__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     color: var(--color-ink-soft);
     text-decoration: none;
     font-family: var(--font-sans);
@@ -1072,106 +1251,181 @@ fieldset {
     transition: color var(--duration-base) var(--ease-soft);
   }
 
-  .site-footer__list a:hover,
-  .site-footer__list a:focus-visible {
-    color: var(--color-ink);
-  }
-
-  .site-footer-dark .site-footer__list a {
+  .site-footer-dark .site-footer__link {
     color: color-mix(in srgb, var(--color-inverse) 78%, transparent);
   }
 
-  .site-footer-dark .site-footer__list a:hover,
-  .site-footer-dark .site-footer__list a:focus-visible {
-    color: var(--color-inverse);
-  }
-
-  .site-footer__meta {
-    color: var(--color-muted);
-    font-family: var(--font-sans);
-    font-size: 0.82rem;
-    line-height: 1.55;
-  }
-
-  .site-footer__meta a {
-    color: var(--color-ink-soft);
-    text-decoration: none;
-    transition: color var(--duration-base) var(--ease-soft);
-  }
-
-  .site-footer__meta a:hover,
-  .site-footer__meta a:focus-visible {
+  .site-footer__link:hover,
+  .site-footer__link:focus-visible {
     color: var(--color-ink);
   }
 
-  .site-footer-dark .site-footer__meta {
-    color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
-  }
-
-  .site-footer-dark .site-footer__meta a {
-    color: color-mix(in srgb, var(--color-inverse) 82%, transparent);
-  }
-
-  .site-footer-dark .site-footer__meta a:hover,
-  .site-footer-dark .site-footer__meta a:focus-visible {
+  .site-footer-dark .site-footer__link:hover,
+  .site-footer-dark .site-footer__link:focus-visible {
     color: var(--color-inverse);
   }
 
-  .site-footer__bottom {
-    border-top: 1px solid var(--color-border-soft);
-    padding-block: 1.25rem;
+  .site-footer__link-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.85rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--color-muted);
+    flex: 0 0 auto;
+    transition: transform 300ms var(--ease-out);
   }
 
-  .site-footer-dark .site-footer__bottom {
-    border-top-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  .site-footer-dark .site-footer__link-arrow {
+    color: color-mix(in srgb, var(--color-inverse) 48%, transparent);
   }
 
-  .site-footer__bottom-inner {
+  .site-footer__link:hover .site-footer__link-arrow,
+  .site-footer__link:focus-visible .site-footer__link-arrow {
+    transform: translateX(2px);
+  }
+
+  /* ----- Contact detail -------------------------------- */
+  .site-footer__detail {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-
-  @media (min-width: 48rem) {
-    .site-footer__bottom-inner {
-      flex-direction: row;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-  }
-
-  .site-footer__bottom-meta {
     color: var(--color-muted);
     font-family: var(--font-sans);
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+    line-height: 1.55;
   }
 
-  .site-footer-dark .site-footer__bottom-meta {
-    color: color-mix(in srgb, var(--color-inverse) 56%, transparent);
+  .site-footer-dark .site-footer__detail {
+    color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
   }
 
-  .site-footer__bottom-meta--accent {
+  .site-footer__text {
+    margin: 0;
+  }
+
+  .site-footer__atelier {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--color-muted);
+  }
+
+  .site-footer-dark .site-footer__atelier {
+    color: color-mix(in srgb, var(--color-inverse) 64%, transparent);
+  }
+
+  .site-footer__atelier-dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: var(--color-leather);
+    flex: 0 0 auto;
+  }
+
+  .site-footer-dark .site-footer__atelier-dot {
+    background: var(--color-brass);
+  }
+
+  /* ----- Credentials ----------------------------------- */
+  .site-footer__creds {
+    gap: 0.35rem;
+  }
+
+  .site-footer__cred {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .site-footer-dark .site-footer__cred {
+    color: color-mix(in srgb, var(--color-inverse) 72%, transparent);
+  }
+
+  .site-footer__cred-prefix {
+    color: var(--color-border-strong);
+    font-size: 0.65rem;
+    flex: 0 0 auto;
+  }
+
+  /* ----- Colophon bar ---------------------------------- */
+  .site-footer__colophon {
+    padding-bottom: 1.5rem;
+  }
+
+  .site-footer__hr {
+    display: block;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    margin: 0;
+    background: var(--color-border-soft);
+  }
+
+  .site-footer-dark .site-footer__hr {
+    background: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  }
+
+  .site-footer__colophon-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem 1rem;
+    padding-top: 0.9rem;
+  }
+
+  .site-footer__colophon-mark {
     color: var(--color-leather-dark);
-    font-weight: 650;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-size: 0.62rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    flex: 0 0 auto;
   }
 
-  .site-footer-dark .site-footer__bottom-meta--accent {
+  .site-footer-dark .site-footer__colophon-mark {
     color: var(--color-brass);
   }
 
-  .site-footer__rule {
-    display: block;
-    width: 2rem;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.5;
+  .site-footer__colophon-legal {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 1.2;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .site-footer-dark .site-footer__colophon-legal {
+    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
+  }
+
+  .site-footer__colophon-sup {
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: 0.55rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 1.2;
+  }
+
+  .site-footer-dark .site-footer__colophon-sup {
+    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
   }
 
   /* Skip-link colour under the sticky header. */
@@ -1179,6 +1433,16 @@ fieldset {
   .site-header + .skip-link {
     top: 5rem;
   }
+
+  /* Honour reduced motion — reveal becomes a soft fade only. */
+  @media (prefers-reduced-motion: reduce) {
+    .site-footer [data-reveal] {
+      transform: none !important;
+      transition: opacity 1ms linear;
+    }
+  }
+
+
 }
 
 /* =========================================================
@@ -2024,35 +2288,147 @@ fieldset {
     }
   }
 
-  /* ----- Media variant — type over an image background.
-     The consumer sets the image via a CSS var. A soft
-     vertical gradient gives contrast without competing. */
-  .page-hero--media {
-    color: var(--color-ink-on-inverse);
-    padding-block: clamp(5rem, 12vw, 9rem);
+  /* ----- Component detection --------------------------------
+     The hero can be used two ways:
+       1. Direct class usage (quienes-somos.astro) — the
+          section owns its own padding-block; the content
+          sits inside.
+       2. Component usage (PageHero.astro) — the section is
+          framed by an atelier strip on top and a signature
+          on the bottom; the section's padding moves to the
+          inner content so the framing reads edge-to-edge.
+
+     The :has() selectors below detect the component usage
+     by looking for the strip / signature children and
+     adjust the section's vertical rhythm accordingly. */
+  .page-hero:has(> .page-hero__strip) {
+    padding-block: 0;
   }
 
-  .page-hero--media::before {
-    content: '';
+  .page-hero:has(> .page-hero__strip) .page-hero-inner {
+    padding-block: clamp(4.5rem, 9vw, 9rem);
+  }
+
+  .page-hero--compact:has(> .page-hero__strip) {
+    padding-block: 0;
+  }
+
+  .page-hero--compact:has(> .page-hero__strip) .page-hero-inner {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  /* =========================================================
+     MEDIA VARIANT — FULL-BLEED IMAGE + EDITORIAL OVERLAY
+     The image is rendered by PageHero.astro as an absolute
+     media element. The variant is full-bleed: the section
+     spans 100% of the viewport, the photo is the only
+     background, and text sits on top with a layered
+     overlay that guarantees WCAG AA contrast regardless of
+     the underlying photo.
+
+     Visual depth comes from layers stacked behind the
+     content:
+
+       z = 0   .page-hero__media-bg   the photo
+       z = 1   ::after    multi-stop gradient (top vignette
+                          to integrate with the sticky header,
+                          bottom darken to protect the
+                          actions row, soft radial at the
+                          base for cinematic depth)
+
+     Editorial register is provided by:
+       - corner brackets (`.page-hero__frame`)
+       - background numeral (`.page-hero__numeral`)
+       - atelier strip + signature (inverse palette)
+       - optional vertical side rail (`.page-hero__side-rail`)
+       - optional bottom provenance (`.page-hero__provenance`)
+       - automatic button-inversion for the dark tone
+     ========================================================= */
+  .page-hero--media {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    margin: 0;
+    min-height: clamp(28rem, 56vw, 40rem);
+    display: flex;
+    align-items: center;
+    padding-block: clamp(4.5rem, 9vw, 7.5rem);
+    color: var(--color-inverse);
+    background: var(--color-charcoal);
+    overflow: hidden;
+  }
+
+  /* Component usage on media: strip + signature are
+     edge-to-edge and the inner content owns the padding. */
+  .page-hero--media:has(> .page-hero__strip) {
+    padding-block: 0;
+  }
+
+  .page-hero--media:has(> .page-hero__strip) .page-hero-inner {
+    padding-block: clamp(4.5rem, 9vw, 7.5rem);
+  }
+
+  .page-hero__media-bg {
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background-image: var(--page-hero-image, none);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transform: scale(1.04);
+    transform-origin: var(--page-hero-image-origin, 55% 50%);
+    transition: transform 1.8s var(--ease-out);
+    will-change: transform;
+    /* Drop the photo's saturation slightly so the dark
+       overlay reads as the dominant atmosphere and the
+       photograph becomes a textural layer. */
+    filter: saturate(0.7) brightness(0.55);
   }
 
+  .page-hero--media:hover .page-hero__media-bg,
+  .page-hero--media:focus-within .page-hero__media-bg {
+    transform: scale(1.07);
+    filter: saturate(0.78) brightness(0.62);
+  }
+
+  .page-hero--media > .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Heavier multi-stop overlay — the photo is now a
+     textural layer, not the dominant visual. Three stacks
+     guarantee WCAG AA contrast regardless of the photo:
+       1. radial left vignette     (anchors the type column)
+       2. horizontal gradient      (full-bleed dark wash)
+       3. vertical gradient        (top + bottom darken) */
   .page-hero--media::after {
     content: '';
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--color-ink) 36%, transparent) 0%,
-      color-mix(in srgb, var(--color-ink) 70%, transparent) 100%
-    );
+    z-index: 1;
+    background-image:
+      radial-gradient(
+        ellipse at 20% 50%,
+        color-mix(in srgb, var(--color-ink) 88%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink) 72%, transparent) 30%,
+        transparent 62%
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-ink) 88%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink) 70%, transparent) 32%,
+        color-mix(in srgb, var(--color-ink) 50%, transparent) 62%,
+        color-mix(in srgb, var(--color-ink) 64%, transparent) 100%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-ink) 48%, transparent) 0%,
+        transparent 32%,
+        color-mix(in srgb, var(--color-ink) 62%, transparent) 100%
+      );
   }
 
   .page-hero--media.page-hero--tone-light {
@@ -2060,39 +2436,554 @@ fieldset {
   }
 
   .page-hero--media.page-hero--tone-light::after {
-    background: linear-gradient(
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 9px,
+        color-mix(in srgb, var(--color-ink) 5%, transparent) 9px,
+        color-mix(in srgb, var(--color-ink) 5%, transparent) 10px
+      ),
+      radial-gradient(
+        ellipse at 50% 100%,
+        transparent 0%,
+        transparent 55%,
+        color-mix(in srgb, var(--color-page) 30%, transparent) 100%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-page) 65%, transparent) 0%,
+        transparent 28%,
+        color-mix(in srgb, var(--color-page) 90%, transparent) 100%
+      );
+  }
+
+  /* =========================================================
+     ATELIER FRAME (same vocabulary as FinalCTA)
+     ========================================================= */
+
+  /* ----- Background numeral -------------------------------
+     A giant display-serif character (the section index)
+     sits behind the body as a soft watermark. The
+     mask-image softens the top/bottom edges so the glyph
+     feels like a natural bleed rather than a hard cut. */
+  .page-hero__numeral {
+    position: absolute;
+    top: clamp(1.5rem, 4vw, 4rem);
+    right: clamp(-1.5rem, -2vw, -0.5rem);
+    z-index: 1;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(9rem, 24vw, 20rem);
+    font-weight: 200;
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+    font-variant-numeric: lining-nums tabular-nums;
+    -webkit-mask-image: linear-gradient(
       180deg,
-      color-mix(in srgb, var(--color-surface) 78%, transparent) 0%,
-      color-mix(in srgb, var(--color-surface) 90%, transparent) 100%
+      transparent 0%,
+      black 18%,
+      black 78%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      black 18%,
+      black 78%,
+      transparent 100%
     );
   }
 
-  /* ----- Top rail (eyebrow / index / kicker / meta). */
+  .page-hero--media .page-hero__numeral {
+    color: var(--color-inverse);
+    opacity: 0.09;
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__numeral {
+    color: var(--color-ink);
+    opacity: 0.05;
+  }
+
+  /* ----- Corner brackets ----------------------------------
+     Four L-shaped hairline marks with a small leather stud
+     at each intersection — the atelier punctuation that
+     makes the frame feel crafted. Hidden on the media
+     variant (the photograph is the frame). */
+  .page-hero__frame {
+    position: absolute;
+    inset: clamp(0.6rem, 1vw, 0.95rem);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .page-hero__corner {
+    position: absolute;
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .page-hero__corner::before,
+  .page-hero__corner::after {
+    content: '';
+    position: absolute;
+    background: var(--color-ink);
+    opacity: 0.5;
+  }
+
+  .page-hero__corner--tl {
+    top: 0;
+    left: 0;
+    background-image: radial-gradient(
+      circle at 0 0,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .page-hero__corner--tl::before {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .page-hero__corner--tl::after {
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  .page-hero__corner--tr {
+    top: 0;
+    right: 0;
+    background-image: radial-gradient(
+      circle at 100% 0,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .page-hero__corner--tr::before {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .page-hero__corner--tr::after {
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  .page-hero__corner--bl {
+    bottom: 0;
+    left: 0;
+    background-image: radial-gradient(
+      circle at 0 100%,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .page-hero__corner--bl::before {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .page-hero__corner--bl::after {
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  .page-hero__corner--br {
+    bottom: 0;
+    right: 0;
+    background-image: radial-gradient(
+      circle at 100% 100%,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .page-hero__corner--br::before {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .page-hero__corner--br::after {
+    bottom: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  /* On the media variant the photograph is the frame; the
+     brackets would clash with the image so they hide. */
+  .page-hero--media .page-hero__frame {
+    display: none;
+  }
+
+  /* ----- Top atelier strip -------------------------------- */
+  .page-hero__strip {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: clamp(0.78rem, 1.2vw, 0.95rem);
+    padding-inline: var(--container-padding);
+    border-bottom: 1px solid var(--color-border-soft);
+    background: color-mix(
+      in srgb,
+      var(--color-surface) 86%,
+      var(--color-surface-soft)
+    );
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .page-hero__strip-left,
+  .page-hero__strip-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+
+  .page-hero__strip-index {
+    color: var(--color-ink);
+  }
+
+  .page-hero__strip-sep {
+    width: 1.25rem;
+    height: 1px;
+    background: var(--color-border-strong);
+    flex: 0 0 auto;
+  }
+
+  .page-hero__strip-location {
+    color: var(--color-ink-soft);
+  }
+
+  .page-hero__strip-dot {
+    width: 0.32rem;
+    height: 0.32rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather);
+    flex: 0 0 auto;
+  }
+
+  .page-hero__strip-tag {
+    color: var(--color-leather-dark);
+  }
+
+  @media (max-width: 30rem) {
+    .page-hero__strip {
+      padding-block: 0.6rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      gap: 0.6rem;
+    }
+
+    .page-hero__strip-left,
+    .page-hero__strip-right {
+      gap: 0.55rem;
+    }
+
+    .page-hero__strip-location {
+      display: none;
+    }
+
+    .page-hero__strip-sep {
+      display: none;
+    }
+  }
+
+  /* ----- Hairline rule above the actions ------------------ */
+  .page-hero__rule {
+    position: relative;
+    height: 1px;
+    border: 0;
+    margin: clamp(0.25rem, 0.6vw, 0.6rem) 0 0;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-border-strong) 0%,
+      var(--color-border) 60%,
+      transparent 100%
+    );
+  }
+
+  .page-hero__rule::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather);
+  }
+
+  .page-hero--centered .page-hero__rule {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-border) 50%,
+      transparent 100%
+    );
+    max-width: 14rem;
+  }
+
+  .page-hero--centered .page-hero__rule::after {
+    right: 50%;
+  }
+
+  /* ----- Bottom signature strip --------------------------- */
+  .page-hero__signature {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.6rem, 1vw, 0.9rem);
+    padding-block: clamp(0.78rem, 1.2vw, 0.95rem);
+    padding-inline: var(--container-padding);
+    border-top: 1px solid var(--color-border-soft);
+    background: color-mix(
+      in srgb,
+      var(--color-surface) 86%,
+      var(--color-surface-soft)
+    );
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .page-hero__signature-mark {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    text-transform: none;
+  }
+
+  .page-hero__signature-rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--color-border);
+    opacity: 0.6;
+    min-width: 1rem;
+  }
+
+  .page-hero__signature-note {
+    color: var(--color-ink-soft);
+    white-space: nowrap;
+  }
+
+  .page-hero__signature-year {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    font-size: 0.72rem;
+    text-transform: none;
+  }
+
+  @media (max-width: 40rem) {
+    .page-hero__signature {
+      padding-block: 0.65rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      gap: 0.55rem;
+    }
+
+    .page-hero__signature-rule--end {
+      display: none;
+    }
+
+    .page-hero__signature-year {
+      display: none;
+    }
+  }
+
+  /* ----- Media variant: atelier strip + signature in the
+     inverse palette so they read against the photograph. */
+  .page-hero--media .page-hero__strip,
+  .page-hero--media .page-hero__signature {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+    color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
+  }
+
+  .page-hero--media .page-hero__strip-index,
+  .page-hero--media .page-hero__signature-year {
+    color: var(--color-inverse);
+  }
+
+  .page-hero--media .page-hero__strip-tag,
+  .page-hero--media .page-hero__signature-mark {
+    color: var(--color-brass);
+  }
+
+  .page-hero--media .page-hero__strip-dot {
+    background: var(--color-brass);
+  }
+
+  .page-hero--media .page-hero__strip-sep,
+  .page-hero--media .page-hero__signature-rule {
+    background: color-mix(in srgb, var(--color-inverse) 32%, transparent);
+    opacity: 1;
+  }
+
+  .page-hero--media .page-hero__strip-location,
+  .page-hero--media .page-hero__signature-note {
+    color: color-mix(in srgb, var(--color-inverse) 84%, transparent);
+  }
+
+  .page-hero--media .page-hero__rule {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-inverse) 60%, transparent) 0%,
+      color-mix(in srgb, var(--color-inverse) 22%, transparent) 60%,
+      transparent 100%
+    );
+  }
+
+  .page-hero--media .page-hero__rule::after {
+    background: var(--color-brass);
+  }
+
+  .page-hero--media.page-hero--centered .page-hero__rule {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-inverse) 32%, transparent) 50%,
+      transparent 100%
+    );
+  }
+
+  /* ----- Provenance rail (media variant only) ------------- */
+  .page-hero__provenance {
+    position: relative;
+    z-index: 2;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.05rem;
+    border-top: 1px solid
+      color-mix(in srgb, var(--color-ink-on-inverse) 22%, transparent);
+    color: color-mix(in srgb, var(--color-ink-on-inverse) 70%, transparent);
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__provenance {
+    border-top-color: var(--color-border);
+    color: var(--color-muted);
+  }
+
+  .page-hero__provenance-text {
+    margin: 0;
+    max-width: 56rem;
+  }
+
+  /* ----- Side rail (media variant only) ------------------- */
+  .page-hero__side-rail {
+    position: absolute;
+    top: 50%;
+    right: clamp(1.1rem, 2.4vw, 2rem);
+    z-index: 2;
+    display: none;
+    transform: translateY(-50%) rotate(180deg);
+    writing-mode: vertical-rl;
+    color: color-mix(in srgb, var(--color-ink-on-inverse) 75%, transparent);
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 650;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+
+  .page-hero__side-rail::before {
+    content: '';
+    display: inline-block;
+    width: 1.6rem;
+    height: 1px;
+    margin-right: 0.7rem;
+    vertical-align: middle;
+    background: currentColor;
+  }
+
+  .page-hero--media.page-hero--tone-light .page-hero__side-rail {
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 64rem) {
+    .page-hero__side-rail {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  /* ----- Button overrides for the media hero.
+     The FinalCTA's image variant sets no special button
+     overrides — it relies on the standard `.button-inverse`
+     class (transparent surface, inverse border, inverse
+     text, fills with inverse on hover). The PageHero follows
+     the same rule so the action language is identical
+     across the editorial open and close. The base button
+     tokens handle the radius, letter-spacing and padding
+     shape; the media hero only adds a touch more weight to
+     the type so the buttons read at flagship scale. */
+  .page-hero--media .button {
+    letter-spacing: 0.17em;
+  }
+
+  .page-hero--media.page-hero--tone-light .button {
+    letter-spacing: 0.16em;
+  }
+
+  /* ----- Top rail (eyebrow / kicker / meta). */
   .page-hero__top {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.55rem 1rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0;
   }
 
-  .page-hero__index {
+  .page-hero__eyebrow {
     color: var(--color-leather-dark);
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    font-variant-numeric: lining-nums tabular-nums;
-    padding: 0.2rem 0.55rem;
-    border: 1px solid currentColor;
-    border-radius: var(--radius-xs);
   }
 
-  .page-hero--media .page-hero__index {
-    color: var(--color-gold-soft);
+  .page-hero--media .page-hero__eyebrow {
+    color: var(--color-brass);
+    letter-spacing: 0.22em;
+    font-size: 0.66rem;
   }
 
-  .page-hero--media.page-hero--tone-light .page-hero__index {
+  .page-hero--media.page-hero--tone-light .page-hero__eyebrow {
     color: var(--color-leather-dark);
   }
 
@@ -2116,10 +3007,24 @@ fieldset {
     margin: 0;
   }
 
-  .page-hero--media .page-hero__title,
+  @media (max-width: 30rem) {
+    .page-hero__title {
+      line-height: 1.04;
+    }
+  }
+
+  .page-hero--media .page-hero__title {
+    color: var(--color-inverse);
+    font-size: clamp(3rem, 7.2vw, 5.75rem);
+    line-height: 0.98;
+    max-width: 14ch;
+    text-shadow: 0 2px 32px
+      color-mix(in srgb, var(--color-ink) 82%, transparent);
+  }
+
   .page-hero--media .page-hero__description,
   .page-hero--media .page-hero__eyebrow {
-    color: var(--color-ink-on-inverse);
+    color: var(--color-inverse);
   }
 
   .page-hero--media.page-hero--tone-light .page-hero__title,
@@ -2130,7 +3035,7 @@ fieldset {
 
   .page-hero--media .page-hero__kicker,
   .page-hero--media .page-hero__meta {
-    color: color-mix(in srgb, var(--color-ink-on-inverse) 70%, transparent);
+    color: color-mix(in srgb, var(--color-inverse) 78%, transparent);
   }
 
   .page-hero--media.page-hero--tone-light .page-hero__kicker,
@@ -2146,7 +3051,9 @@ fieldset {
 
   .page-hero--media .page-hero__title em,
   .page-hero--media .page-hero__title i {
-    color: var(--color-gold-soft);
+    color: var(--color-brass);
+    font-style: italic;
+    font-weight: 200;
   }
 
   .page-hero--media.page-hero--tone-light .page-hero__title em,
@@ -2157,18 +3064,32 @@ fieldset {
   .page-hero__description {
     color: var(--color-muted);
     font-size: clamp(0.98rem, 1.15vw, 1.05rem);
-    line-height: 1.74;
+    line-height: 1.62;
     text-wrap: pretty;
-    max-width: 44ch;
+    max-width: 38ch;
     margin: 0;
+  }
+
+  .page-hero--media .page-hero__description {
+    color: color-mix(in srgb, var(--color-inverse) 88%, transparent);
+    font-size: clamp(1.05rem, 1.3vw, 1.18rem);
+    line-height: 1.7;
+    max-width: 44ch;
+    text-shadow: 0 1px 20px
+      color-mix(in srgb, var(--color-ink) 78%, transparent);
   }
 
   /* ----- Body container — type stack. */
   .page-hero__body {
     display: flex;
     flex-direction: column;
-    gap: clamp(1rem, 2vw, 1.5rem);
+    gap: clamp(0.85rem, 1.6vw, 1.2rem);
     max-width: 48rem;
+  }
+
+  .page-hero--media .page-hero__body {
+    max-width: 44rem;
+    gap: clamp(1.1rem, 2vw, 1.5rem);
   }
 
   .page-hero__body--center {
@@ -2184,6 +3105,10 @@ fieldset {
 
   .page-hero__body--center .page-hero__actions {
     justify-content: center;
+  }
+
+  .page-hero--centered .page-hero__rule {
+    margin-inline: auto;
   }
 
   .page-hero__actions {
@@ -2649,6 +3574,16 @@ fieldset {
     border: 1px solid var(--color-border);
     border-radius: calc(var(--radius-card) - 2px);
     pointer-events: none;
+  }
+
+  .image-placeholder__image {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .image-placeholder--frame-minimal::before {
@@ -4143,6 +5078,18 @@ fieldset {
     border-top: 0;
   }
 
+  /* Contact info list — stack of `ContactInfoCard` tiles
+     used on the contact page. Owns the vertical rhythm
+     between framed cards; each tile keeps its own border. */
+  .contact-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   .form-grid {
     display: grid;
     gap: 1rem;
@@ -4158,60 +5105,1383 @@ fieldset {
     display: grid;
     gap: 0.5rem;
   }
+
+  /* Inline checkbox + label row used by consent / opt-in
+     lines on forms. The native control is hidden visually
+     but stays focusable; a small hairline square is drawn
+     next to the label and flips to ink when checked. */
+  .form-check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 0.7rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .form-check__box {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 1rem;
+    height: 1rem;
+    margin: 0.15rem 0 0 0;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 2px;
+    background: var(--color-surface);
+    flex: 0 0 auto;
+    transition:
+      border-color var(--duration-fast) var(--ease-soft),
+      background-color var(--duration-fast) var(--ease-soft);
+  }
+
+  .form-check__box:hover {
+    border-color: var(--color-ink);
+  }
+
+  .form-check__box:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  .form-check__box:checked {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+
+  .form-check__box:checked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fbfaf7' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 4l3 3 5-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.7rem auto;
+  }
+
+  .form-check:hover {
+    color: var(--color-ink);
+  }
+
+  /* The form foot — a hairline-separated row that holds the
+     consent checkbox on one side and the submit + note on
+     the other. Stacks on mobile, splits on tablet+ with the
+     submit aligned to the right edge. */
+  .form-foot {
+    display: grid;
+    gap: 1.5rem;
+    padding-top: clamp(1.25rem, 2.4vw, 1.75rem);
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  @media (min-width: 48rem) {
+    .form-foot {
+      grid-template-columns: minmax(0, 1.1fr) auto;
+      align-items: center;
+      gap: 2.5rem;
+    }
+  }
+
+  .form-foot__submit {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+  }
+
+  .form-foot__note {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    max-width: 32rem;
+    margin: 0;
+  }
+
+  /* Optional link inside a differentiator-item title — a
+     quiet hairline that grows on hover/focus. Used by the
+     contact page's topic register so each row is a
+     jump-link to the matching form field. */
+  .differentiator-item__link {
+    color: var(--color-ink);
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 1px;
+    transition: background-size var(--duration-slow) var(--ease-out);
+  }
+
+  .differentiator-item:hover .differentiator-item__link,
+  .differentiator-item:focus-within .differentiator-item__link,
+  .differentiator-item__link:hover,
+  .differentiator-item__link:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  .differentiator-item__link:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* Italic leather accent inside the editorial heading
+     classes — the same accent the page-hero and home-hero
+     titles use, now available to every heading that opts
+     into the display-serif family. */
+  .heading-section em,
+  .heading-section i,
+  .heading-card em,
+  .heading-card i,
+  .display-soft em,
+  .display-soft i {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-weight: 200;
+  }
+
+  /* =========================================================
+     FORM LETTERHEAD
+     A paper-toned panel that holds a form. Reads as a
+     printed atelier letterhead — quiet plane, hairline
+     frame, fine rules at top and bottom. A small letterhead
+     stamp at the top carries the brand mark, name and
+     location, like a printed piece of stationery.
+     ========================================================= */
+
+  .form-letterhead {
+    position: relative;
+    display: grid;
+    gap: clamp(1.5rem, 2.5vw, 2rem);
+    padding: clamp(2rem, 4vw, 3rem);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card-lg);
+  }
+
+  .form-letterhead__stamp {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .form-letterhead__mark {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: 1.55rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    flex: 0 0 auto;
+  }
+
+  .form-letterhead__name {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .form-letterhead__location {
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .form-letterhead__meta {
+    margin-left: auto;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .form-letterhead__date {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--color-border-soft);
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .form-letterhead__date em {
+    color: var(--color-leather-dark);
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  .form-letterhead__salute {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+    margin: 0;
+  }
+
+  .form-letterhead__close {
+    display: grid;
+    gap: 0.6rem;
+    padding-top: clamp(1rem, 2vw, 1.5rem);
+    border-top: 1px solid var(--color-border-soft);
+    color: var(--color-muted);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .form-letterhead__close span {
+    display: block;
+  }
+
+  .form-letterhead__close strong {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 650;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* =========================================================
+     CONTACT PAGE SYSTEM
+     Extracted from /contacto so the correspondence panels,
+     compact form controls, direct-channel rows and FAQ dossier
+     can guide the rest of the editorial site.
+     ========================================================= */
+
+  .correspondence,
+  .faq {
+    --contact-radius-panel: var(--radius-md);
+    --contact-radius-media: var(--radius-md);
+    --contact-radius-control: var(--radius-lg);
+    --contact-radius-detail: var(--radius-xs);
+  }
+
+  .correspondence__grid {
+    display: grid;
+    gap: var(--grid-gap-lg);
+  }
+
+  @media (min-width: 64rem) {
+    .correspondence__grid {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  .form-letterhead__corner {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0.18rem;
+    background: var(--color-surface);
+    color: var(--color-leather-dark);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 0 0 0 var(--contact-radius-control);
+  }
+
+  .contact-form {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .contact-form__stack {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select {
+    border-radius: var(--contact-radius-control);
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    border: 1px solid var(--color-border-soft);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    transition: border-color var(--duration-base) var(--ease-soft);
+  }
+
+  .contact-form input:hover,
+  .contact-form textarea:hover,
+  .contact-form select:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  .contact-form input:focus-visible,
+  .contact-form textarea:focus-visible,
+  .contact-form select:focus-visible {
+    outline: none;
+    border-color: var(--color-leather-dark);
+    box-shadow: 0 0 0 1.5px var(--color-leather-dark);
+  }
+
+  .contact-form textarea {
+    min-height: 6rem;
+  }
+
+  .contact-form .form-grid {
+    gap: 0.7rem;
+  }
+
+  .contact-form label {
+    display: block;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .contact-form .form-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-top: 0.6rem;
+    border-top: 0;
+  }
+
+  .contact-form .form-foot .button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-letterhead--aside {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 2.5vw, 2rem);
+  }
+
+  .contact-channels {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .contact-channel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.05rem;
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .contact-channel__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 auto;
+    color: var(--color-leather-dark);
+  }
+
+  .contact-channel__icon-frame {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-surface);
+    transition:
+      border-color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft);
+    flex: 0 0 auto;
+  }
+
+  .contact-channel:hover .contact-channel__icon-frame {
+    border-color: var(--color-leather-dark);
+    background: var(--color-surface-soft);
+  }
+
+  .contact-channel__icon svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    stroke-width: 1.5;
+  }
+
+  .contact-channel__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .contact-channel__label {
+    display: block;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .contact-channel__value {
+    display: block;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .form-letterhead--aside .differentiator-list {
+    margin-top: 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0;
+    gap: 0;
+  }
+
+  .form-letterhead--aside .differentiator-item {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.1rem 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  .form-letterhead--aside .differentiator-item + .differentiator-item {
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .form-letterhead--aside .differentiator-item__title {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .form-letterhead--aside .differentiator-item__detail {
+    margin: 0;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 36rem) {
+    .contact-channel__value {
+      font-size: 1rem;
+    }
+  }
+
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
+  }
+
+  .faq__item {
+    position: relative;
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card-lg);
+    background: var(--color-surface);
+    transition: border-color 400ms var(--ease-soft);
+  }
+
+  .faq__item[open] {
+    border-color: var(--color-border);
+  }
+
+  .faq__item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--color-leather-dark);
+    transition: height 500ms var(--ease-out);
+    will-change: height;
+  }
+
+  .faq__item[open]::after {
+    height: 100%;
+  }
+
+  .faq__summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    list-style: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .faq__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__summary:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -3px;
+  }
+
+  .faq__lead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .faq__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .faq__category {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 650;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-border-soft);
+    line-height: 1.2;
+    transition:
+      color 400ms var(--ease-soft),
+      border-color 400ms var(--ease-soft);
+  }
+
+  .faq__item[open] .faq__category {
+    color: var(--color-leather-dark);
+    border-color: var(--color-leather);
+  }
+
+  .faq__index {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--color-muted);
+    letter-spacing: 0.02em;
+    margin-left: auto;
+  }
+
+  .faq__question {
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 450;
+    font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+    line-height: 1.45;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+  }
+
+  .faq__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+    margin-top: 0.25rem;
+    color: var(--color-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    transition: all 400ms var(--ease-soft);
+  }
+
+  .faq__toggle svg {
+    display: block;
+    width: 0.7rem;
+    height: 0.7rem;
+    transition: transform 400ms var(--ease-out);
+  }
+
+  .faq__summary:hover .faq__toggle {
+    border-color: var(--color-border-strong);
+    color: var(--color-ink);
+  }
+
+  .faq__item[open] .faq__toggle {
+    background: var(--color-leather-dark);
+    color: var(--color-inverse);
+    border-color: var(--color-leather-dark);
+  }
+
+  .faq__item[open] .faq__toggle svg {
+    transform: rotate(180deg);
+  }
+
+  .faq__corner {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    background: var(--color-surface);
+    color: var(--color-leather-dark);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 0 0 0 4px;
+    pointer-events: none;
+  }
+
+  .faq__corner svg {
+    display: block;
+  }
+
+  .faq__answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 450ms var(--ease-out);
+  }
+
+  .faq__item[open] .faq__answer {
+    grid-template-rows: 1fr;
+  }
+
+  .faq__answer-inner {
+    overflow: hidden;
+  }
+
+  .faq__answer p {
+    margin: 0;
+    padding: 1.15rem 1.5rem 1.5rem;
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    line-height: 1.75;
+    max-width: 48rem;
+    text-wrap: pretty;
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  @media (max-width: 36rem) {
+    .faq__list {
+      gap: 0.7rem;
+      margin-top: 2rem;
+    }
+
+    .faq__summary {
+      padding: 1rem 1.1rem;
+    }
+
+    .faq__question {
+      font-size: 0.95rem;
+    }
+
+    .faq__answer p {
+      padding: 1rem 1.1rem 1.1rem;
+      font-size: 0.86rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__item,
+    .faq__item::after,
+    .faq__summary,
+    .faq__toggle,
+    .faq__toggle svg,
+    .faq__category,
+    .faq__question,
+    .faq__answer {
+      transition: none;
+    }
+
+    .faq__item[open] .faq__toggle svg {
+      transform: none;
+    }
+  }
+
+  /* =========================================================
+     ATELIER SEAL
+     A circular signature mark. Two concentric hairline rings
+     in leather-dark, a fine uppercase wordmark, and a
+     large display year. Used as a closing signature on
+     the contact page and any other editorial close.
+     ========================================================= */
+
+  .atelier-seal {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5.75rem;
+    height: 5.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-leather-dark);
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.55rem;
+    line-height: 1.1;
+    text-align: center;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.7rem;
+    flex: 0 0 auto;
+  }
+
+  .atelier-seal::before {
+    content: '';
+    position: absolute;
+    inset: 0.24rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid
+      color-mix(in srgb, var(--color-leather-dark) 28%, transparent);
+    pointer-events: none;
+  }
+
+  .atelier-seal__year {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 200;
+    font-style: normal;
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: 0;
+    margin-top: 0.2rem;
+  }
+
+  .atelier-seal--large {
+    width: 8rem;
+    height: 8rem;
+    font-size: 0.62rem;
+    padding: 1rem;
+  }
+
+  .atelier-seal--large .atelier-seal__year {
+    font-size: 1.55rem;
+    margin-top: 0.35rem;
+  }
+
+  .atelier-seal--inverse {
+    border-color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
+    color: var(--color-inverse);
+  }
+
+  .atelier-seal--inverse::before {
+    border-color: color-mix(in srgb, var(--color-inverse) 32%, transparent);
+  }
+
+  /* =========================================================
+     EDITORIAL SPREAD
+     A full-bleed image band with a large italic pull-quote
+     centred over it. Used as the "atelier moment" on
+     editorial pages — a single dramatic composition that
+     breaks the page rhythm with a dark, atmospheric
+     spread. The image is provided via the --editorial-image
+     custom property; --editorial-image-focus controls the
+     object position keyword.
+     ========================================================= */
+
+  .editorial-spread {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    min-height: clamp(28rem, 62vh, 46rem);
+    display: grid;
+    place-items: center;
+    padding: clamp(4rem, 9vw, 8rem) clamp(1.5rem, 5vw, 4rem);
+    background: var(--color-surface-inverse);
+    color: var(--color-inverse);
+    overflow: hidden;
+  }
+
+  .editorial-spread__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--editorial-image, none);
+    background-size: cover;
+    background-position: var(--editorial-image-focus, center);
+    background-repeat: no-repeat;
+  }
+
+  .editorial-spread__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-ink) 55%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 78%, transparent) 100%
+    );
+  }
+
+  .editorial-spread__media--light::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 60%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface) 88%, transparent) 100%
+    );
+  }
+
+  .editorial-spread__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 56rem;
+    text-align: center;
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    justify-items: center;
+  }
+
+  .editorial-spread__index {
+    color: var(--color-gold-soft);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .editorial-spread__caption {
+    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .editorial-spread__stamp {
+    position: absolute;
+    top: clamp(1.25rem, 2.5vw, 2rem);
+    left: clamp(1.25rem, 2.5vw, 2rem);
+    z-index: 2;
+    color: color-mix(in srgb, var(--color-inverse) 60%, transparent);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .editorial-spread__stamp::before {
+    content: '';
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+    flex: 0 0 auto;
+  }
+
+  .editorial-spread__stamp--right {
+    left: auto;
+    right: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .editorial-pullquote {
+    position: relative;
+    max-width: 48rem;
+    margin: 0;
+    color: var(--color-inverse);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(1.95rem, 3.8vw, 3.1rem);
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+
+  .editorial-pullquote::before,
+  .editorial-pullquote::after {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    background: color-mix(in srgb, var(--color-inverse) 55%, transparent);
+    margin-inline: auto;
+  }
+
+  .editorial-pullquote::before {
+    margin-bottom: 1.5rem;
+  }
+
+  .editorial-pullquote::after {
+    margin-top: 1.5rem;
+  }
+
+  .editorial-pullquote cite {
+    display: block;
+    margin-top: 1.5rem;
+    color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 0.65rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* ----- Signature strip — sits below the spread, holds
+     the atelier seal + a short editorial line. */
+  .signature-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+    justify-items: center;
+    text-align: center;
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  @media (min-width: 48rem) {
+    .signature-strip {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      text-align: left;
+      justify-items: start;
+    }
+
+    .signature-strip--center {
+      text-align: center;
+      justify-items: center;
+    }
+  }
+
+  .signature-strip__seal {
+    justify-self: center;
+  }
+
+  .signature-strip__body {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 38rem;
+  }
+
+  .signature-strip__eyebrow {
+    color: var(--color-leather-dark);
+    margin: 0;
+  }
+
+  .signature-strip__line {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(1.25rem, 2vw, 1.55rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
 }
 
 /* =========================================================
    FINAL CTA · EDITORIAL CLOSE
-   Default = paper panel, calm and editorial.
+   Default = paper panel framed by an atelier strip on top
+   and a signature strip at the bottom. A giant faded
+   numeral sits behind the copy as a watermark; four hair
+   corner brackets anchor the corners. The body is divided
+   from the actions by a hairline rule.
+
    --image    = full-bleed image with overlay, light or dark.
-   --split    = two-column with media on one side.
+   --split    = two-column with media on one side; the right
+                column keeps the strip + signature framing.
    --center   = centered content.
    Tone defaults to dark on the image variant; --tone-light
    gives a soft, paper-coloured overlay.
+
+   Decorative anatomy of the default variant:
+     ┌─ top atelier strip (index · location / dot · tag) ─┐
+     │   corner brackets at the four edges                 │
+     │   giant faded editorial numeral (background)        │
+     │   body (eyebrow, display title, description)        │
+     │   hairline rule                                      │
+     │   action group                                       │
+     └─ bottom signature strip (mark · rule · note · year)┘
    ========================================================= */
 
 @layer components {
+  /* ----- Section shell ------------------------------------
+     No internal padding here — the strip, the inner content
+     and the signature each own their own padding so the
+     horizontal hairline rules can run edge-to-edge. */
   .final-cta {
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     background: var(--color-surface);
     color: var(--color-ink);
-    padding: clamp(2.5rem, 5vw, 4.5rem);
     border-radius: var(--radius-card-lg);
     border: 1px solid var(--color-border-soft);
   }
 
+  /* Subtle paper grain only on the paper variants. The
+     image variant reuses ::before for the photo, so the
+     texture stays out of its way. */
+  .final-cta:not(.final-cta--image):not(.final-cta--split)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: var(--paper-tex);
+    background-size: var(--paper-tex-size);
+    pointer-events: none;
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+  }
+
+  /* ----- Top atelier strip -------------------------------- */
+  .final-cta__strip {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: clamp(0.78rem, 1.2vw, 0.95rem);
+    padding-inline: var(--container-padding);
+    border-bottom: 1px solid var(--color-border-soft);
+    background: color-mix(
+      in srgb,
+      var(--color-surface) 86%,
+      var(--color-surface-soft)
+    );
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .final-cta__strip-left,
+  .final-cta__strip-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+
+  .final-cta__strip-index {
+    color: var(--color-ink);
+  }
+
+  .final-cta__strip-sep {
+    width: 1.25rem;
+    height: 1px;
+    background: var(--color-border-strong);
+    flex: 0 0 auto;
+  }
+
+  .final-cta__strip-location {
+    color: var(--color-ink-soft);
+  }
+
+  .final-cta__strip-dot {
+    width: 0.32rem;
+    height: 0.32rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather);
+    flex: 0 0 auto;
+  }
+
+  .final-cta__strip-tag {
+    color: var(--color-leather-dark);
+  }
+
+  /* On the smallest phones the strip becomes more compact
+     and the location drops so it fits on a single line. */
+  @media (max-width: 30rem) {
+    .final-cta__strip {
+      padding-block: 0.6rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      gap: 0.6rem;
+    }
+
+    .final-cta__strip-left,
+    .final-cta__strip-right {
+      gap: 0.55rem;
+    }
+
+    .final-cta__strip-location {
+      display: none;
+    }
+
+    .final-cta__strip-sep {
+      display: none;
+    }
+  }
+
+  /* ----- Background numeral -------------------------------
+     A giant display-serif character (the section index) sits
+     behind the body as a soft watermark. Sits at z-index 1
+     so it never competes with the copy. The mask-image
+     softens the top/bottom edges so the glyph feels like a
+     natural bleed rather than a hard cut. */
+  .final-cta__numeral {
+    position: absolute;
+    top: clamp(0.5rem, 2vw, 2.5rem);
+    right: clamp(-1rem, -1.5vw, -0.5rem);
+    z-index: 1;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(7rem, 19vw, 15.5rem);
+    font-weight: 200;
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    opacity: 0.055;
+    pointer-events: none;
+    user-select: none;
+    font-variant-numeric: lining-nums tabular-nums;
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      black 18%,
+      black 78%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      black 18%,
+      black 78%,
+      transparent 100%
+    );
+  }
+
+  /* On the smallest phones the numeral gets smaller still
+     and the bleed softens so it never fights the title. */
+  @media (max-width: 30rem) {
+    .final-cta__numeral {
+      top: clamp(-0.5rem, -1vw, 0.25rem);
+      right: clamp(-2rem, -3vw, -1rem);
+      font-size: clamp(6rem, 28vw, 10rem);
+    }
+  }
+
+  /* ----- Corner brackets ----------------------------------
+     Four L-shaped hairline marks sit just inside the border
+     and frame the panel. A small leather "stud" sits at the
+     intersection of each L — the atelier punctuation that
+     makes the frame feel crafted, not generic. Default
+     paper variants only. */
+  .final-cta__frame {
+    position: absolute;
+    inset: clamp(0.5rem, 0.9vw, 0.78rem);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .final-cta__corner {
+    position: absolute;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .final-cta__corner::before,
+  .final-cta__corner::after {
+    content: '';
+    position: absolute;
+    background: var(--color-ink);
+    opacity: 0.5;
+  }
+
+  .final-cta__corner--tl {
+    top: 0;
+    left: 0;
+    background-image: radial-gradient(
+      circle at 0 0,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .final-cta__corner--tl::before {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .final-cta__corner--tl::after {
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  .final-cta__corner--tr {
+    top: 0;
+    right: 0;
+    background-image: radial-gradient(
+      circle at 100% 0,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .final-cta__corner--tr::before {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .final-cta__corner--tr::after {
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  .final-cta__corner--bl {
+    bottom: 0;
+    left: 0;
+    background-image: radial-gradient(
+      circle at 0 100%,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .final-cta__corner--bl::before {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .final-cta__corner--bl::after {
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  .final-cta__corner--br {
+    bottom: 0;
+    right: 0;
+    background-image: radial-gradient(
+      circle at 100% 100%,
+      var(--color-leather) 0,
+      var(--color-leather) 1.6px,
+      transparent 2.4px
+    );
+  }
+  .final-cta__corner--br::before {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .final-cta__corner--br::after {
+    bottom: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+  }
+
+  /* On the smallest phones the brackets shrink a touch so
+     they don't crowd the strip and signature. */
+  @media (max-width: 30rem) {
+    .final-cta__corner {
+      width: 0.85rem;
+      height: 0.85rem;
+    }
+  }
+
+  /* ----- Main content (body + actions) -------------------- */
   .final-cta--center {
     text-align: center;
   }
 
-  .final-cta--center .final-cta__inner {
-    margin-inline: auto;
-  }
-
   .final-cta__inner {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     display: grid;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
-    max-width: 48rem;
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+    padding: clamp(2.5rem, 5vw, 4.5rem) var(--container-padding);
   }
 
-  .final-cta--align-end .final-cta__inner {
-    align-items: end;
-  }
+  /* The Container primitive already sets max-width and
+     margin-inline auto. The override above keeps the
+     horizontal padding consistent with the strip and
+     signature that flank it. */
 
   @media (min-width: 64rem) {
     .final-cta__inner {
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: end;
-      max-width: none;
     }
 
     .final-cta--center .final-cta__inner {
       grid-template-columns: 1fr;
       justify-items: center;
+    }
+
+    .final-cta--align-end .final-cta__inner {
+      align-items: end;
     }
   }
 
@@ -4234,13 +6504,21 @@ fieldset {
   .final-cta__title {
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-size: clamp(2.15rem, 4.5vw, 3.4rem);
     font-weight: 200;
     letter-spacing: -0.022em;
-    line-height: 1;
+    line-height: 1.02;
     text-wrap: balance;
     max-width: 18ch;
     margin: 0;
+  }
+
+  /* On the smallest phones the title breathes a touch more
+     so two-line wraps don't feel cramped. */
+  @media (max-width: 30rem) {
+    .final-cta__title {
+      line-height: 1.08;
+    }
   }
 
   .final-cta__title em,
@@ -4259,6 +6537,82 @@ fieldset {
     margin: 0;
   }
 
+  /* ----- Aside (rule + actions) --------------------------- */
+  .final-cta__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .final-cta--center .final-cta__aside {
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .final-cta--align-end .final-cta__aside {
+      align-items: flex-end;
+    }
+  }
+
+  .final-cta__rule {
+    position: relative;
+    height: 1px;
+    border: 0;
+    margin: 0;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-border-strong) 0%,
+      var(--color-border) 60%,
+      transparent 100%
+    );
+  }
+
+  /* A small leather "stud" sits at the rule's terminus —
+     the atelier punctuation that closes the rule like a
+     full stop at the end of a sentence. */
+  .final-cta__rule::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-pill);
+    background: var(--color-leather);
+  }
+
+  .final-cta--center .final-cta__rule {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-border) 50%,
+      transparent 100%
+    );
+    max-width: 14rem;
+  }
+
+  .final-cta--center .final-cta__rule::after {
+    right: 50%;
+  }
+
+  .final-cta--align-end .final-cta__rule {
+    background: linear-gradient(
+      270deg,
+      var(--color-border-strong) 0%,
+      var(--color-border) 60%,
+      transparent 100%
+    );
+  }
+
+  .final-cta--align-end .final-cta__rule::after {
+    right: auto;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+
   .final-cta__actions {
     display: flex;
     flex-wrap: wrap;
@@ -4270,9 +6624,81 @@ fieldset {
     justify-content: center;
   }
 
-  @media (min-width: 64rem) {
-    .final-cta--align-end .final-cta__actions {
-      justify-content: flex-end;
+  /* ----- Bottom signature strip --------------------------- */
+  .final-cta__signature {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.6rem, 1vw, 0.9rem);
+    padding-block: clamp(0.78rem, 1.2vw, 0.95rem);
+    padding-inline: var(--container-padding);
+    border-top: 1px solid var(--color-border-soft);
+    background: color-mix(
+      in srgb,
+      var(--color-surface) 86%,
+      var(--color-surface-soft)
+    );
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.17em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .final-cta__signature-mark {
+    color: var(--color-leather-dark);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    text-transform: none;
+  }
+
+  .final-cta__signature-rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--color-border);
+    opacity: 0.6;
+    min-width: 1rem;
+  }
+
+  .final-cta__signature-note {
+    color: var(--color-ink-soft);
+    white-space: nowrap;
+  }
+
+  .final-cta__signature-year {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    font-size: 0.72rem;
+    text-transform: none;
+  }
+
+  /* On tight viewports the signature collapses the trailing
+     year so the middle note can stay on a single line, and
+     the whole strip becomes more compact. */
+  @media (max-width: 40rem) {
+    .final-cta__signature {
+      padding-block: 0.65rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      gap: 0.55rem;
+    }
+
+    .final-cta__signature-rule--end {
+      display: none;
+    }
+
+    .final-cta__signature-year {
+      display: none;
     }
   }
 
@@ -4282,10 +6708,9 @@ fieldset {
      soft gradient overlay sits on top — no grid texture,
      no inscribed frame, no corner stamp. */
   .final-cta--image {
-    color: var(--color-ink-on-inverse);
+    color: var(--color-inverse);
     border-color: transparent;
     background: var(--color-surface-inverse);
-    padding: clamp(3rem, 7vw, 5.5rem);
   }
 
   .final-cta--image::before {
@@ -4311,10 +6736,109 @@ fieldset {
     );
   }
 
+  /* On the image variant the strip and signature ride on a
+     dark wash — no soft paper background, the typography
+     stays in the inverse palette. */
+  .final-cta--image .final-cta__strip,
+  .final-cta--image .final-cta__signature {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+    color: color-mix(in srgb, var(--color-inverse) 70%, transparent);
+  }
+
+  .final-cta--image .final-cta__strip-index,
+  .final-cta--image .final-cta__signature-year {
+    color: var(--color-inverse);
+  }
+
+  .final-cta--image .final-cta__strip-tag,
+  .final-cta--image .final-cta__signature-mark {
+    color: var(--color-brass);
+  }
+
+  .final-cta--image .final-cta__strip-dot {
+    background: var(--color-brass);
+  }
+
+  .final-cta--image .final-cta__strip-sep,
+  .final-cta--image .final-cta__signature-rule {
+    background: color-mix(in srgb, var(--color-inverse) 32%, transparent);
+    opacity: 1;
+  }
+
+  /* The body content and aside sit above the gradient. */
+  .final-cta--image .final-cta__inner {
+    position: relative;
+    z-index: 3;
+  }
+
   .final-cta--image .final-cta__title,
   .final-cta--image .final-cta__description,
   .final-cta--image .final-cta__eyebrow {
     color: inherit;
+  }
+
+  /* The highlighted word inside the title (rendered via <em>)
+     lives in leather-dark on paper. On the dark image variant
+     that same brown sinks into the photo, so we lift it to
+     brass — the same atelier accent the strip and signature
+     use on the dark surface. */
+  .final-cta--image .final-cta__title em,
+  .final-cta--image .final-cta__title i {
+    color: var(--color-brass);
+  }
+
+  /* Location and signature note inherit a soft ink on paper;
+     on the dark image they need a light tone so they read. */
+  .final-cta--image .final-cta__strip-location,
+  .final-cta--image .final-cta__signature-note {
+    color: color-mix(in srgb, var(--color-inverse) 84%, transparent);
+  }
+
+  /* Numeral reads as a faint white watermark on the photo. */
+  .final-cta--image .final-cta__numeral {
+    color: var(--color-inverse);
+    opacity: 0.1;
+  }
+
+  /* Corner brackets are removed on the image variant — the
+     dark gradient already frames the panel. */
+  .final-cta--image .final-cta__frame {
+    display: none;
+  }
+
+  /* Rule above the actions is a soft inverse wash. */
+  .final-cta--image .final-cta__rule {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-inverse) 60%, transparent) 0%,
+      color-mix(in srgb, var(--color-inverse) 22%, transparent) 60%,
+      transparent 100%
+    );
+  }
+
+  /* The terminus dot rises from leather to brass on the dark
+     image so it reads against the photo. */
+  .final-cta--image .final-cta__rule::after {
+    background: var(--color-brass);
+  }
+
+  .final-cta--image.final-cta--center .final-cta__rule {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-inverse) 32%, transparent) 50%,
+      transparent 100%
+    );
+  }
+
+  .final-cta--image.final-cta--align-end .final-cta__rule {
+    background: linear-gradient(
+      270deg,
+      color-mix(in srgb, var(--color-inverse) 60%, transparent) 0%,
+      color-mix(in srgb, var(--color-inverse) 22%, transparent) 60%,
+      transparent 100%
+    );
   }
 
   /* Light tone — for an image with a brighter, paper-like wash. */
@@ -4330,6 +6854,31 @@ fieldset {
     );
   }
 
+  .final-cta--image.final-cta--tone-light .final-cta__strip,
+  .final-cta--image.final-cta--tone-light .final-cta__signature {
+    color: var(--color-muted);
+    border-color: var(--color-border-soft);
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__strip-index,
+  .final-cta--image.final-cta--tone-light .final-cta__signature-year {
+    color: var(--color-ink);
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__strip-tag,
+  .final-cta--image.final-cta--tone-light .final-cta__signature-mark {
+    color: var(--color-leather-dark);
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__strip-dot {
+    background: var(--color-leather);
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__strip-sep,
+  .final-cta--image.final-cta--tone-light .final-cta__signature-rule {
+    background: var(--color-border);
+  }
+
   .final-cta--image.final-cta--tone-light .final-cta__title {
     color: var(--color-ink);
   }
@@ -4342,10 +6891,47 @@ fieldset {
     color: var(--color-leather-dark);
   }
 
+  .final-cta--image.final-cta--tone-light .final-cta__numeral {
+    color: var(--color-ink);
+    opacity: 0.06;
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__rule {
+    background: linear-gradient(
+      90deg,
+      var(--color-border-strong) 0%,
+      var(--color-border) 60%,
+      transparent 100%
+    );
+  }
+
+  .final-cta--image.final-cta--tone-light .final-cta__rule::after {
+    background: var(--color-leather);
+  }
+
+  .final-cta--image.final-cta--tone-light.final-cta--center .final-cta__rule {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-border) 50%,
+      transparent 100%
+    );
+  }
+
+  .final-cta--image.final-cta--tone-light.final-cta--align-end
+    .final-cta__rule {
+    background: linear-gradient(
+      270deg,
+      var(--color-border-strong) 0%,
+      var(--color-border) 60%,
+      transparent 100%
+    );
+  }
+
   /* ----- Split variant — image on one side, content on the
-     other. Mobile stacks with the image on top. */
+     other. The right-hand panel inherits the strip + inner
+     + signature framing; the left becomes the photo. */
   .final-cta--split {
-    padding: 0;
     border-color: var(--color-border-soft);
   }
 
@@ -4369,24 +6955,55 @@ fieldset {
   }
 
   .final-cta--split .final-cta__inner {
-    padding: clamp(2rem, 4vw, 3.5rem);
+    padding: clamp(2rem, 4vw, 3.25rem) var(--container-padding);
   }
 
   @media (min-width: 64rem) {
     .final-cta--split {
       display: grid;
       grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr auto;
       align-items: stretch;
     }
 
     .final-cta--split .final-cta__media {
+      grid-column: 1;
+      grid-row: 1 / -1;
       aspect-ratio: auto;
       min-height: 0;
     }
 
+    .final-cta--split .final-cta__strip {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
     .final-cta--split .final-cta__inner {
-      align-content: center;
-      padding: clamp(2.5rem, 5vw, 4rem);
+      grid-column: 2;
+      grid-row: 2;
+      align-self: center;
+      padding-block: clamp(2.25rem, 4.5vw, 3.5rem);
+    }
+
+    .final-cta--split .final-cta__signature {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    /* The left brackets sit on top of the photo — hide them.
+       The right brackets (tr, br) naturally frame the right
+       column, which is where the content lives. */
+    .final-cta--split .final-cta__corner--tl,
+    .final-cta--split .final-cta__corner--bl {
+      display: none;
+    }
+
+    /* The numeral is positioned relative to the full section
+       by default; on the split variant pull it inside the
+       right column so it sits over the content, not the photo. */
+    .final-cta--split .final-cta__numeral {
+      right: clamp(1rem, 2.5vw, 2.5rem);
+      top: clamp(0.75rem, 2.5vw, 2.25rem);
     }
   }
 }
@@ -4615,12 +7232,12 @@ fieldset {
   .section-header__title {
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 5.4vw, 4.4rem);
+    font-size: clamp(2.15rem, 4.5vw, 3.4rem);
     font-weight: 200;
     letter-spacing: -0.022em;
-    line-height: 0.98;
+    line-height: 1.02;
     text-wrap: balance;
-    max-width: 28ch;
+    max-width: 22ch;
     margin: 0;
   }
 
@@ -4662,7 +7279,7 @@ fieldset {
   .section-header__description {
     color: var(--color-muted);
     font-family: var(--font-sans);
-    font-size: clamp(0.98rem, 1.05vw, 1.05rem);
+    font-size: clamp(0.88rem, 1vw, 0.95rem);
     font-weight: 400;
     line-height: 1.72;
     text-wrap: pretty;
@@ -7379,5 +9996,568 @@ fieldset {
     height: 1px;
     background: currentColor;
     opacity: 0.5;
+  }
+}
+
+/* =========================================================
+   DESIGN CONSISTENCY PASS · 2026
+   Final normalization layer for reusable components.
+   Goal: the smaller UI pieces inherit the same editorial
+   retail language as PageHero, FinalCTA, Header and Button:
+   tight radii, hairline structure, restrained surfaces,
+   compact uppercase labels and transform-only hover states.
+   ========================================================= */
+
+:root {
+  --radius-media: var(--radius-md);
+  --radius-module: var(--radius-card);
+  --surface-module: var(--color-surface);
+  --surface-module-soft: var(--color-surface-soft);
+  --surface-overlay: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  --border-module: var(--color-border-soft);
+}
+
+@layer base {
+  body,
+  button,
+  input,
+  textarea,
+  select {
+    letter-spacing: 0;
+  }
+}
+
+@layer components {
+  .surface-card,
+  .panel,
+  .panel-soft,
+  .container--framed,
+  .card,
+  .card-soft,
+  .feature-card,
+  .feature-card-minimal,
+  .b2b-access,
+  .category-tile,
+  .contact-info {
+    border-radius: var(--radius-module);
+  }
+
+  .page-hero__media,
+  .final-cta__media,
+  .home-hero__media,
+  .company-intro__media,
+  .image-ground,
+  .image-placeholder,
+  .blog-card-media,
+  .product-card__media,
+  .product-gallery__main,
+  .product-gallery__thumb-button,
+  .product-info__media-main,
+  .product-info__media-thumb,
+  .b2b-access__media,
+  .category-tile-large,
+  .category-tile-large__media,
+  .category-tile-media,
+  .category-tile-image,
+  .category-tile-image__media {
+    border-radius: var(--radius-media);
+  }
+
+  .feature-card,
+  .feature-card-minimal,
+  .b2b-access,
+  .category-tile,
+  .category-tile-image--placeholder,
+  .contact-info,
+  .price-cta {
+    border-color: var(--border-module);
+    box-shadow: none;
+  }
+
+  .feature-card,
+  .b2b-access,
+  .category-tile,
+  .contact-info {
+    background: var(--surface-module);
+  }
+
+  .feature-card-muted,
+  .card-soft,
+  .panel-soft,
+  .category-tile--studio,
+  .category-tile--paper,
+  .contact-info__icon {
+    background: var(--surface-module-soft);
+  }
+
+  .feature-card::before,
+  .b2b-access::before,
+  .category-tile::before,
+  .contact-info::before {
+    content: '';
+    position: absolute;
+    inset: 0.72rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-border-soft) 76%, transparent);
+    border-radius: calc(var(--radius-module) - 1px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-base) var(--ease-soft);
+  }
+
+  .feature-card:hover::before,
+  .feature-card:focus-within::before,
+  .b2b-access:hover::before,
+  .b2b-access:focus-within::before,
+  .category-tile:hover::before,
+  .category-tile:focus-visible::before,
+  .contact-info--linked:hover::before,
+  .contact-info--linked:focus-visible::before {
+    opacity: 1;
+  }
+
+  .feature-card,
+  .featured-card--linked,
+  .blog-card,
+  .product-card,
+  .category-tile,
+  .category-tile-image,
+  .contact-info {
+    transition:
+      border-color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft),
+      color var(--duration-base) var(--ease-soft),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .feature-card:hover,
+  .featured-card--linked:hover,
+  .category-tile:hover,
+  .category-tile-image:hover,
+  .contact-info--linked:hover {
+    transform: translateY(-1px);
+  }
+
+  .feature-card-dark,
+  .b2b-access--dark,
+  .category-tile--ink {
+    background: var(--color-surface-inverse);
+    color: var(--color-inverse);
+    border-color: color-mix(in srgb, var(--color-inverse) 14%, transparent);
+  }
+
+  .feature-card-dark::before,
+  .b2b-access--dark::before,
+  .category-tile--ink::before {
+    border-color: color-mix(in srgb, var(--color-inverse) 18%, transparent);
+  }
+
+  .featured-card__top,
+  .featured-card__media,
+  .blog-grid--list > .blog-card,
+  .product-info__spec-row,
+  .b2b-access__rail,
+  .b2b-access__step,
+  .site-footer__strip,
+  .site-footer__signature {
+    border-color: var(--border-module);
+  }
+
+  .blog-card-media,
+  .product-card__media,
+  .product-gallery__main,
+  .product-info__media-main,
+  .category-tile-image,
+  .image-placeholder {
+    background: var(--color-surface-muted);
+    border: 1px solid
+      color-mix(in srgb, var(--color-ink) 9%, var(--color-border-soft));
+  }
+
+  .blog-card-media::after,
+  .product-card__media::after,
+  .product-gallery__main::after,
+  .product-info__media-main::after,
+  .category-tile-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-base) var(--ease-soft);
+  }
+
+  .blog-card:hover .blog-card-media::after,
+  .blog-card:focus-within .blog-card-media::after,
+  .product-card:hover .product-card__media::after,
+  .product-card:focus-within .product-card__media::after,
+  .product-gallery__main:hover::after,
+  .product-gallery__main:focus-within::after,
+  .product-info__media-main:hover::after,
+  .product-info__media-main:focus-within::after,
+  .category-tile-image:hover::after,
+  .category-tile-image:focus-visible::after {
+    opacity: 1;
+  }
+
+  .blog-card-media__placeholder,
+  .product-card__media > .image-placeholder,
+  .product-gallery__main > .image-placeholder,
+  .product-info__media-main > .image-placeholder {
+    border: 0;
+    border-radius: inherit;
+  }
+
+  .blog-card-title,
+  .featured-card__title,
+  .product-info__title,
+  .product-card__name,
+  .category-tile__title,
+  .category-tile-image__title,
+  .b2b-access__title,
+  .contact-info__value {
+    letter-spacing: 0;
+  }
+
+  .blog-card-title,
+  .featured-card__title,
+  .category-tile__title,
+  .category-tile-image__title {
+    line-height: 1.08;
+  }
+
+  .blog-card-body,
+  .product-card__body,
+  .featured-card__body,
+  .category-tile-image__body {
+    gap: 0.62rem;
+  }
+
+  .blog-card-cover-tag,
+  .blog-card-numeral,
+  .product-card__quick,
+  .category-tile__index,
+  .category-tile-image__index,
+  .featured-card__caption,
+  .image-placeholder__caption-stack {
+    border-radius: var(--radius-xs);
+    background: var(--surface-overlay);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+  }
+
+  .product-card__quick,
+  .badge,
+  .pill--bordered,
+  .product-info__chip {
+    min-height: 2rem;
+  }
+
+  .badge,
+  .pill--bordered,
+  .product-info__chip {
+    border-color: var(--color-border);
+    box-shadow: none;
+  }
+
+  .badge {
+    padding: 0.4rem 0.72rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+  }
+
+  .badge--rounded {
+    border-radius: var(--radius-card);
+  }
+
+  .badge--square,
+  .badge--tag {
+    border-radius: var(--radius-xs);
+  }
+
+  .badge--sm {
+    min-height: 1.7rem;
+    padding: 0.32rem 0.62rem;
+    font-size: 0.55rem;
+  }
+
+  .badge--lg {
+    min-height: 2.35rem;
+    padding: 0.52rem 0.9rem;
+    font-size: 0.62rem;
+  }
+
+  .badge--multi {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.18rem;
+    line-height: 1.15;
+  }
+
+  .badge__kicker,
+  .badge__meta {
+    color: currentColor;
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+    opacity: 0.66;
+  }
+
+  .badge__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.9rem;
+    height: 0.9rem;
+    flex: 0 0 auto;
+  }
+
+  .pill {
+    min-height: 1.65rem;
+    touch-action: manipulation;
+  }
+
+  .pill--bordered {
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+  }
+
+  .pill__index {
+    color: var(--color-muted-light);
+  }
+
+  .pill__count {
+    background: var(--color-surface);
+  }
+
+  .product-info__chip,
+  .pill__count,
+  .badge__count {
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .section-divider__line,
+  .section-divider::before,
+  .section-divider::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-border) 82%, transparent),
+      transparent
+    );
+  }
+
+  .section-divider__label,
+  .section-divider-label,
+  .breadcrumb,
+  .pill,
+  .badge,
+  .product-card__category,
+  .product-card__meta,
+  .contact-info__label {
+    letter-spacing: 0.14em;
+  }
+
+  .breadcrumb--pill .breadcrumb__inner {
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+  }
+
+  .breadcrumb__home,
+  .breadcrumb__link,
+  .breadcrumb__ellipsis {
+    min-height: 1.65rem;
+  }
+
+  .breadcrumb__current {
+    color: var(--color-ink);
+    font-weight: 650;
+  }
+
+  .section-divider__core {
+    min-width: 0;
+  }
+
+  .section-divider__label,
+  .section-divider__kicker,
+  .section-divider__meta {
+    overflow-wrap: anywhere;
+  }
+
+  .price-cta {
+    position: relative;
+    border-color: var(--color-border-soft);
+    padding-block: clamp(1.1rem, 2.2vw, 1.45rem);
+  }
+
+  .price-cta::before {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    background: var(--color-leather-dark);
+    opacity: 0.7;
+  }
+
+  .price-cta__label {
+    font-size: 0.88rem;
+    font-weight: 650;
+    letter-spacing: 0;
+  }
+
+  .price-cta__note {
+    max-width: 54ch;
+  }
+
+  .price-cta__actions {
+    gap: 0.65rem;
+  }
+
+  .contact-info {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: clamp(1.1rem, 2vw, 1.45rem);
+    color: var(--color-ink);
+    text-decoration: none;
+    border: 1px solid var(--border-module);
+    border-radius: var(--contact-radius-panel, var(--radius-module));
+    overflow: hidden;
+  }
+
+  .contact-info--linked {
+    cursor: pointer;
+  }
+
+  .contact-info--linked:hover,
+  .contact-info--linked:focus-visible {
+    border-color: var(--color-ink);
+    background: var(--color-surface-soft);
+  }
+
+  .contact-info--linked:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .contact-info__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--contact-radius-control, var(--radius-control));
+    color: var(--color-leather-dark);
+    flex: 0 0 auto;
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft),
+      background-color var(--duration-base) var(--ease-soft);
+  }
+
+  .contact-info__icon svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .contact-info--linked:hover .contact-info__icon,
+  .contact-info--linked:focus-visible .contact-info__icon {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-inverse);
+  }
+
+  .contact-info__body {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.24rem;
+  }
+
+  .contact-info__label {
+    color: var(--color-muted);
+    line-height: 1.2;
+  }
+
+  .contact-info__value {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+    font-weight: 560;
+    line-height: 1.34;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-info--linked:hover .contact-info__value,
+  .contact-info--linked:focus-visible .contact-info__value {
+    color: var(--color-leather-dark);
+  }
+
+  .contact-info__description {
+    max-width: 40ch;
+    margin: 0.1rem 0 0;
+    color: var(--color-muted);
+  }
+
+  .contact-info__arrow {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    flex: 0 0 auto;
+    margin-left: auto;
+    color: var(--color-ink-soft);
+    transition:
+      color var(--duration-base) var(--ease-soft),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .contact-info__arrow svg {
+    width: 14px;
+    height: 10px;
+  }
+
+  .contact-info--linked:hover .contact-info__arrow,
+  .contact-info--linked:focus-visible .contact-info__arrow {
+    color: var(--color-leather-dark);
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 40rem) {
+    .contact-info {
+      gap: 0.85rem;
+      padding: 1.05rem 1.15rem;
+    }
+
+    .contact-info__icon {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .contact-info__icon svg {
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+
+    .contact-info__value {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feature-card:hover,
+    .featured-card--linked:hover,
+    .category-tile:hover,
+    .category-tile-image:hover,
+    .contact-info--linked:hover,
+    .contact-info--linked:hover .contact-info__arrow,
+    .contact-info--linked:focus-visible .contact-info__arrow {
+      transform: none;
+    }
   }
 }

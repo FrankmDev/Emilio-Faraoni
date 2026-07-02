@@ -1,0 +1,68 @@
+---
+import ContactChannel from '@/components/ui/ContactChannel.astro';
+import ContactForm from '@/components/ui/ContactForm.astro';
+import RegisterCorner from '@/components/ui/RegisterCorner.astro';
+import SectionHeader from '@/components/ui/SectionHeader.astro';
+import type {
+  ContactChannel as ContactChannelData,
+  ContactNote,
+  ContactTopic,
+} from '@/data/contact';
+
+interface Props {
+  topics: readonly ContactTopic[];
+  channels: readonly ContactChannelData[];
+  notes: readonly ContactNote[];
+}
+
+const { topics, channels, notes } = Astro.props;
+---
+
+<section
+  class="section section-lg correspondence"
+  aria-labelledby="contact-form-heading"
+>
+  <div class="container-wide correspondence__grid">
+    <div class="form-letterhead">
+      <RegisterCorner class="form-letterhead__corner" />
+
+      <SectionHeader
+        index="01"
+        eyebrow="Escríbanos"
+        title="Envíe un mensaje al taller"
+        description="Le responderemos a la dirección que indique. Los campos marcados con * son obligatorios."
+        id="contact-form-heading"
+        level={2}
+      />
+
+      <ContactForm topics={topics} />
+    </div>
+
+    <div class="form-letterhead form-letterhead--aside">
+      <RegisterCorner class="form-letterhead__corner" />
+
+      <SectionHeader
+        index="02"
+        eyebrow="Datos de contacto"
+        title="Atención directa"
+        description="Utilice el formulario o contacte directamente. Respondemos sin intermediarios."
+        level={2}
+      />
+
+      <div class="contact-channels">
+        {channels.map((channel) => <ContactChannel {...channel} />)}
+      </div>
+
+      <dl class="differentiator-list" aria-label="Información adicional">
+        {
+          notes.map((item) => (
+            <div class="differentiator-item">
+              <dt class="differentiator-item__title">{item.title}</dt>
+              <dd class="differentiator-item__detail">{item.detail}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>

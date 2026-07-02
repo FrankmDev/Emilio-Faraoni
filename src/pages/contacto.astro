@@ -1,7 +1,18 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageShell from '@/components/layout/PageShell.astro';
+import ContactCorrespondence from '@/components/sections/ContactCorrespondence.astro';
+import ContactFaqSection from '@/components/sections/ContactFaqSection.astro';
+import EditorialSpread from '@/components/sections/EditorialSpread.astro';
+import FinalCTA from '@/components/sections/FinalCTA.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 import { company } from '@/data/company';
+import {
+  contactChannels,
+  contactFaqs,
+  contactNotes,
+  inquiryTopics,
+} from '@/data/contact';
 ---
 
 <BaseLayout
@@ -9,18 +20,62 @@ import { company } from '@/data/company';
   description={`Póngase en contacto con ${company.name}. Consultas profesionales sobre fabricación, materiales y relaciones comerciales en ${company.location}.`}
 >
   <PageShell>
-    <section class="page-hero" aria-labelledby="contact-title">
-      <div class="container-wide page-hero-inner">
-        <div class="page-hero-content">
-          <p class="page-hero__eyebrow eyebrow">Contacto</p>
-          <h1 id="contact-title" class="page-hero__title display-serif">
-            Contacto
-          </h1>
-          <p class="page-hero__description copy-lead">
-            Para consultas profesionales, puede contactar con
-            {company.name}.
-          </p>
-        </div>
+    <PageHero
+      variant="media"
+      eyebrow="Contacto"
+      title={`Conversemos<em>.</em>`}
+      description="Consultas profesionales sobre distribución, fabricación, materiales o prensa. Atención directa desde el taller."
+      image="/horizontal.jpg"
+      imageAlt="Artesano del taller sosteniendo correas de cuero recién cortadas"
+      imageFocus="65% center"
+      primaryCta={{
+        label: 'Escribir al taller',
+        href: '#contact-form-heading',
+        variant: 'inverse',
+      }}
+      secondaryCta={{
+        label: 'Preguntas frecuentes',
+        href: '#faq-heading',
+        variant: 'inverse',
+      }}
+    />
+
+    <ContactCorrespondence
+      topics={inquiryTopics}
+      channels={contactChannels}
+      notes={contactNotes}
+    />
+
+    <EditorialSpread
+      headingId="atelier-pause-heading"
+      hiddenTitle="Pausa del taller"
+      image="/vertical.jpg"
+      imageFocus="50% 35%"
+      leftStamp="F · El taller"
+      rightStamp={`${company.foundedYear} → hoy`}
+      caption="El taller · Pausa"
+      quote="El cuero no se apresura. El taller, tampoco."
+      cite="Emilio Faraoni · Elche, Alicante"
+    />
+
+    <ContactFaqSection faqs={contactFaqs} />
+
+    <section class="section section-md">
+      <div class="container-wide">
+        <FinalCTA
+          variant="image"
+          tone="dark"
+          image="/horizontal.jpg"
+          imageAlt="Taller de marroquinería al final de la jornada"
+          imageFocus="50% 60%"
+          eyebrow="O directamente"
+          title={`Cuando lo necesite, <em>escríbanos</em>.`}
+          description="Sin formularios enrevesados, sin intermediarios: una línea directa con el taller."
+          primaryLabel="Iniciar conversación"
+          primaryHref="#contact-form-heading"
+          secondaryLabel="Volver al inicio"
+          secondaryHref="/"
+        />
       </div>
     </section>
   </PageShell>

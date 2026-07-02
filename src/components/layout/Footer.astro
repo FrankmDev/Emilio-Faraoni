@@ -1,29 +1,9 @@
 ---
-import Container from '@/components/ui/Container.astro';
-import NavLink from '@/components/layout/NavLink.astro';
 import { company } from '@/data/company';
 import { footerNavigation } from '@/data/navigation';
 import { ROUTES } from '@/lib/routes';
 
-/**
- * Footer · editorial spread, three columns + legal bar.
- *
- * Composition (left → right):
- *   · Brand: name, short description, address line.
- *   · Web:   the four primary navigation items.
- *   · Contact: email + phone + hours, only if confirmed.
- *
- * The contact column is rendered conditionally. When the
- * brand has not confirmed email, phone or address, the
- * column is replaced with a quiet, single-line note. We
- * never invent or placeholder contact details.
- *
- * Bottom rail: copyright, country, and a small editorial
- * tag (no public prices, no commercial urgency).
- */
-
 interface Props {
-  /** Footer presentation — 'default' (light) or 'dark'. */
   variant?: 'default' | 'dark';
 }
 
@@ -33,73 +13,170 @@ const currentPath = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 
 function isActive(href: string): boolean {
-  if (href === ROUTES.HOME) {
-    return currentPath === ROUTES.HOME;
-  }
+  if (href === ROUTES.HOME) return currentPath === ROUTES.HOME;
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
 
 const hasContact = Boolean(company.email || company.phone);
 const addressLine = company.location;
+const yearFounded = company.foundedYear;
+
+const credentials = [
+  `Fundada en ${yearFounded}`,
+  addressLine,
+  'Producto nacional',
+  'Materiales nacionales',
+  'Fabricación artesanal',
+] as const;
 ---
 
 <footer
   class:list={['site-footer', variant === 'dark' && 'site-footer-dark']}
+  data-site-footer
   aria-label="Pie de página"
 >
-  <Container wide class="site-footer__inner">
-    <div class="site-footer__brand">
-      <a href={ROUTES.HOME} class="site-footer__brand-name">{company.name}</a>
-      <p class="site-footer__tagline">{company.shortDescription}</p>
-      {addressLine && <address class="site-footer__address">{addressLine}</address>}
+  <div class="container-wide">
+    <div class="site-footer__manifesto" data-reveal style="--reveal-delay: 0ms">
+      <a
+        href={ROUTES.HOME}
+        class="site-footer__wordmark"
+        aria-label={`${company.name} · Inicio`}
+      >
+        {company.name}
+      </a>
+      <span class="site-footer__rule" aria-hidden="true"></span>
+      <p class="site-footer__statement">
+        Empresa familiar de marroquinería artesanal &middot; desde {yearFounded} &middot; {addressLine}
+      </p>
     </div>
 
-    <div class="site-footer__col">
-      <p class="meta-label" id="footer-web-label">Web</p>
-      <ul class="site-footer__list" aria-labelledby="footer-web-label">
-        {
-          footerNavigation.map((item) => (
-            <li>
-              <NavLink href={item.href} label={item.label} active={isActive(item.href)} />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+    <div class="site-footer__columns">
+      <section class="site-footer__column" data-reveal style="--reveal-delay: 80ms">
+        <span class="site-footer__column-index" aria-hidden="true">01</span>
+        <h3 class="site-footer__heading" id="footer-nav-label">Navegación</h3>
+        <ul class="site-footer__list" aria-labelledby="footer-nav-label">
+          {
+            footerNavigation.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="site-footer__link"
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  <span class="site-footer__link-arrow" aria-hidden="true">&rarr;</span>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
 
-    <div class="site-footer__col">
-      <p class="meta-label" id="footer-contact-label">Contacto</p>
-      {hasContact ? (
-        <div
-          class="site-footer__meta stack-sm"
-          aria-labelledby="footer-contact-label"
-          role="group"
-        >
-          {company.email && <a href={`mailto:${company.email}`}>{company.email}</a>}
-          {company.phone && <a href={`tel:${company.phone.replace(/\s+/g, '')}`}>{company.phone}</a>}
+      <section class="site-footer__column" data-reveal style="--reveal-delay: 160ms">
+        <span class="site-footer__column-index" aria-hidden="true">02</span>
+        <h3 class="site-footer__heading" id="footer-contact-label">Contacto</h3>
+        <div class="site-footer__detail" aria-labelledby="footer-contact-label">
+          {hasContact ? (
+            <>
+              {company.email && (
+                <a href={`mailto:${company.email}`} class="site-footer__link">
+                  <span class="site-footer__link-arrow" aria-hidden="true">&rarr;</span>
+                  {company.email}
+                </a>
+              )}
+              {company.phone && (
+                <a href={`tel:${company.phone.replace(/\s+/g, '')}`} class="site-footer__link">
+                  <span class="site-footer__link-arrow" aria-hidden="true">&rarr;</span>
+                  {company.phone}
+                </a>
+              )}
+            </>
+          ) : (
+            <p class="site-footer__text">Datos de contacto disponibles bajo consulta.</p>
+          )}
+          <span class="site-footer__atelier">
+            <span class="site-footer__atelier-dot" aria-hidden="true"></span>
+            Visita con cita previa
+          </span>
         </div>
-      ) : (
-        <p
-          class="site-footer__meta"
-          aria-labelledby="footer-contact-label"
-        >
-          Datos de contacto disponibles bajo consulta.
-        </p>
-      )}
-    </div>
-  </Container>
+      </section>
 
-  <div class="site-footer__bottom">
-    <Container wide class="site-footer__bottom-inner">
-      <small class="site-footer__bottom-meta">
-        © {currentYear} {company.name}
-      </small>
-      <small class="site-footer__bottom-meta site-footer__bottom-meta--accent">
-        ES · {company.country}
-      </small>
-      <small class="site-footer__bottom-meta">
-        Editorial · sin precios públicos
-      </small>
-    </Container>
+      <section class="site-footer__column" data-reveal style="--reveal-delay: 240ms">
+        <span class="site-footer__column-index" aria-hidden="true">03</span>
+        <h3 class="site-footer__heading" id="footer-cred-label">Credenciales</h3>
+        <ul class="site-footer__list site-footer__creds" aria-labelledby="footer-cred-label">
+          {
+            credentials.map((cred) => (
+              <li class="site-footer__cred">
+                <span class="site-footer__cred-prefix" aria-hidden="true">&mdash;</span>
+                {cred}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+
+    <div class="site-footer__colophon" data-reveal style="--reveal-delay: 340ms">
+      <hr class="site-footer__hr" aria-hidden="true" />
+      <div class="site-footer__colophon-row">
+        <span class="site-footer__colophon-mark" aria-hidden="true">EF</span>
+        <span class="site-footer__colophon-legal">
+          &copy; {currentYear} {company.name} &middot; {addressLine} &middot; ES
+        </span>
+        <span class="site-footer__colophon-sup">Navegación principal</span>
+      </div>
+    </div>
   </div>
 </footer>
+
+<script>
+  type FooterEl = HTMLElement & { _revealBound?: boolean };
+
+  const init = () => {
+    const footer = document.querySelector<FooterEl>('[data-site-footer]');
+    if (!footer || footer._revealBound) return;
+    footer._revealBound = true;
+
+    const reduceMotion = window.matchMedia?.(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    const reveals = Array.from(
+      footer.querySelectorAll<HTMLElement>('[data-reveal]'),
+    );
+
+    if (reduceMotion) {
+      footer.classList.add('is-revealed');
+      reveals.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      footer.classList.add('is-revealed');
+      reveals.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).classList.add('is-revealed');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    );
+
+    observer.observe(footer);
+    reveals.forEach((el) => observer.observe(el));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>

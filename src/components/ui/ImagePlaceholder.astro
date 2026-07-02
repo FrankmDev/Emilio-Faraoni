@@ -1,11 +1,11 @@
 ---
 /**
  * ImagePlaceholder · editorial replacement for missing media.
- * CSS-only. Renders as a presentational <div> by default, or as
- * an img-role element when `label` is provided. Built on the
- * global `.image-placeholder` token (flat surface, hairline
- * border, optional inset frame and corner stamps). Aspect
- * ratio is set via the global `.ratio-*` class on the wrapper.
+ * Renders one of the temporary local workshop images while the
+ * final catalogue media is pending. Built on the global
+ * `.image-placeholder` token (hairline border, optional inset
+ * frame and corner stamps). Aspect ratio is set via the global
+ * `.ratio-*` class on the wrapper.
  */
 type Variant = 'wide' | 'portrait' | 'square' | 'hero' | 'tall';
 type Tone = 'light' | 'muted' | 'sand' | 'paper' | 'ink' | 'leather';
@@ -51,6 +51,17 @@ const ratioMap: Record<Variant, string> = {
   tall: 'ratio-tall',
 };
 
+const imageMap: Record<Variant, string> = {
+  wide: '/horizontal.jpg',
+  portrait: '/vertical.jpg',
+  square: '/vertical.jpg',
+  hero: '/horizontal.jpg',
+  tall: '/vertical.jpg',
+};
+
+const imageSrc = imageMap[variant];
+const renderCross = false;
+
 const wrapperClass = [
   'image-placeholder',
   ratioMap[variant],
@@ -69,6 +80,13 @@ const wrapperClass = [
   role={label ? 'img' : 'presentation'}
   aria-label={label}
 >
+  <img
+    src={imageSrc}
+    alt=""
+    loading="lazy"
+    decoding="async"
+    class="image-placeholder__image"
+  />
   {
     frame === 'editorial' && (
       <>
@@ -85,7 +103,7 @@ const wrapperClass = [
   }
   <span class="image-placeholder__frame" aria-hidden="true"></span>
   {
-    crossed && (
+    renderCross && (
       <svg
         class="image-placeholder__cross"
         viewBox="0 0 100 100"
